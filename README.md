@@ -88,3 +88,4 @@ java -DCONSOLE_ENCODING=MS949 -jar klid-web.jar
 # 그 외 (설정 불필요, 기본값 UTF-8 사용)
 java -jar klid-web.jar
 ```
+# klid
