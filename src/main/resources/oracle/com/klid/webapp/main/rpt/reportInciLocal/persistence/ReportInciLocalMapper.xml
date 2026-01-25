@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportInciLocal.persistence.ReportInciLocalMapper">
+    <resultMap type="com.klid.webapp.main.rpt.reportInciLocal.dto.ReportInciLocalDto" id="resultReportList">
+        <result property="inst_cd" 					column="inst_cd"/>
+        <result property="name" 					column="inst_nm"/>
+        <result property="y" 					column="cnt"/>
+    </resultMap>
+
+    <!-- 시도 그리드 조회 -->
+    <select id="selectInciLocalList" resultMap="resultReportList">
+        with sido as (SELECT *
+        FROM  (SELECT dmg_inst_cd,
+        <choose>
+            <when test="dateType == 'inci_acpn_dt'">
+                nvl(count(inci_acpn_dt),0) total_cnt
+            </when>
+            <otherwise>
+                nvl(count(inci_upd_dt),0) total_cnt
+            </otherwise>
+        </choose>
+        FROM tbzledge D
+        WHERE EXISTS(SELECT sub_cd
+        FROM tsminst_leaf tsminst
+        WHERE tsminst.sub_cd= d.dmg_inst_cd
+        AND inst_cd = 1100000
+        AND sub_cd NOT IN (
+        SELECT com_code2
+        FROM COMM_CODE
+        WHERE com_code1 = '4002'
+        AND code_lvl = '2')
+        AND sub_cd <![CDATA[ <> ]]> 1200000) AND inci_no LIKE 'CT%' AND length(inci_no) <![CDATA[ < ]]> 16
+        <choose>
+            <when test="dateType == 'inci_acpn_dt'">
+              AND TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss')
+            </when>
+            <otherwise>
+               AND TO_DATE(inci_upd_dt, 'yyyymmddhh24miss')
+            </otherwise>
+        </choose>
+        BETWEEN TO_DATE(#{startDt}, 'yyyymmddhh24miss')
+        AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+        AND inci_ttl NOT LIKE '%훈련%' AND inci_ttl NOT LIKE '%확인%'
+        AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+        group by DMG_INST_CD) a,
+        (SELECT t1.sub_cd as inst_cd, t2.inst_nm as inst_nm, nvl(replace((select local_cd from tsminst where inst_cd=t2.inst_cd), 170, 75), '0') local_cd
+        FROM tsminst_leaf t1, TSMINST t2
+        WHERE  (t2.PNT_INST_CD=1100000)
+        and t1.inst_cd = t2.inst_cd
+        AND t1.inst_cd NOT IN (SELECT com_code2 FROM COMM_CODE
+        WHERE com_code1 = '4002'
+        AND code_lvl = '2'  )
+        AND t1.sub_cd <![CDATA[ <> ]]> 1200000
+        and t2.inst_cd <![CDATA[ <> ]]> 1200000) b
+        WHERE a.dmg_inst_cd (+) = b.inst_cd
+        ORDER BY to_number(local_cd))
+        select local_cd as inst_cd, inst_nm, SUM( nvl(total_cnt,0) ) AS CNT from sido group by local_cd, inst_nm
+        <choose>
+            <when test="sortType == 'main'">
+                ORDER BY cnt desc ,to_number(local_cd)
+            </when>
+            <otherwise>
+                ORDER BY to_number(local_cd)
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 시군구 그리드 조회 -->
+    <select id="selectInciSidoList" resultMap="resultReportList">
+        <if test="sAuthMain != null and sAuthMain != ''">
+            <choose>
+                <when test="sAuthMain == 'AUTH_MAIN_3'">
+                    WITH inst AS (
+                    SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd
+                    FROM tsminst
+                    WHERE local_cd = (select local_cd from tsminst where inst_cd=#{instCd}) AND INST_CD NOT IN (SELECT com_code2
+                    FROM COMM_CODE
+                    WHERE com_code1 = '4002' AND code_lvl = '2')
+                    AND INST_CD <![CDATA[ <> ]]> 1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 ),
+                    tree AS ( SELECT inst_cd
+                    FROM tsminst
+                    CONNECT BY PRIOR inst_cd = pnt_inst_cd
+                    START WITH inst_cd = #{instCd} ),
+                    pri AS ( SELECT NVL(inst_nm, '합계')     inst_nm,
+                    DECODE(inst_cd, '', '0', inst_cd) local_cd,
+                    nvl(total_cnt, 0) AS     total_cnt,
+                    nvl(end_cnt, 0) AS     end_cnt,
+                    nvl(ing_cnt, 0) AS     ing_cnt
+                    FROM (
+            <choose>
+                <when test="topInstView == 'main'">
+                    SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+                    NVL( COUNT(TRANS_INCI_PRCS_STAT), 0) total_cnt,
+                    NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+                    NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', NULL,'12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+                    FROM TBZLEDGE d
+                    WHERE 1=1
+                    <choose>
+                        <when test="dateType == 'inci_acpn_dt'">
+                            AND TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss')
+                        </when>
+                        <otherwise>
+                            AND TO_DATE(inci_upd_dt, 'yyyymmddhh24miss')
+                        </otherwise>
+                    </choose>
+                    BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+                    AND inci_ttl NOT LIKE '%훈련%'
+                    AND inci_ttl NOT LIKE '%확인%'
+                    AND (d.INCI_TRNS_RCPT_INST_CD = #{instCd} OR dmg_inst_cd = #{instCd})
+                    AND d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT * FROM tree
+                    WHERE INST_cd <![CDATA[ <> ]]> #{instCd})
+                    GROUP BY INCI_TRNS_RCPT_INST_CD
+                    UNION ALL
+                    SELECT DCL_INST_CD AS dmg_inst_cd,
+                    NVL( COUNT(TRANS_INCI_PRCS_STAT), 0) total_cnt,
+                    NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+                    NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', NULL,'12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+                    FROM TBZLEDGE d
+                    WHERE 1=1
+                    <choose>
+                        <when test="dateType == 'inci_acpn_dt'">
+                            AND TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss')
+                        </when>
+                        <otherwise>
+                            AND TO_DATE(inci_upd_dt, 'yyyymmddhh24miss')
+                        </otherwise>
+                    </choose>
+                    BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+                    AND inci_ttl NOT LIKE '%훈련%'
+                    AND inci_ttl NOT LIKE '%확인%'
+                    AND d.DCL_INST_CD IN (#{instCd})
+                    AND d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT * FROM tree
+                    WHERE INST_cd <![CDATA[ <> ]]> #{instCd})
+                    GROUP BY DCL_INST_CD
+                    UNION ALL
+                </when>
+            </choose>
+                    SELECT INCI_TRNS_RCPT_SIDO_INST_CD AS dmg_inst_cd,
+                    NVL( COUNT(TRANS_SIDO_PRCS_STAT), 0) total_cnt,
+                    NVL( COUNT( DECODE(TRANS_SIDO_PRCS_STAT, '13', 1, '12',  1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+                    NVL( COUNT( DECODE(TRANS_SIDO_PRCS_STAT, '13', NULL,'12', NULL,'15',  NULL, '17', NULL, 1)), 0) ing_cnt
+                    FROM TBZLEDGE d
+                    WHERE 1=1
+                    AND inci_ttl NOT LIKE '%훈련%'
+                    AND inci_ttl NOT LIKE '%확인%'
+                    <choose>
+                        <when test="dateType == 'inci_acpn_dt'">
+                            AND TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss')
+                        </when>
+                        <otherwise>
+                            AND TO_DATE(inci_upd_dt, 'yyyymmddhh24miss')
+                        </otherwise>
+                    </choose>
+                    BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+                    AND (d.INCI_TRNS_RCPT_INST_CD IN (SELECT * FROM tree
+                    WHERE INST_cd <![CDATA[ <> ]]> #{instCd})
+                    OR d.INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT * FROM tree
+                    WHERE INST_CD <![CDATA[ <> ]]> #{instCd}))
+                    GROUP BY INCI_TRNS_RCPT_SIDO_INST_CD) T1, inst T2
+                    WHERE T2.INST_CD=t1.dmg_inst_cd (+)
+            <choose>
+                <when test="topInstView != 'main'">
+                    and t2.inst_cd <![CDATA[ <> ]]> #{instCd}
+                </when>
+            </choose>
+                    ORDER BY TO_NUMBER(local_cd), DECODE(inst_nm, (SELECT inst_nm FROM tsminst WHERE inst_cd  =  #{instCd}), 2)
+                    )
+                    SELECT inst_nm,
+                    local_cd as inst_cd,
+                    sum(total_cnt) AS CNT,
+                    sum(end_cnt)   AS end_cnt,
+                    sum(ing_cnt)   AS ing_cnt
+                    FROM pri
+                    GROUP BY INST_NM, local_cd
+            <choose>
+                <when test="topInstView == 'main'">
+                    order by cnt desc, local_cd asc
+                </when>
+                <otherwise>
+                    order by local_cd asc
+                </otherwise>
+            </choose>
+                </when>
+                <when test="sAuthMain == 'AUTH_MAIN_4'">
+                    SELECT B.INST_CD, B.INST_NM, COUNT(A.DMG_INST_CD) CNT
+                    FROM (
+                    SELECT DMG_INST_CD
+                    FROM TBZLEDGE D
+                    WHERE 1=1
+                    <choose>
+                        <when test="dateType == 'inci_acpn_dt'">
+                            AND TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss')
+                        </when>
+                        <otherwise>
+                            AND TO_DATE(inci_upd_dt, 'yyyymmddhh24miss')
+                        </otherwise>
+                    </choose>
+                    BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE( #{endDt},'yyyymmddhh24miss')+1
+                    AND INCI_TRNS_RCPT_SIDO_INST_CD = #{instCd}
+                    AND inci_ttl not like '%훈련%'
+                    AND inci_ttl not like '%확인%'
+                    ) A,
+                    (SELECT INST_CD, INST_NM
+                    FROM TSMINST
+                    WHERE 1=1
+                    AND INST_CD=#{instCd}
+                    ) B
+                    WHERE A.DMG_INST_CD(+)=B.INST_CD
+                    GROUP BY B.INST_CD, B.INST_NM
+                    ORDER BY CNT DESC, inst_cd asc
+                </when>
+            </choose>
+        </if>
+    </select>
+
+</mapper>

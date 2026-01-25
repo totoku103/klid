@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.policy.persistence.PolicyConfMapper">
+
+   <resultMap id="resultPolicyConfInfo" type="com.klid.webapp.common.dto.PolicyDto">
+       <result property="policyKind"					column="POLICY_KIND"/>
+       <result property="policyName"				column="POLICY_NAME"/>
+       <result property="val1"						column="VAL1"/>
+       <result property="val2"						column="VAL2"/>
+       <result property="valLob1"						column="VAL_LOB1"/>
+   </resultMap>
+
+    <!-- 정책설정 조회 -->
+    <select id="selectPolicyConfInfo" resultMap="resultPolicyConfInfo">
+        SELECT	POLICY_KIND,
+        POLICY_NAME,
+        VAL1,
+        VAL2,
+        VAL_LOB1
+        FROM		COM_POLICY
+        WHERE 1=1
+        <if test="_parameter.containsKey('policyKind') and policyKind != null and policyKind != ''">
+            AND POLICY_KIND = #{policyKind}
+        </if>
+        <if test="_parameter.containsKey('policyName') and policyName != null and policyName != ''">
+            AND POLICY_NAME = #{policyName}
+        </if>
+    </select>
+
+    <!-- 정책설정 저장 -->
+    <update id="updatePolicyConfig">
+        BEGIN
+        <!-- SELECT 1 FROM DUAL; -->
+
+        <if test="_parameter.containsKey('pwdPolicyUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdPolicyUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_POLICY_USE';
+        </if>
+
+        <if test="_parameter.containsKey('pwdLen')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdLen}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_LENGTH';
+        </if>
+
+        <if test="_parameter.containsKey('pwdNumberUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdNumberUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_NUMBER';
+        </if>
+
+        <if test="_parameter.containsKey('pwdUpperLowerUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdUpperLowerUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_UPPERLOWER';
+        </if>
+
+        <if test="_parameter.containsKey('pwdSpecialCharUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdSpecialCharUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_SPECIALCHAR';
+        </if>
+
+        <if test="_parameter.containsKey('pwdChgCycle')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdChgCycle}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_CHANGECYCLE';
+        </if>
+
+        <if test="_parameter.containsKey('pwdChgCycleUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdChgCycleUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_CHANGECYCLE_USE';
+        </if>
+
+        <if test="_parameter.containsKey('pwdErrPolicyUse')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdErrPolicyUse}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_ERRPOLICY_USE';
+        </if>
+
+        <if test="_parameter.containsKey('pwdInputCount')">
+            UPDATE	COM_POLICY
+            SET		VAL1 = #{pwdInputCount}
+            WHERE	POLICY_KIND = 'PASSWORD_POLICY'
+            AND		POLICY_NAME = 'PASSWORD_INPUTCOUNT';
+        </if>
+
+        <if test="_parameter.containsKey('autoLogoutUse')">
+            UPDATE	COM_POLICY
+            SET 		VAL1 = #{autoLogoutUse}
+            WHERE	POLICY_KIND = 'AUTO_LOGOUT'
+            AND		POLICY_NAME = 'AUTO_LOGOUT_USE';
+        </if>
+
+        <if test="_parameter.containsKey('autoLogoutTime')">
+            UPDATE COM_POLICY
+            SET 		VAL1 = #{autoLogoutTime}
+            WHERE	POLICY_KIND = 'AUTO_LOGOUT'
+            AND		POLICY_NAME = 'AUTO_LOGOUT_TIME';
+        </if>
+
+        <if test="_parameter.containsKey('smsAgentCount')">
+            UPDATE COM_POLICY
+            SET 		VAL1 = #{smsAgentCount}
+            WHERE	POLICY_KIND = 'LICENSE'
+            AND		POLICY_NAME = 'SMS_AGENT_COUNT';
+        </if>
+        END;
+    </update>
+
+</mapper>

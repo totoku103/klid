@@ -1,0 +1,8 @@
+export { PrivacyPolicyPage } from './PrivacyPolicyPage'
+export { HistoryPolicyPage } from './HistoryPolicyPage'
+export { ComparePolicyPage } from './ComparePolicyPage'
+export { HistoryPolicy202502 } from './HistoryPolicy202502'
+export { HistoryPolicy202403 } from './HistoryPolicy202403'
+export { HistoryPolicy201901 } from './HistoryPolicy201901'
+export { ComparePolicy202502 } from './ComparePolicy202502'
+export { ComparePolicy202403 } from './ComparePolicy202403'

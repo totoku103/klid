@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.user.otp.persistence.OtpMapper">
+    <select id="selectOtpSecretKeyByUserIdAndIpAddr" resultType="string">
+        SELECT OTP_KEY
+        FROM COMM_USER
+        WHERE USE_YN = 'Y'
+          AND USER_ID = #{userId}
+          AND IP_ADDR = #{ipAddr}
+    </select>
+    
+    <select id="selectOtpSecretKeyByUserNameAndPhoneNumberAndOfficeNumber"
+            resultType="string">
+        SELECT OTP_KEY
+        FROM COMM_USER
+        WHERE USE_YN = 'Y'
+          AND USER_NAME = #{userName}
+          AND MOBL_PHN_NO = #{phoneNumber}
+          AND OFFC_TEL_NO = #{officeNumber}
+    </select>
+</mapper>

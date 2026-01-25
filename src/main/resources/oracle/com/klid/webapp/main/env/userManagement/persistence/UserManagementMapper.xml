@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.userManagement.persistence.UserManagementMapper">
+
+    <select id="selectCommUserBySeq"
+            resultType="com.klid.webapp.main.env.userManagement.dto.CommUserDto">
+        SELECT SEQ             AS COMM_USER_SEQ,
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED AS LAST_PWD_MODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               IP_ADDR,
+               GPKI_SERIAL_NO,
+               LOGIN_FAIL_CNT,
+               OTP_KEY,
+               PASS_RESET_YN,
+               LOCK_YN,
+               INACTIVE_YN
+        FROM COMM_USER
+        WHERE SEQ = #{seq}
+    </select>
+
+
+    <insert id="insertCommUserRequest"
+            parameterType="com.klid.webapp.main.env.userManagement.dto.CommUserRequestUserInfoDto">
+		<selectKey keyProperty="userInfo.seq" resultType="int" order="BEFORE">
+			SELECT COMM_USER_REQUEST_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+        insert into COMM_USER_REQUEST (SEQ,
+                                       COMM_USER_SEQ,
+                                       INST_CD,
+                                       USER_ID,
+                                       USER_NAME,
+                                       USER_PWD,
+                                       MOBL_PHN_NO,
+                                       OFFC_TEL_NO,
+                                       EMAIL_ADDR,
+                                       SMS_YN,
+                                       USE_YN,
+                                       REG_DT,
+                                       LASTPWDMODIFIED,
+                                       AUTH_MAIN,
+                                       AUTH_SUB,
+                                       IP_ADDR,
+                                       OTP_KEY,
+                                       GPKI_SERIAL_NO,
+                                       LOGIN_FAIL_CNT,
+                                       PASS_RESET_YN,
+                                       LOCK_YN,
+                                       INACTIVE_YN,
+--
+                                       REQUEST_USER_SEQ,
+                                       REQUEST_INST_CD,
+                                       REQUEST_TYPE,
+                                       REQUEST_REASON,
+                                       REQUEST_REG_DT,
+                                       PROCESS_STATE)
+        values (#{userInfo.seq},
+                #{userInfo.commUserSeq},
+                #{userInfo.instCd},
+                #{userInfo.userId},
+                #{userInfo.userName},
+                #{userInfo.userPwd},
+                #{userInfo.moblPhnNo},
+                #{userInfo.offcTelNo},
+                #{userInfo.emailAddr},
+                #{userInfo.smsYn},
+                #{userInfo.useYn},
+                TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+                <choose>
+                    <when test="userInfo.lastPwdModified != null">
+                        #{userInfo.lastPwdModified},
+                    </when>
+                    <otherwise>
+                        systimestamp,
+                    </otherwise>
+                </choose>
+
+                #{userInfo.authMain},
+                #{userInfo.authSub},
+                #{userInfo.ipAddr},
+                #{userInfo.otpKey},
+                #{userInfo.gpkiSerialNo},
+                #{userInfo.loginFailCnt},
+                #{userInfo.passResetYn},
+                #{userInfo.lockYn},
+                #{userInfo.inactiveYn},
+--
+                #{requestUserSeq},
+                #{requestInstCd},
+                #{requestType},
+                #{requestReason},
+                TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+                #{requestProcessState}
+               )
+    </insert>
+</mapper>

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sec.shareBoard.persistence.ShareBoardMapper">
+	
+<resultMap type="com.klid.webapp.main.sec.shareBoard.dto.ShareBoardDto" id="getBoardResultMap">
+		<result property="bultnNo"				column="BULTN_NO"/>
+		<result property="bultnType"			column="BULTN_TYPE"/>
+		<result property="bultnTitle"			column="BULTN_TITLE"/>
+		<result property="bultnCont"			column="BULTN_CONT"/>
+		<result property="readCnt"				column="READ_CNT"/>
+		<result property="rcmdCnt"				column="RCMD_CNT"/>
+		<result property="regDate"				column="REG_DATE"/>
+		<result property="userId"				column="USER_ID"/>
+		<result property="organCode"			column="ORGAN_CODE"/>
+		<result property="pntOrganCode"			column="PNT_ORGAN_CODE"/>
+		<result property="startDt"				column="START_DT"/>
+		<result property="endDt"				column="END_DT"/>
+		<result property="groupNo"				column="GROUP_NO"/>
+		<result property="levelNo"				column="LEVEL_NO"/>
+		<result property="orderNo"				column="ORDER_NO"/>
+		<result property="cateNo"				column="CATE_NO"/>
+		<result property="openScope"			column="OPEN_SCOPE"/>
+		<result property="existFile"			column="EXIST_FILE"/>
+		<result property="totalReplyCnt"		column="TOTAL_REPLY_CNT"/>
+		<result property="totalRcmdCnt"			column="TOTAL_RCMD_CNT"/>
+		<result property="isSecret"				column="IS_SECRET"/>
+		<result property="useYn"				column="USE_YN"/>
+		<result property="pntUserId"			column="PNT_USER_ID"/>
+		<result property="htmlYn"				column="HTML_YN"/>
+		<result property="groupItemNo"			column="GROUP_ITEM_NO"/>
+		<result property="control"				column="CONTROL"/>
+		<result property="userName"				column="USER_NAME"/>
+		<result property="fileCount"			column="FILECOUNT"/>
+        <result property="groupType"			column="groupType"/>
+		<result property="instNm"				column="INST_NM"/>
+	</resultMap>
+		
+<!--  게시판 타입으로 리스트 받아오기-->
+<select id="getBoardList" resultMap="getBoardResultMap">
+    SELECT        
+		A.BULTN_NO			,
+		A.BULTN_TYPE		,
+		A.BULTN_TITLE	    ,
+		A.BULTN_CONT,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') 	AS REG_DATE, -->
+		A.READ_CNT	    	,
+		A.RCMD_CNT	    	,
+		A.USER_ID	        ,
+		A.ORGAN_CODE	    ,
+		A.PNT_ORGAN_CODE	,
+		A.START_DT	    	,
+		A.END_DT	        ,
+		A.GROUP_NO	    	,
+		A.LEVEL_NO	    	,
+		A.ORDER_NO	    	,
+		A.CATE_NO	        ,
+		A.OPEN_SCOPE	    ,
+		A.EXIST_FILE	    ,
+		A.TOTAL_REPLY_CNT	,
+		A.TOTAL_RCMD_CNT	,
+		A.IS_SECRET	    	,
+		A.USE_YN	        ,
+		A.PNT_USER_ID	    ,
+		A.HTML_YN	        ,
+		A.GROUP_ITEM_NO		,
+		A.CONTROL			,
+		(
+            SELECT	COUNT(*) 
+            FROM	BULTN_FILE B 
+            WHERE	A.BULTN_NO =B.BULTN_NO
+        ) AS FILECOUNT,
+		NVL(A.USER_NAME,
+			(SELECT B.USER_NAME
+			FROM COMM_USER B
+			WHERE A.USER_ID = B.USER_ID)
+		) AS USER_NAME,
+		C.INST_NM
+    FROM 
+    	BULTN A
+	INNER JOIN TSMINST C ON A.ORGAN_CODE = C.INST_CD
+    WHERE 
+           1=1
+    AND A.USE_YN = 'Y'
+	AND A.BULTN_TYPE = 'data_sbms'
+	AND REG_DATE BETWEEN TO_CHAR(TO_DATE(#{date1} || '000000', 'yyyy-mm-ddhh24miss'), 'yyyymmddhh24miss') AND TO_CHAR(TO_DATE(#{date2} || '235959', 'yyyy-mm-ddhh24miss'), 'yyyymmddhh24miss')
+	AND A.ORGAN_CODE IN(
+		SELECT inst_cd FROM tsminst
+		CONNECT BY PRIOR inst_cd = pnt_inst_cd
+		START WITH inst_cd = #{srchInstCd}
+	)
+	<if test="srchBultnTitle != null and srchBultnTitle != ''">
+		AND UPPER(A.BULTN_TITLE) LIKE '%' || UPPER(#{srchBultnTitle}) || '%'
+	</if>
+	<if test="srchBultnCont != null and srchBultnCont != ''">
+		AND UPPER(A.BULTN_CONT) LIKE '%' || UPPER(#{srchBultnCont}) || '%'
+	</if>
+    ORDER BY A.BULTN_NO DESC
+</select>
+
+<!-- 게시판 조회수 증가 -->
+<update id="hitsUpBoard" >
+	UPDATE BULTN 
+	SET 
+			READ_CNT = NVL(READ_CNT, 0) + 1 
+	WHERE 
+			BULTN_NO = #{boardNo}
+</update>
+
+<!-- 게시판 번호로 컨텐츠 보기-->
+<select id="getBoardContents" resultMap="getBoardResultMap" >
+	SELECT
+		A.BULTN_NO		,
+		A.BULTN_TYPE	,
+		A.BULTN_TITLE	,
+		A.BULTN_CONT,
+		A.READ_CNT	    ,
+		A.RCMD_CNT	    ,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') AS REG_DATE , -->
+		A.USER_ID	    ,
+		A.ORGAN_CODE	,
+		A.PNT_ORGAN_CODE,
+		A.START_DT	    ,
+		A.END_DT	    ,
+		A.GROUP_NO	    ,
+		A.LEVEL_NO	    ,
+		A.ORDER_NO	    ,
+		A.CATE_NO	    ,
+		A.OPEN_SCOPE	,
+		A.EXIST_FILE	,
+		A.TOTAL_REPLY_CNT,
+		A.TOTAL_RCMD_CNT,
+		A.IS_SECRET	    ,
+		A.USE_YN	    ,
+		A.PNT_USER_ID	,
+		A.HTML_YN	    ,
+		A.GROUP_ITEM_NO	,
+		A.CONTROL		,
+		NVL(A.USER_NAME,
+			(SELECT B.USER_NAME
+				FROM COMM_USER B
+			WHERE A.USER_ID=B.USER_ID)
+			) AS USER_NAME,
+		C.INST_NM
+    FROM 
+    	BULTN A
+	INNER JOIN TSMINST C ON A.ORGAN_CODE = C.INST_CD
+    WHERE 
+           1=1
+	AND BULTN_NO = #{boardNo}
+	AND A.USE_YN = 'Y'
+	AND A.BULTN_TYPE = 'data_sbms'
+</select>
+
+<resultMap type="com.klid.webapp.common.file.dto.AttachfileDto" id="resultAttachfile">
+	<result property="fileNo" 			column="FILE_NO"/>
+	<result property="fileName" 		column="FILE_NAME"/>
+	<result property="originalFileName" column="ORIGINAL_FILE_NAME"/>
+</resultMap>
+		
+<!-- 게시판 번호로 첨부파일 보기-->
+<select id="selectAttachFileList" resultMap="resultAttachfile">
+	SELECT
+		FILE_NO,
+		FILE_NAME,
+		ORIGIN_NAME		AS ORIGINAL_FILE_NAME		
+	FROM BULTN_FILE			
+	WHERE BULTN_NO = ${boardNo}
+</select>
+
+<!-- 게시판 글쓰고 작성한 글 번호 받아오기 -->
+ <insert id="addBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_NO), 0) + 1 FROM BULTN
+		</selectKey>
+			INSERT INTO 
+			BULTN		(
+							BULTN_NO	,
+							BULTN_TYPE	,
+							BULTN_TITLE	,
+							BULTN_CONT,
+							READ_CNT	,
+							RCMD_CNT	,
+							REG_DATE	,
+							USER_ID	,
+							GROUP_NO	,
+							LEVEL_NO	,
+							ORDER_NO	,
+							USE_YN	,
+							CATE_NO,
+	 						ORGAN_CODE,
+	 						USER_NAME
+						)        
+			VALUES		(
+								#{boardNo},
+								'data_sbms',
+								#{boardTitle},
+								#{boardContent},
+								0,
+								0,
+								TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+								#{userId},
+								0,
+								1,
+								0,
+								'Y',
+								1,
+	 							#{instCd},
+	 							#{userName}
+						)							
+</insert>
+
+<!-- 게시판 글 수정하기 -->
+ <update id="editBoard">
+	UPDATE BULTN 
+	SET 
+		BULTN_TITLE = #{boardTitle}, 
+		BULTN_CONT  = #{boardContent}
+	WHERE 
+		BULTN_NO = #{boardNo}
+</update>
+ 
+<!-- 게시판 글 삭제하기 -->
+<delete id="delBoard">
+	UPDATE BULTN SET
+		USE_YN = 'N'
+	WHERE BULTN_NO = #{boardNo}
+</delete>
+
+	<resultMap type="com.klid.webapp.main.sec.shareBoard.dto.ShareBoardDto" id="getShareBoardSidoResultMap">
+		<result property="instNm"				column="INST_NM"/>
+		<result property="rcmdCnt"				column="CNT"/>
+	</resultMap>
+	<select id="getShareBoardSidoCnt" resultMap="getShareBoardSidoResultMap">
+		SELECT
+			COUNT(A.ORGAN_CODE) AS CNT,
+			B.INST_NM AS INST_NM
+		FROM (
+			SELECT ORGAN_CODE
+			FROM BULTN
+			WHERE
+			USE_YN='Y' AND
+			BULTN_TYPE = 'data_sbms'
+			AND ORGAN_CODE NOT IN ('1100000', '1311000')
+			AND REG_DATE BETWEEN TO_CHAR(TO_DATE(#{date1}||'000000', 'yyyy-mm-ddhh24miss'), 'yyyymmddhh24miss') AND TO_CHAR(TO_DATE(#{date2}||'235959', 'yyyy-mm-ddhh24miss'), 'yyyymmddhh24miss')
+			) A,
+			(
+			SELECT INST_CD,
+			INST_NM,
+			NVL(REPLACE(LOCAL_CD, 170, 75), '0') AS LOCAL_CD
+			FROM TSMINST
+			WHERE PNT_INST_CD ='1100000'
+			AND INST_CD NOT IN (
+				SELECT COM_CODE2 FROM COMM_CODE WHERE COM_CODE1 = '4002' AND CODE_LVL = '2'
+				)
+			AND INST_CD <![CDATA[ <> ]]> '1200000'
+			) B
+		WHERE
+			A.ORGAN_CODE(+) = B.INST_CD
+		GROUP BY
+			B.INST_CD,
+			B.INST_NM,
+			B.LOCAL_CD
+		ORDER BY TO_NUMBER(B.LOCAL_CD) asc
+	</select>
+
+	<select id="getBoardDetail" resultMap="getBoardResultMap" >
+		SELECT
+		A.BULTN_NO		,
+		A.BULTN_TYPE	,
+		A.BULTN_TITLE	,
+		A.BULTN_CONT,
+		A.READ_CNT	    ,
+		A.RCMD_CNT	    ,
+		A.REG_DATE,
+		A.USER_ID	    ,
+		A.ORGAN_CODE	,
+		A.PNT_ORGAN_CODE,
+		A.START_DT	    ,
+		A.END_DT	    ,
+		A.GROUP_NO	    ,
+		A.LEVEL_NO	    ,
+		A.ORDER_NO	    ,
+		A.CATE_NO	    ,
+		A.OPEN_SCOPE	,
+		A.EXIST_FILE	,
+		A.TOTAL_REPLY_CNT,
+		A.TOTAL_RCMD_CNT,
+		A.IS_SECRET	    ,
+		A.USE_YN	    ,
+		A.PNT_USER_ID	,
+		A.HTML_YN	    ,
+		A.GROUP_ITEM_NO	,
+		A.CONTROL
+		FROM
+		BULTN A
+		WHERE
+		1=1
+		AND BULTN_NO = #{boardNo}
+		AND A.USE_YN = 'Y'
+	</select>
+
+
+</mapper>

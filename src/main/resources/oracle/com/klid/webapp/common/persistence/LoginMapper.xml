@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.login.persistence.LoginMapper">
+
+    <resultMap type="com.klid.webapp.common.dto.UserDto" id="resultUser">
+        <result property="seq" column="SEQ"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="instCd" column="INST_CD"/>
+        <result property="pntInstCd" column="PNT_INST_CD"/>
+        <result property="instNm" column="INST_NM"/>
+        <result property="pntInstNm" column="PNT_INST_NM"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="localCd" column="LOCAL_CD"/>
+        <result property="userPwd" column="USER_PWD"/>
+        <result property="grade" column="GRADE"/>
+        <result property="moblPhnNo" column="MOBL_PHN_NO"/>
+        <result property="homeTelNo" column="HOME_TEL_NO"/>
+        <result property="offcTelNo" column="OFFC_TEL_NO"/>
+        <result property="offcFaxNo" column="OFFC_FAX_NO"/>
+        <result property="emailAddr" column="EMAIL_ADDR"/>
+        <result property="smsYn" column="SMS_YN"/>
+        <result property="emailYn" column="EMAIL_YN"/>
+        <result property="useYn" column="USE_YN"/>
+        <result property="centerUserYn" column="CENTER_USER_YN"/>
+        <result property="pkiDn" column="PKI_DN"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="roleCtrs" column="ROLE_CTRS"/>
+        <result property="roleIics" column="ROLE_IICS"/>
+        <result property="roleRms" column="ROLE_RMS"/>
+        <result property="roleEws" column="ROLE_EWS"/>
+        <result property="roleSd" column="ROLE_SD"/>
+        <result property="ncategory" column="NCATEGORY"/>
+        <result property="nrefindex" column="NREFINDEX"/>
+        <result property="lastpwdmodified" column="LASTPWDMODIFIED"/>
+        <result property="lastpwdmodifiedtime" column="LASTPWDMODIFIEDTIME"/>
+        <result property="lockYn" column="LOCK_YN"/>
+        <result property="passResetYn" column="pass_reset_yn"/>
+        <result property="ipAddr"           column="IP_ADDR"/>
+        <result property="otpKey"           column="OTP_KEY"/>
+        <result property="inactiveYn"           column="INACTIVE_YN"/>
+    </resultMap>
+
+    <select id="selectLogin" resultMap="resultUser">
+        SELECT A.USER_ID, A.INST_CD AS INST_CD,B.PNT_INST_CD,  B.INST_NM,
+             B.LOCAL_CD, A.USER_NAME, A.USER_PWD, A.GRADE, A.MOBL_PHN_NO,
+             A.HOME_TEL_NO, A.OFFC_TEL_NO, A.OFFC_FAX_NO, A.EMAIL_ADDR, A.SMS_YN,
+             A.EMAIL_YN, A.USE_YN, A.CENTER_USER_YN, A.PKI_DN, A.REG_DT, A.ROLE_CTRS,
+             A.ROLE_IICS, A.ROLE_RMS, A.ROLE_EWS, A.ROLE_SD, A.NCATEGORY, A.NREFINDEX,
+             ROUND((TO_DATE(TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS'),
+             'YYYY-MM-DD HH24:MI:SS') - TO_DATE('1970-01-01 09:00:00',
+             'YYYY-MM-DD HH24:MI:SS'))*24*60*60*1000) AS LASTPWDMODIFIEDTIME,
+             TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS.FF6') AS LASTPWDMODIFIED,
+             A.LOCK_YN,
+             A.PASS_RESET_YN,
+             A.IP_ADDR,
+             A.INACTIVE_YN
+        FROM COMM_USER A, TSMINST B
+        WHERE A.INST_CD=B.INST_CD
+          AND A.USE_YN='Y'
+          AND LOWER(A.USER_ID) = LOWER(#{userId})
+          AND A.USER_PWD = #{password}
+    </select>
+    
+    <resultMap type="com.klid.webapp.common.dto.UserDto" id="resultUserInfo">
+        <result property="seq" 			column="SEQ"/>
+        <result property="userId" 		column="USER_ID"/>
+        <result property="instCd" 		column="INST_CD"/>
+        <result property="pntInstCd" 	column="PNT_INST_CD"/>
+        <result property="instNm" 		column="INST_NM"/>
+        <result property="pntInstNm" 	column="PNT_INST_NM"/>
+        <result property="userName" 	column="USER_NAME"/>
+        <result property="localCd" 		column="LOCAL_CD"/>
+        <result property="userPwd" 		column="USER_PWD"/>
+        <result property="grade" 		column="GRADE"/>
+        <result property="moblPhnNo" 	column="MOBL_PHN_NO"/>
+        <result property="homeTelNo" 	column="HOME_TEL_NO"/>
+        <result property="offcTelNo" 	column="OFFC_TEL_NO"/>
+        <result property="offcFaxNo" 	column="OFFC_FAX_NO"/>
+        <result property="emailAddr" 	column="EMAIL_ADDR"/>
+        <result property="smsYn" 		column="SMS_YN"/>
+        <result property="emailYn" 		column="EMAIL_YN"/>
+        <result property="useYn" 		column="USE_YN"/>
+        <result property="centerUserYn" column="CENTER_USER_YN"/>
+        <result property="pkiDn" 		column="PKI_DN"/>
+        <result property="regDt" 		column="REG_DT"/>
+        <result property="roleCtrs" 	column="ROLE_CTRS"/>
+        <result property="roleIics" 	column="ROLE_IICS"/>
+        <result property="roleRms" 		column="ROLE_RMS"/>
+        <result property="roleEws" 		column="ROLE_EWS"/>
+        <result property="roleSd" 		column="ROLE_SD"/>
+        <result property="ncategory" 	column="NCATEGORY"/>
+        <result property="nrefindex" 	column="NREFINDEX"/>
+        <result property="lastpwdmodified" column="LASTPWDMODIFIED"/>
+        <result property="lastpwdmodifiedtime" column="LASTPWDMODIFIEDTIME"/>
+        <result property="authGrpNo" 	column="AUTH_GRP_NO"/>
+        <result property="auth" 		column="AUTH"/>
+        <result property="authMain" 	column="AUTH_MAIN"/>
+        <result property="authSub" 		column="AUTH_SUB"/>
+
+        <result property="roleTbz01" 		column="role_tbz_01"/>
+        <result property="roleTbz02" 		column="role_tbz_02"/>
+        <result property="roleTbz03" 		column="role_tbz_03"/>
+        <result property="roleTbz04" 		column="role_tbz_04"/>
+        <result property="roleTbz05" 		column="role_tbz_05"/>
+        <result property="roleTbz06" 		column="role_tbz_06"/>
+
+        <result property="roleNot01" 		column="ROLE_NOT_01"/>
+        <result property="roleNot02" 		column="ROLE_NOT_02"/>
+        <result property="roleNot03" 		column="ROLE_NOT_03"/>
+        <result property="roleNot04" 		column="ROLE_NOT_04"/>
+        <result property="roleNot05" 		column="ROLE_NOT_05"/>
+        <result property="roleNot06" 		column="ROLE_NOT_06"/>
+
+        <result property="roleRes01" 		column="ROLE_RES_01"/>
+        <result property="roleRes02" 		column="ROLE_RES_02"/>
+        <result property="roleRes03" 		column="ROLE_RES_03"/>
+        <result property="roleRes04" 		column="ROLE_RES_04"/>
+        <result property="roleRes05" 		column="ROLE_RES_05"/>
+        <result property="roleRes06" 		column="ROLE_RES_06"/>
+
+        <result property="roleSha01" 		column="ROLE_SHA_01"/>
+        <result property="roleSha02" 		column="ROLE_SHA_02"/>
+        <result property="roleSha03" 		column="ROLE_SHA_03"/>
+        <result property="roleSha04" 		column="ROLE_SHA_04"/>
+        <result property="roleSha05" 		column="ROLE_SHA_05"/>
+        <result property="roleSha06" 		column="ROLE_SHA_06"/>
+
+        <result property="roleQna01" 		column="ROLE_QNA_01"/>
+        <result property="roleQna02" 		column="ROLE_QNA_02"/>
+        <result property="roleQna03" 		column="ROLE_QNA_03"/>
+        <result property="roleQna04" 		column="ROLE_QNA_04"/>
+        <result property="roleQna05" 		column="ROLE_QNA_05"/>
+        <result property="roleQna06" 		column="ROLE_QNA_06"/>
+
+        <result property="loginFailCnt"     column="LOGIN_FAIL_CNT"/>
+        <result property="lockYn"           column="LOCK_YN"/>
+        <result property="instLevel"        column="INST_LEVEL"/>
+    </resultMap>
+    <select id="selectUserInfo" resultMap="resultUserInfo">
+    SELECT
+        A.SEQ,
+    	A.USER_ID, 
+    	A.INST_CD AS INST_CD,
+    	B.PNT_INST_CD,  
+    	B.INST_NM,
+        B.LOCAL_CD, 
+        A.USER_NAME,
+        A.USER_PWD, 
+        A.GRADE, 
+        A.MOBL_PHN_NO,
+		A.HOME_TEL_NO, 
+		A.OFFC_TEL_NO, 
+		A.OFFC_FAX_NO, 
+		A.EMAIL_ADDR, 
+		A.SMS_YN,
+        A.EMAIL_YN, 
+        A.USE_YN, 
+        A.CENTER_USER_YN, 
+        A.PKI_DN,
+        A.REG_DT, 
+        A.ROLE_CTRS,
+        A.ROLE_IICS, 
+        A.ROLE_RMS, 
+        A.ROLE_EWS, 
+        A.ROLE_SD, 
+        A.NCATEGORY, 
+        A.NREFINDEX,
+        A.IP_ADDR,
+        A.LOCK_YN,
+        A.PASS_RESET_YN,
+        ROUND((TO_DATE(TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS'),
+             'YYYY-MM-DD HH24:MI:SS') - TO_DATE('1970-01-01 09:00:00',
+             'YYYY-MM-DD HH24:MI:SS'))*24*60*60*1000) AS LASTPWDMODIFIEDTIME,
+             TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS.FF6') 		AS LASTPWDMODIFIED,
+    	A.AUTH_GRP_NO,
+    	A.AUTH,
+        A.AUTH_MAIN,
+        A.AUTH_SUB,
+
+        C.ROLE_TBZ_01     ,
+        C.ROLE_TBZ_02     ,
+        C.ROLE_TBZ_03     ,
+        C.ROLE_TBZ_04     ,
+        C.ROLE_TBZ_05     ,
+        C.ROLE_TBZ_06     ,
+
+        C.ROLE_NOT_01     ,
+        C.ROLE_NOT_02     ,
+        C.ROLE_NOT_03     ,
+        C.ROLE_NOT_04     ,
+        C.ROLE_NOT_05     ,
+        C.ROLE_NOT_06     ,
+
+        C.ROLE_RES_01     ,
+        C.ROLE_RES_02     ,
+        C.ROLE_RES_03     ,
+        C.ROLE_RES_04     ,
+        C.ROLE_RES_05     ,
+        C.ROLE_RES_06     ,
+
+        C.ROLE_SHA_01     ,
+        C.ROLE_SHA_02     ,
+        C.ROLE_SHA_03     ,
+        C.ROLE_SHA_04     ,
+        C.ROLE_SHA_05     ,
+        C.ROLE_SHA_06     ,
+
+        C.ROLE_QNA_01     ,
+        C.ROLE_QNA_02     ,
+        C.ROLE_QNA_03     ,
+        C.ROLE_QNA_04     ,
+        C.ROLE_QNA_05     ,
+        C.ROLE_QNA_06     ,
+        A.LOGIN_FAIL_CNT,
+        A.LOCK_YN,
+        B.INST_LEVEL,
+        A.OTP_KEY
+	FROM COMM_USER A, TSMINST B, ROLE_AUTH C
+    WHERE A.INST_CD=B.INST_CD
+    AND A.USE_YN='Y'
+    AND  A.auth_main = c.auth_main(+)
+    AND A.auth_sub = C.auth_sub(+)
+    AND LOWER(A.USER_ID) = LOWER(#{userId})
+  </select>
+
+    <select id="selectUserInfoByUserNameAndOfficeNumber"
+            resultMap="resultUserInfo">
+        SELECT
+            A.SEQ,
+            A.USER_ID,
+            A.INST_CD AS INST_CD,
+            B.PNT_INST_CD,
+            B.INST_NM,
+            B.LOCAL_CD,
+            A.USER_NAME,
+            A.USER_PWD,
+            A.GRADE,
+            A.MOBL_PHN_NO,
+            A.HOME_TEL_NO,
+            A.OFFC_TEL_NO,
+            A.OFFC_FAX_NO,
+            A.EMAIL_ADDR,
+            A.SMS_YN,
+            A.EMAIL_YN,
+            A.USE_YN,
+            A.CENTER_USER_YN,
+            A.PKI_DN,
+            A.REG_DT,
+            A.ROLE_CTRS,
+            A.ROLE_IICS,
+            A.ROLE_RMS,
+            A.ROLE_EWS,
+            A.ROLE_SD,
+            A.NCATEGORY,
+            A.NREFINDEX,
+            A.IP_ADDR,
+            A.LOCK_YN,
+            A.PASS_RESET_YN,
+            ROUND((TO_DATE(TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS'),
+                           'YYYY-MM-DD HH24:MI:SS') - TO_DATE('1970-01-01 09:00:00',
+                                                              'YYYY-MM-DD HH24:MI:SS'))*24*60*60*1000) AS LASTPWDMODIFIEDTIME,
+            TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS.FF6') 		AS LASTPWDMODIFIED,
+            A.AUTH_GRP_NO,
+            A.AUTH,
+            A.AUTH_MAIN,
+            A.AUTH_SUB,
+
+            C.ROLE_TBZ_01     ,
+            C.ROLE_TBZ_02     ,
+            C.ROLE_TBZ_03     ,
+            C.ROLE_TBZ_04     ,
+            C.ROLE_TBZ_05     ,
+            C.ROLE_TBZ_06     ,
+
+            C.ROLE_NOT_01     ,
+            C.ROLE_NOT_02     ,
+            C.ROLE_NOT_03     ,
+            C.ROLE_NOT_04     ,
+            C.ROLE_NOT_05     ,
+            C.ROLE_NOT_06     ,
+
+            C.ROLE_RES_01     ,
+            C.ROLE_RES_02     ,
+            C.ROLE_RES_03     ,
+            C.ROLE_RES_04     ,
+            C.ROLE_RES_05     ,
+            C.ROLE_RES_06     ,
+
+            C.ROLE_SHA_01     ,
+            C.ROLE_SHA_02     ,
+            C.ROLE_SHA_03     ,
+            C.ROLE_SHA_04     ,
+            C.ROLE_SHA_05     ,
+            C.ROLE_SHA_06     ,
+
+            C.ROLE_QNA_01     ,
+            C.ROLE_QNA_02     ,
+            C.ROLE_QNA_03     ,
+            C.ROLE_QNA_04     ,
+            C.ROLE_QNA_05     ,
+            C.ROLE_QNA_06     ,
+            A.LOGIN_FAIL_CNT,
+            A.LOCK_YN,
+            B.INST_LEVEL,
+            A.OTP_KEY
+        FROM COMM_USER A, TSMINST B, ROLE_AUTH C
+        WHERE A.INST_CD=B.INST_CD
+          AND A.USE_YN='Y'
+          AND  A.auth_main = c.auth_main(+)
+          AND A.auth_sub = C.auth_sub(+)
+          AND TRIM(A.USER_NAME) = #{userName}
+        <if test="officeNumber != null and officeNumber != ''">
+        AND REGEXP_REPLACE(A.OFFC_TEL_NO, '\D', '') = #{officeNumber}
+        </if>
+    </select>
+
+	<!-- 사용자 접근 로그  -->
+	<insert id="insertUserLog">
+		INSERT INTO USR_LOGINFO (
+			usr_id, log_dt, log_cd, usr_ip, menu_cd, remark
+		)
+		VALUES (
+			#{userId}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{logCd}, #{usrIp}, #{menuCd}, #{remark}
+		)
+	</insert>
+
+    <update id="editOtpKey">
+        UPDATE COMM_USER SET
+            OTP_KEY = #{otpSetCode}
+        WHERE USER_ID = #{userId}
+    </update>
+</mapper>

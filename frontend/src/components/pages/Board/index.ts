@@ -1,0 +1,6 @@
+export { NoticeBoardPage } from './Notice'
+export { QnaBoardPage } from './Qna'
+export { ShareBoardPage } from './Share'
+export { ResourceBoardPage } from './Resource'
+export { MoisBoardPage } from './MoisBoard'
+export { TakeOverBoardPage } from './TakeOverBoard'

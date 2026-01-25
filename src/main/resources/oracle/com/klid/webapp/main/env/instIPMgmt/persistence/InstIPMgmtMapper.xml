@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.instIPMgmt.persistence.InstIPMgmtMapper">
+    <resultMap id="resultInstIPMgmt" type="com.klid.webapp.main.env.instIPMgmt.dto.InstIPMgmtDto">
+        <result property="no"					column="ROWNUM"/>
+        <result property="seq"					column="SEQ"/>
+        <result property="instCd"            	column="INST_CD"/>
+        <result property="instNm"              	column="INST_NM"/>
+        <result property="pntSInstCd"           column="PNT_INST_CD"/>
+        <result property="pntSInstCdNm"			column="PNT_INST_CD_NM"/>
+        <result property="instNmStr"			column="INST_NM_STR"/>
+        <result property="sip"					column="SIP"/>
+        <result property="eip"					column="EIP"/>
+        <result property="ipCd"					column="IP_CD"/>
+        <result property="usrId"				column="USR_ID"/>
+        <result property="regDt"				column="REG_DT"/>
+        <result property="usrIp"				column="USR_IP"/>
+        <result property="ipCont"				column="IP_CONT"/>
+    </resultMap>
+
+    <select id="selectInstIPMgmtList" resultMap="resultInstIPMgmt">
+        SELECT	ROWNUM, SEQ, INST_CD, INST_NM, PNT_INST_CD, PNT_INST_CD_NM, SIP, EIP, IP_CD, IP_CONT
+        FROM (
+        SELECT
+        A.SEQ, A.INST_CD, A.INST_NM
+        , A.PNT_INST_CD, (SELECT INST_NM FROM TSMINST WHERE INST_CD = A.PNT_INST_CD) PNT_INST_CD_NM
+        , A.SIP, A.EIP, CASE WHEN A.IP_CD=1 THEN '내부' ELSE '외부' END AS IP_CD
+        , A.IP_CONT
+        FROM (
+        SELECT	A.INST_CD, A.INST_NM , B.SEQ, A.PNT_INST_CD,
+        B.SIP, B.EIP, B.IP_CD, B.IP_CONT
+        FROM	TSMINST A, TSMINSTIP B
+        WHERE	A.INST_CD = B.INST_CD(+)
+        <if test="_parameter.containsKey('instCd') and instCd != ''">
+            AND INST_CD = #{instCd}
+        </if>
+        <if test="_parameter.containsKey('useYn') and useYn != ''">
+            AND USE_YN = #{useYn}
+        </if>
+        <if test="_parameter.containsKey('gLocalCd') and gLocalCd != ''">
+            AND LOCAL_CD = #{gLocalCd}
+        </if>
+        <if test="_parameter.containsKey('sInstNm') and sInstNm != ''">
+            AND INST_NM LIKE '%'||#{sInstNm}||'%'
+        </if>
+        <if test="_parameter.containsKey('sInstIp') and sInstIp != ''">
+            <![CDATA[
+					AND		SIP <= #{sInstIp}
+					AND		EIP >= #{sInstIp}
+					]]>
+        </if>
+        <if test="_parameter.containsKey('pntInstCd') and pntInstCd != ''">
+            AND A.INST_CD IN (
+            SELECT	INST_CD
+            FROM	TSMINST
+            WHERE	1=1
+            START WITH INST_CD = #{pntInstCd}
+            CONNECT BY PRIOR INST_CD = PNT_INST_CD
+            )
+        </if>
+        ) A
+        ORDER BY PNT_INST_CD, A.INST_CD, A.INST_NM
+        ) A
+        WHERE SEQ IS NOT NULL
+    </select>
+
+    <select id="selectInstIPList_instCd" resultMap="resultInstIPMgmt">
+        SELECT	A.INST_CD, A.SEQ, A.SIP, A.EIP, A.IP_CD, B.INST_NM
+        FROM	TSMINSTIP A, TSMINST B
+        WHERE	A.INST_CD = B.INST_CD
+        AND		INST_CD = #{instCd}
+        ORDER BY A.SEQ DESC
+    </select>
+
+    <!-- 기관IP정보 추가 -->
+    <insert id="insertInstIP">
+        <selectKey keyProperty="seq" resultType="long" order="BEFORE">
+            SELECT NVL(MAX(SEQ), 0) + 1 AS seq FROM TSMINSTIP
+        </selectKey>
+        INSERT INTO TSMINSTIP (
+        SEQ, INST_CD, SIP, EIP, IP_CD, USR_ID, USR_IP, REG_DT, IP_CONT
+        )
+        VALUES (
+        #{seq}, #{instCd}, #{sip}, #{eip}, #{ipCd}, #{usrId}, #{usrIp}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{ipCont}
+        )
+    </insert>
+
+    <!-- 기관IP정보 저장 -->
+    <update id="updateInstIP">
+        UPDATE  TSMINSTIP
+        SET		SIP = #{sip}
+        , EIP = #{eip}
+        , IP_CD = #{ipCd}
+        , USR_ID = #{usrId}
+        , USR_IP = #{usrIp}
+        , REG_DT = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+        , IP_CONT = #{ipCont}
+        WHERE	SEQ = #{seq}
+        AND		INST_CD = #{instCd}
+    </update>
+
+    <!-- 기관IP정보 삭제 -->
+    <delete id="deleteInstIP">
+        DELETE
+        FROM	TSMINSTIP
+        WHERE	SEQ = #{seq}
+        AND		INST_CD = #{instCd}
+    </delete>
+</mapper>

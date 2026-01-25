@@ -1,0 +1,107 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<meta charset="UTF-8">
+<title>사이버 침해대응시스템</title>
+<%@include file="/inc/inc.jsp" %>
+<script src="${pageContext.request.contextPath}/js/main/rpt/reportCtrsDailyDetail.js"></script>
+<body>
+<div id="header">
+    <%@include file="/inc/header.jsp" %>
+</div>
+<div id="nav">
+    <%@include file="/inc/nav.jsp" %>
+</div>
+<div id="section">
+    <div id="layoutMain" >
+        <div id="loc">
+            <%@include file="/inc/loc.jsp" %>
+        </div>
+        <div class="newBox">
+            <div class="searchBox">
+                <div>
+                    <label style="float: left">조회기간 : </label>
+                    <%--   <div id="cbPeriod" style="margin-left:0; margin-right:10px; float: left; " class="pop_combo1" ></div>--%>
+                    <div id="date1" style="float: left" class="pop_combo1" ></div>
+                    <label style="float: left; padding-left:5px; padding-right:5px; padding-top:2px;">~</label>
+                    <div id="date2" style="float: left" class="pop_combo1" ></div>
+                </div>
+                <div>
+                    <label style="float: left">기준시간 </label>
+                    <div id="time" style="margin-left:0; margin-right:10px; float: left; " class="pop_combo1"></div>
+                </div>
+                <div class="searchBtn">
+                    <button id="btnSearch" type="button" class="p_btn"></button>
+                    <button id="btnExcel" type="button" class="p_btnExcel"></button>
+                </div>
+            </div>
+            <div class="searchBox searchBox2">
+                <div>
+                    <label style="float: left">접수번호 : </label>
+                    <input type="text" id="srchInciNo" title="srchInciNo"/>
+                </div>
+                <%--<div>--%>
+                    <%--<label style="float: left">공격국가 : </label>--%>
+                    <%--<div id="attack_nation" class="pop_combo1" ></div>--%>
+                <%--</div>--%>
+                <div>
+                    <label>피해기관 : </label>
+                    <input type="text" id="dmgInstNmText" style="width:150px" title="dmgInstNmText">
+                </div>
+                <div>
+                    <label style="float: left">사고유형 : </label>
+                    <div id="accd_typ_cd" class="pop_combo1" ></div>
+                </div>
+                <div>
+                    <label style="float: left">사고제목 :</label>
+                    <input type="text" id="inci_dtt_nm" title="inci_dtt_nm"/>
+                </div>
+                <div>
+                    <label style="float: left">예외 : </label>
+                    <input type="text" id="inci_dtt_nm_exclude" title="inci_dtt_nm_exclude"/>
+                </div>
+                <%--<div>--%>
+                    <%--<label style="float: left">접수자 : </label>--%>
+                    <%--<input type="text" id="dclCrgrText" title="dclCrgrText"/>--%>
+                <%--</div>--%>
+            </div>
+            <div class="scontent" style="top: 110px;">
+                <div class="contentsP10" style="width: 99.1%">
+                    <!-- 접수현황 -->
+                    <div id="detailGrid"></div>
+                    </br>
+                    <!-- 처리중현황 -->
+                    <div id="detailGrid2"></div>
+                    </br>
+                    <!-- 종결현황 -->
+                    <div id="detailGrid3"></div>
+                    </br>
+                    <!-- 폐기종결현황 -->
+                    <div id="detailGrid4"></div>
+                    </br>
+                    <!-- 오탐종결현황 -->
+                    <div id="detailGrid5"></div>
+                    </br>
+                    <!-- 주의관제종결현황 -->
+                    <div id="detailGrid6"></div>
+                    </br>
+                    <!-- 시도이관건종결/폐기종결현황 -->
+                    <div id="detailGrid7"></div>
+                    </br>
+                    <!-- 시도이관건 오탐종결현황 -->
+                    <div id="detailGrid8"></div>
+                    </br>
+                    <!-- 시도이관건 주의관제종결현황 -->
+                    <div id="detailGrid9"></div>
+                    </br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pwindow" style="position: absolute;">
+        <div></div>
+        <div></div>
+    </div>
+</div>
+</body>
+</html>

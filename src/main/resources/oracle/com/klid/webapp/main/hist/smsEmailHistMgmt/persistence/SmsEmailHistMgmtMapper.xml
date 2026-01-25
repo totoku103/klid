@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.hist.smsEmailHist.persistence.SmsEmailHistMgmtMapper">
+	<resultMap id="resultDto" type="com.klid.webapp.main.hist.smsEmailHist.dto.SmsEmailHistMgmtDto">
+		<result property="ymdhms" 		column="YMDHMS"/>
+		<result property="yyyymmdd" 	column="YYYYMMDD"/>
+		<result property="hhmmss" 		column="HHMMSS"/>
+		<result property="cellNo" 		column="CELL_NO" />
+		<result property="shortMsg" 	column="SHORT_MSG"/>
+		<result property="planDate" 	column="PLAN_DATE"/>
+		<result property="sndFlag" 		column="SND_FLAG" />
+		<result property="sendNo" 		column="SEND_NO" />
+		<result property="cellName" 	column="CELL_NAME"/>
+		<result property="planFlag" 	column="PLAN_FLAG"/>
+		<result property="sndDate" 		column="SND_DATE" />
+		<result property="mailSnd" 		column="MAIL_SND" />
+		<result property="mailId" 		column="MAIL_ID" />
+		<result property="mailTitle" 	column="MAIL_TITLE"/>
+		<result property="mailMsg" 		column="MAIL_MSG" />
+		<result property="mailSndDate" 	column="MAIL_SND_DATE"/>
+		<result property="retryCount" 	column="RETRY_COUNT"/>
+		<result property="sndLoc" 		column="SND_LOC"/>
+		<result property="sendName" 	column="SEND_NAME"/>
+	</resultMap>
+
+	<select id="selectSmsHist" resultMap="resultDto">
+		SELECT	TO_CHAR(CAST(CONCAT(YYYYMMDD, HHMMSS) AS TIMESTAMP(0)), 'YYYY-MM-DD HH24:MI:SS') AS YMDHMS,
+					YYYYMMDD, HHMMSS, CELL_NO,
+					SHORT_MSG, PLAN_DATE, SND_FLAG,
+					SEND_NO, CELL_NAME, PLAN_FLAG,
+					TO_CHAR(SND_DATE, 'YYYY-MM-DD HH24:MI:SS') SND_DATE,
+					b.USER_NAME AS SEND_NAME
+		FROM 	CM_SHORT_MSG a
+			LEFT JOIN COMM_USER b
+			ON a.SEND_USER_ID = b.USER_ID
+		WHERE	1=1
+		AND 	YYYYMMDD BETWEEN #{date1} AND #{date2}
+		AND 	YYYYMMDD || HHMMSS BETWEEN '${date1}${time1}00' AND '${date2}${time2}59'
+		ORDER BY YYYYMMDD DESC, HHMMSS DESC
+	</select>
+
+	<select id="selectEmailHist" resultMap="resultDto">
+		SELECT	YYYYMMDD, HHMMSS, MAIL_SND,
+					MAIL_ID, MAIL_TITLE, MAIL_MSG,
+					TO_CHAR(MAIL_SND_DATE, 'YYYY-MM-DD HH24:MI:SS') MAIL_SND_DATE, RETRY_COUNT,
+					SND_LOC
+		FROM 	CM_SHORT_MSG
+		WHERE	1=1
+		AND 	YYYYMMDD BETWEEN #{date1} AND #{date2}
+		AND 	YYYYMMDD || HHMMSS BETWEEN '${date1}${time1}00' AND '${date2}${time2}59'
+		ORDER BY YYYYMMDD DESC, HHMMSS DESC
+	</select>
+
+</mapper>

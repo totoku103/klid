@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: klid-ctrs-web
+  profiles:
+    active: prod
+
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  web:
+    resources:
+      static-locations:
+        - classpath:/META-INF/resources/
+        - classpath:/resources/
+        - classpath:/static/
+        - classpath:/public/
+
+mybatis:
+  mapper-locations: classpath:oracle/com/klid/webapp/**/*.xml
+  config-location: classpath:config/mybatis-config.xml
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      timeout: 60m
+      cookie:
+        http-only: true
+        secure: false
+      tracking-modes: cookie
+
+logging:
+  config: classpath:logback-spring.xml
+
+app:
+  upload-size: 1048576000

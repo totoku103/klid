@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.engineer.popup.persistence.PopupMapper">
+<!-- 	<resultMap type="com.netis.webapp.engineer.popup.dto.popupDto" id="resultPageList">
+		
+	</resultMap> -->
+
+<!-- page 추가 -->
+<insert id="addPage">
+		INSERT INTO COM_MENU (
+			MENU_NO, MENU_NAME, MENU_KIND, SITE_NAME, IS_WEBUSE, WEB_ICON_CLASS
+		)
+		VALUES (
+			(SELECT max(MENU_NO)+1 from COM_MENU), #{pageName}, 'PAGE', #{siteName},  #{isWebuse}, #{webIconClass}
+		)
+</insert>
+
+
+	<update id="savePage">
+		BEGIN
+			<foreach collection="list" item="item">
+				UPDATE 
+					COM_MENU
+				SET		
+					MENU_NAME = #{item.menuName},
+					VISIBLE_ORDER = #{item.visibleOrder},
+					IS_WEBUSE = #{item.isWebuse},
+					WEB_ICON_CLASS = #{item.webIconClass}
+				WHERE MENU_NO = #{item.menuNo} 
+				AND SITE_NAME = #{siteName};
+			</foreach>
+		END;
+	</update>
+ 
+<!-- page 삭제 -->
+
+<delete id="delPage">
+		DELETE
+        FROM COM_MENU
+        WHERE MENU_NO = #{menuNo} AND SITE_NAME = #{siteName}
+</delete>   
+
+
+<!-- pageGroup추가 -->
+<insert id="addPageGroup">
+	INSERT INTO COM_MENU (
+			MENU_NO, MENU_NAME, MENU_KIND, MENU_PAGE_NO, SITE_NAME, IS_WEBUSE
+		)
+		VALUES (
+			(SELECT max(MENU_NO)+1 from COM_MENU), #{pageGroupName}, 'PAGE_GROUP', #{menuPageNo}, #{siteName}, #{isWebuse}
+		)
+</insert>
+
+
+<update id="savePageGroup">
+BEGIN
+			<foreach collection="list" item="item">
+				UPDATE 
+					COM_MENU
+				SET		
+					MENU_NAME = #{item.menuName},
+					VISIBLE_ORDER = #{item.visibleOrder},
+					MENU_AUTH  = #{item.menuAuth},
+					IS_WEBUSE = #{item.isWebuse}
+				WHERE MENU_NO = #{item.menuNo} 
+				AND MENU_PAGE_NO = #{item.menuPageNo}
+				AND SITE_NAME = #{siteName};
+			</foreach>
+		END;
+</update>
+ 
+<!-- page 삭제 -->
+
+<delete id="delPageGroup">
+	DELETE
+        FROM COM_MENU
+        WHERE MENU_NO = #{menuNo} AND MENU_PAGE_NO = #{menuPageNo} AND SITE_NAME = #{siteName}
+</delete>   
+
+
+<!-- menu추가 -->
+<update id="addMenu">
+		BEGIN
+		<foreach collection="list" item="item">
+			    MERGE INTO COM_MENU
+			    USING DUAL
+			    ON(MENU_NO = #{item.menuNo}  )
+		        WHEN MATCHED THEN
+       				     UPDATE SET
+			             MENU_AUTH = DECODE(#{item.menuAuth},'System','3','Admin','2','User','1'),
+				         VISIBLE_ORDER = #{item.visibleOrder},
+		                 IS_WEBUSE = #{item.isWebuse}
+			        	DELETE WHERE (MENU_NO = #{item.menuNo} AND SITE_NAME = #{siteName} AND #{item.addYn} = 0 )
+			        WHEN NOT MATCHED THEN
+			            INSERT(MENU_NO, MENU_NAME, MENU_KIND, MENU_AUTH, MENU_PAGE_NO, MENU_PAGE_GRP_NO, GUID, SITE_NAME, IS_WEBUSE,  VISIBLE_ORDER) VALUES ((SELECT max(MENU_NO)+1 from COM_MENU), #{item.menuNm}, 'MENU', DECODE(#{item.menuAuth},'System','3','Admin','2','User','1'), #{menuPageNo}, #{menuPageGrpNo}, #{item.guid}, #{siteName}, #{item.isWebuse}, #{item.visibleOrder})
+			            WHERE #{item.addYn} = 1;
+		</foreach>
+		END;
+</update>
+
+
+<update id="saveMenu">
+BEGIN
+			<foreach collection="list" item="item">
+				UPDATE 
+					COM_MENU
+				SET		
+					MENU_NAME = #{item.menuName},
+					MENU_AUTH = #{item.menuAuth},
+					VISIBLE_ORDER = #{item.visibleOrder},
+					IS_WEBUSE = #{item.isWebuse}
+				WHERE MENU_NO = #{item.menuNo} 
+				AND SITE_NAME = #{siteName};
+			</foreach>
+		END;
+</update>
+ 
+<!-- page 삭제 -->
+
+<delete id="delMenu">
+		DELETE
+        FROM COM_MENU
+        WHERE MENU_NO = #{menuNo} AND SITE_NAME = #{siteName}
+</delete>
+
+</mapper>

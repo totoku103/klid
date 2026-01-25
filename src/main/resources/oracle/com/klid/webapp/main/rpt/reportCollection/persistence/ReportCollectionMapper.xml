@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportCollection.persistence.ReportCollectionMapper">
+
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportHackingDto" id="resultHacking">
+        <result property="seqNo" 					column="seq_no"/>
+        <result property="inciNo" 					column="inci_no"/>
+        <result property="dmgInstNm" 					column="dmg_inst_nm"/>
+        <result property="hackingDt" 					column="hacking_dt"/>
+        <result property="hackingMonth" 					column="hacking_month"/>
+        <result property="hackingDay" 					column="hacking_day"/>
+        <result property="regDt" 					column="reg_dt"/>
+        <result property="inciTarget" 					column="inci_target"/>
+        <result property="ipAddress" 					column="ip_address"/>
+        <result property="instType" 					column="inst_type"/>
+        <result property="domainNm" 					column="domain_nm"/>
+        <result property="netDiv" 					column="net_div"/>
+        <result property="hackingCont" 					column="hacking_cont"/>
+        <result property="attackTypeNm" 					column="attack_type_nm"/>
+        <result property="remark" 					column="remark"/>
+        <result property="mediaReport" 					column="media_report"/>
+        <result property="inciHistory" 					column="inci_history"/>
+        <result property="analysisHistory" 					column="analysis_history"/>
+        <result property="inciPrcsStatNm" 					column="inci_prcs_stat_nm"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportSecurityDataDto" id="resultSecurityData">
+        <result property="seqNo" 					column="seq_no"/>
+        <result property="cateName" 					column="cate_name"/>
+        <result property="bultnTitle" 					column="bultn_title"/>
+        <result property="instNm" 					column="inst_nm"/>
+        <result property="userName" 					column="user_name"/>
+        <result property="regDate" 					column="reg_date"/>
+        <result property="bultnNo" 					column="bultn_no"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportNoticeDto" id="resultNotice">
+        <result property="seqNo" 					column="seq_no"/>
+        <result property="cateName" 					column="cate_name"/>
+        <result property="bultnTitle" 					column="bultn_title"/>
+        <result property="instNm" 					column="inst_nm"/>
+        <result property="userName" 					column="user_name"/>
+        <result property="regDate" 					column="reg_date"/>
+        <result property="bultnNo" 					column="bultn_no"/>
+    </resultMap>
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportSecurityVulnerabilityDto" id="resultSecurityVulnerability">
+        <result property="seqNo" 					column="seq_no"/>
+        <result property="inciNo" 					column="inci_no"/>
+        <result property="inciTtl" 					column="inci_ttl"/>
+        <result property="instNm" 					column="inst_nm"/>
+        <result property="inciAcpnDt" 					column="inci_acpn_dt"/>
+        <result property="vulnerbilityCont" 					column="vulnerability_cont"/>
+        <result property="hstyCont" 					column="hsty_cont"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportDailyDto" id="resultDaily">
+        <result property="seqNo" 					column="seq_no"/>
+        <result property="inciNo" 					column="inci_no"/>
+        <result property="dmgInstNm" 					column="dmg_inst_nm"/>
+        <result property="dclInstNm" 					column="dcl_inst_nm"/>
+        <result property="inciDttNm" 					column="inci_dtt_nm"/>
+        <result property="attCodeName" 					column="att_code_name"/>
+        <result property="inciAcpnDate" 					column="inci_acpn_date"/>
+        <result property="inciAcpnTime" 					column="inci_acpn_time"/>
+        <result property="inciPrcsStatNm" 					column="inci_prcs_stat_nm"/>
+        <result property="inciPrcsStatCodeNm" 					column="inci_prcs_stat_code_nm"/>
+        <result property="transInciPrcsStatCodeNm" 					column="TRANS_INCI_PRCS_STAT_code_nm"/>
+        <result property="dclCrgr" 					column="dcl_crgr"/>
+        <result property="nationNm" 					column="nation_nm"/>
+        <result property="prty" 					column="prty"/>
+        <result property="sigun" 					column="sigun"/>
+        <result property="klid" 					column="klid"/>
+        <result property="nis" 					column="nis"/>
+        <result property="nirs" 					column="nirs"/>
+        <result property="cyber" 					column="cyber"/>
+        <result property="total" 					column="total"/>
+        <result property="termDay" 					column="termDay"/>
+        <result property="inciAcpnDts"                         column="inci_acpn_dts"/>
+        <result property="inciTtlDtt"                         column="inci_ttl_dtt"/>
+        <result property="inciTtl"                         column="inci_ttl"/>
+        <result property="inciAcpnDt"                         column="inci_acpn_dt"/>
+        <result property="inciUpdDt"                         column="inci_upd_dt"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.main.rpt.reportCollection.dto.ReportCollectionDto" id="resultCollection">
+        <result property="value" 					column="value"/>
+        <result property="localNm" 					column="local_nm"/>
+        <result property="orgNm" 					column="org_nm"/>
+        <result property="regTime" 					column="reg_time"/>
+    </resultMap>
+
+    <!--집중관리대장 -->
+    <select id="getRetrieveSecurityHackingDetail" resultMap="resultHacking">
+        SELECT
+        inci_no AS inci_no,
+        dmg.inst_nm AS dmg_inst_nm,
+        REPLACE (hc.hacking_dt, '-', '') AS hacking_dt,
+        SUBSTR (hc.hacking_dt, 6, 2) AS hacking_month,
+        SUBSTR (hc.hacking_dt, 9, 2) AS hacking_day,
+        hc.inci_target AS inci_target,
+        hc.ip_address AS ip_address,
+        hc.inst_type AS inst_type,
+        hc.domain_nm AS domain_nm,
+        hc.net_div AS net_div,
+        hc.hacking_cont AS hacking_cont,
+        hc.attack_type_nm AS attack_type_nm,
+        hc.attack_type_cd AS attack_type_cd,
+        hc.reg_dt AS reg_dt,
+        hc.remark AS remark,
+        NVL (SUBSTR (hc.media_report, 1, 1), ' ') AS media_report,
+        hc.inci_history AS inci_history,
+        hc.analysis_history AS analysis_history,
+        ' ' AS inci_prcs_stat_nm
+        from tbzhacking hc
+        left outer join tsminst dmg
+        on hc.sido = dmg.inst_cd
+        where
+        TO_DATE(hc.REG_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+        <if test="inciNo != null and inciNo != ''">
+            and UPPER(INCI_NO)  like '%' || UPPER(#{inciNo})||'%'
+        </if>
+        <if test="instNm != null and instNm != ''">
+            and dmg_INST_NM like '%' || #{instNm}||'%'
+        </if>
+        <if test="hackIp != null and hackIp != ''">
+            and IP_ADDRESS like '%' || #{hackIp}||'%'
+        </if>
+        <if test="attackTypeNm!=null and attackTypeNm != ''">
+            and lower(attack_type_nm) like '%'||replace(replace(lower(#{attackTypeNm}), '%', '#%'), '_', '#_')||'%' escape '#'
+        </if>
+        <if test="hackCont != null and hackCont != ''">
+            and UPPER(HACKING_CONT) like '%' || UPPER(#{hackCont})||'%'
+        </if>
+        order by REG_DT ASC
+    </select>
+
+    <!--취약점관리대장-->
+    <select id="getRetrieveSecurityVulnerabilityDetail" resultMap="resultSecurityVulnerability">
+        select rownum as seq_no,
+        inci_no,
+        inci_ttl,
+        inst_nm,
+        inci_acpn_dt,
+        vulnerability_cont,
+        hsty_cont
+        from (
+        select main.inci_no as inci_no,
+        case
+          when
+            main.inci_dtt_nm is null
+          then
+            substr(main.inci_ttl,instr(main.inci_ttl, '[')+1, instr(main.inci_ttl, ']')-instr(main.inci_ttl, '[')-1)
+          else
+            main.inci_dtt_nm
+        end as inci_ttl,
+        dmg.inst_nm as inst_nm,
+        to_char(to_date(inci_acpn_dt, 'yyyymmddhh24miss'), 'mm-dd') as inci_acpn_dt,
+        replace(pv.vulnerability_cont,'n','<![CDATA[ <]]>br>') as vulnerability_cont,
+        replace(regexp_substr(histo.hsty_cont,'[^$|#]+',1,5),'n','<![CDATA[ <]]>br>') as hsty_cont
+        from tbzledge main left outer join tsminst dmg
+        on main.dmg_inst_cd = dmg.inst_cd
+        left outer join
+        (select inci_no, hsty_cont from tbhhisto histo where histo.ttl like '%종결승인요청%' and inst_cd = '1100000') histo
+        on main.inci_no = histo.inci_no
+        left outer join tsmnation natn
+        on main.att_natn_cd = natn.nation_cd
+        left outer join tbzhomepv pv
+        on main.inci_no = pv.inci_no
+        where 1 = 1
+        and pv.home_ch = 2
+        and dmg.inst_nm is not null
+        and to_char(to_date(inci_acpn_dt, 'yyyymmddhh24miss'), 'yyyymmdd') between  #{startDt} and #{endDt}
+        <if test="instNm!=null and instNm != ''">
+            and dmg.inst_nm LIKE '%' || #{instNm} || '%'
+        </if>
+        <if test="attackTypeCd != null and attackTypeCd != ''">
+            and attack_type_cd = #{attackTypeCd}
+        </if>
+        order by inci_acpn_dt asc, main.inci_no asc
+        )
+    </select>
+
+    <!-- 공지사항 -->
+    <select id="getNoticeListDetail" resultMap="resultNotice">
+        select rownum as seq_no,
+        cate_name,bultn_title,inst_nm,user_name,reg_date, BULTN_NO
+        from (
+        select
+        b.cate_name as cate_name,
+        bultn_title as bultn_title,
+        c.inst_nm as inst_nm,
+        nvl(user_name,
+          (SELECT
+				D.USER_NAME
+			FROM COMM_USER D
+			WHERE D.USER_ID = A.USER_ID)
+        ) as user_name,
+        to_char(to_date(reg_date,'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') as reg_date,
+        a.BULTN_NO
+        FROM bultn a
+        left outer join bultn_cate b
+        on A.CATE_NO = b.cate_no
+        left outer join tsminst c
+        on a.organ_code=c.inst_cd
+        where bultn_type = 'notice'
+        and reg_date between #{startDt} and #{endDt}
+        and a.USE_YN='Y'
+        order by reg_date desc
+        )
+    </select>
+
+    <!-- 보안자료실 -->
+    <select id="getSecuListDetail" resultMap="resultSecurityData">
+        select rownum as seq_no,
+        cate_name,bultn_title,inst_nm,user_name,reg_date,BULTN_NO
+        from   (
+        SELECT b.cate_name as cate_name,
+        bultn_title,
+        c.inst_nm as inst_nm,
+        nvl(a.user_name,
+          (SELECT
+				D.USER_NAME
+			FROM COMM_USER D
+			WHERE D.USER_ID = A.USER_ID)
+        ) as user_name,
+        to_char(to_date(reg_date,'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') as reg_date,
+        a.BULTN_NO
+        FROM bultn a
+        left outer join bultn_cate b
+        on a.cate_no=b.cate_no
+        left outer join tsminst c
+        on a.organ_code=c.inst_cd
+        WHERE bultn_type = 'secu_data'
+        and reg_date between #{startDt} and #{endDt}
+        and a.USE_YN='Y'
+        order by reg_date desc
+        )
+    </select>
+
+    <!--일일운영현황 처리중현황 -->
+    <select id="getRetrieveIncidentDetail" resultMap="resultDaily">
+
+        SELECT
+        inci_no,
+        E.inst_nm as DMG_INST_NM,
+        f.inst_nm as DCL_INST_NM,
+        INCI_DTT_NM,
+        INCI_TTL,
+        INCI_TTL || '[' || INCI_DTT_NM || ']' as INCI_TTL_DTT,
+        (
+        SELECT code_name FROM comm_code WHERE COM_CODE1 = 3001 AND CODE_LVL = 2	AND USE_YN = 'Y'  AND COM_CODE2 = D.INCI_PRCS_STAT
+        ) AS inci_prcs_stat_code_nm,
+        (
+        SELECT nvl(code_name,'없음') FROM comm_code WHERE COM_CODE1 = 3001 AND CODE_LVL = 2	AND USE_YN = 'Y'  AND COM_CODE2 = D.TRANS_INCI_PRCS_STAT
+        ) AS TRANS_INCI_PRCS_STAT_code_nm,
+        TO_DATE( INCI_ACPN_DT, 'yyyymmddhh24miss' ) AS INCI_ACPN_DT,
+        (
+        SELECT code_name FROM comm_code WHERE COM_CODE1 = 3002 AND CODE_LVL = 2	AND USE_YN = 'Y'  AND COM_CODE2 = D.ACCD_TYP_CD
+        ) AS att_code_name,
+        TO_DATE( INCI_UPD_DT, 'yyyymmddhh24miss' ) AS INCI_UPD_DT,
+        TRUNC(to_date(to_char(sysdate, 'YYYYMMDDHH24MISS'), 'YYYYMMDDHH24MISS') -
+        TO_DATE(INCI_ACPN_DT, 'YYYYMMDDHH24MISS')) AS termDay,
+        TRUNC(MOD((to_date(to_char(sysdate, 'YYYYMMDDHH24MISS'), 'YYYYMMDDHH24MISS') -
+        TO_DATE(INCI_ACPN_DT, 'YYYYMMDDHH24MISS')), 1) * 24) as termTime
+        FROM tbzledge D
+        INNER JOIN 	tsminst E ON d.DMG_INST_CD = e.INST_CD
+        INNER JOIN 	TSMINST F ON d.DCL_INST_CD = f.INST_CD
+        WHERE 1=1
+        <choose>
+            <when test="type=='all'">
+                AND  INCI_ACPN_DT BETWEEN #{startDt} and #{endDt}
+            </when>
+            <otherwise>
+                AND  INCI_UPD_DT BETWEEN #{startDt} and #{endDt}
+            </otherwise>
+        </choose>
+        AND EXISTS (
+        SELECT
+        sub_cd
+        FROM
+        tsminst_leaf tsminst
+        WHERE
+        tsminst.sub_cd = d.dmg_inst_cd
+        AND inst_cd = 1100000
+        AND sub_cd NOT IN (
+        SELECT
+        com_code2
+        FROM
+        COMM_CODE
+        WHERE
+        com_code1 = '4002'
+        AND code_lvl = '2'
+        )
+        AND sub_cd <![CDATA[ <> ]]> 1200000
+        )
+        AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+        AND inci_no LIKE 'CT%'
+        AND LENGTH(inci_no) <![CDATA[ < ]]> 16
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+        AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+        <if test="inciNo!=null and inciNo != ''">
+            and UPPER(d.inci_no) LIKE '%' || UPPER(#{inciNo}) || '%'
+        </if>
+        <if test="dmgInstNm!=null and dmgInstNm != ''">
+            and e.inst_nm LIKE '%' || #{dmgInstNm} || '%'
+        </if>
+        <if test="accdTypeCd != null and accdTypeCd != ''">
+            and d.accd_typ_cd = #{accdTypeCd}
+        </if>
+        <if test="inciDttNm!=null and inciDttNm != ''">
+            and ( UPPER(d.inci_ttl) LIKE '%' || UPPER(#{inciDttNm}) || '%'
+            OR UPPER(d.inci_dtt_nm) LIKE '%' || UPPER(#{inciDttNm}) || '%')
+        </if>
+        <if test="inciDttNmExclude!=null and inciDttNmExclude != ''">
+            and UPPER(d.inci_ttl) NOT LIKE '%' || UPPER(#{inciDttNmExclude}) || '%'
+            and UPPER(d.inci_dtt_nm) NOT LIKE '%' || UPPER(#{inciDttNmExclude}) || '%'
+        </if>
+        <if test="termDay!=null and termDay != ''">
+            <choose>
+                <when test='termDay == "8"'>
+                    and TRUNC(to_date(to_char(sysdate,'YYYYMMDDHH24MISS'),'YYYYMMDDHH24MISS')-TO_DATE(INCI_ACPN_DT,'YYYYMMDDHH24MISS')) >= #{termDay}
+                </when>
+                <otherwise>
+                    and TRUNC(to_date(to_char(sysdate,'YYYYMMDDHH24MISS'),'YYYYMMDDHH24MISS')-TO_DATE(INCI_ACPN_DT,'YYYYMMDDHH24MISS')) = #{termDay}
+                </otherwise>
+            </choose>
+        </if>
+        <choose>
+            <when test="type=='proceed'">
+                AND INCI_PRCS_STAT NOT IN (12,13,15,17)
+                order by inci_no asc,inci_upd_dt asc
+            </when>
+            <when test="type=='closed'">
+                AND INCI_PRCS_STAT =13
+                order by inci_upd_dt asc, inci_no asc
+            </when>
+            <when test="type=='abrogated'">
+                AND INCI_PRCS_STAT =12
+                order by inci_upd_dt asc, inci_no asc
+            </when>
+            <when test="type=='mistake'">
+                AND INCI_PRCS_STAT =15
+                order by inci_upd_dt asc, inci_no asc
+            </when>
+            <when test="type=='control'">
+                AND INCI_PRCS_STAT =17
+                order by inci_upd_dt asc, inci_no asc
+            </when>
+            <when test="type=='sidoClosed'">
+                AND INCI_PRCS_STAT NOT IN (12,13,15,17)
+                AND TRANS_INCI_PRCS_STAT IN (12,13,15,17)
+                order by inci_no asc,inci_upd_dt asc
+            </when>
+            <otherwise>
+                order by inci_acpn_dt asc, inci_no asc
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 일일운영현황 -->
+    <select id="getRetrieveIncidentCountDetail" resultMap="resultDaily">
+        select count(decode(dcl_inst_nm, '중앙지원센터', 1)) klid,
+        count(decode(dcl_inst_nm, '국가사이버안전센터', 1)) nis,
+        count(decode(dcl_inst_nm, '국가정보자원관리원', 1)) nirs,
+        count(decode(dcl_inst_nm, '사이버위협분석팀', 1)) cyber,
+        count(decode(dcl_inst_nm, '', '', 1)) total
+        from (
+        select dcl.inst_nm as dcl_inst_nm
+        from tbzledge main
+        left outer join tsminst dcl
+        on main.dcl_inst_cd = dcl.inst_cd
+        )
+    </select>
+
+    <!-- 위협이벤트 건수 -->
+    <select id="selectInciWarnCnt" resultMap="resultCollection">
+        SELECT SUM_JSON AS VALUE, LOCAL_NM, ORG_NM, TO_CHAR(REG_TIME, 'YYYYMMDDHH24MMSS') AS REG_TIME
+        FROM 	HM_DASH_LC
+        WHERE 	REG_TIME BETWEEN TO_DATE( #{weekDt}, 'YYYYMMDDHH24MISS')
+        AND TO_DATE(#{endDt}, 'YYYYMMDDHH24MISS')
+        <if test="sAuthMain=='AUTH_MAIN_2'">
+            AND 	LOCAL_NM = '유형총합' AND 	ORG_NM = '유형총합'
+        </if>
+        <if test="sAuthMain=='AUTH_MAIN_3'">
+            AND 	LOCAL_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd} ) AND 	ORG_NM = '유형총합'
+        </if>
+        <if test="sAuthMain=='AUTH_MAIN_4'">
+            AND 	ORG_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd})
+        </if>
+    </select>
+
+    <!-- 17개 기관별 탐지현황 -->
+    <select id="selectLocalInciWarnCnt" resultMap="resultCollection">
+        SELECT SUM_JSON AS VALUE, LOCAL_NM, ORG_NM, TO_CHAR(REG_TIME, 'YYYYMMDDHH24MMSS') AS REG_TIME
+        FROM 	HM_DASH_LC
+        WHERE 	REG_TIME BETWEEN TO_DATE( #{startDt}, 'YYYYMMDDHH24MISS')
+        AND TO_DATE(#{endDt}, 'YYYYMMDDHH24MISS')
+        <if test="sAuthMain=='AUTH_MAIN_2'">
+            AND 	LOCAL_NM = '지역총합' AND 	ORG_NM = '지역총합'
+        </if>
+        <if test="sAuthMain=='AUTH_MAIN_3'">
+            AND 	LOCAL_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd} ) AND 	ORG_NM = '지역총합'
+        </if>
+        <if test="sAuthMain=='AUTH_MAIN_4'">
+            AND 	ORG_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd})
+        </if>
+    </select>
+
+</mapper>

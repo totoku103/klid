@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.file.persistence.FileUploadMapper">
+	<insert id="insertFileInfo">
+		<selectKey keyProperty="fileNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(FILE_NO), 0) +1 AS FILE_NO FROM BULTN_FILE		
+		</selectKey>
+		INSERT INTO
+			BULTN_FILE		 
+		 		(
+		 		 FILE_NO,
+		 		 FILE_NAME, 
+		 		 ORIGIN_NAME, 
+		 		 FILE_TYPE, 
+		 		 FILE_SIZE, 
+		 		 REG_DATE, 
+		 		 BULTN_NO,
+				 FILE_PATH
+		 		 )  
+		 VALUES
+		 		( 
+		 		#{fileNo}, 
+		 		#{fileName}, 
+		 		#{originalFileName}, 
+		 		#{fileType},
+		 		#{fileSize}, 
+		 		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+		 		#{boardNo},
+				#{filePath}
+		 		)
+	</insert>
+
+	<insert id="insertAccFileInfo">
+		<selectKey keyProperty="attSeq" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(ATT_SEQ), 0) +1 AS ATT_SEQ FROM TBZATTAC
+		</selectKey>
+		INSERT INTO
+			TBZATTAC
+		(
+		ATT_SEQ,
+		INCI_NO,
+		CLF,
+		ATH_PATH,
+		ATH_FILE_NM,
+		ATH_CNT_TYP,
+		REAL_NAME
+		)
+		VALUES
+		(
+		#{attSeq},
+		#{inciNo},
+		#{clf},
+		#{savePath},
+		#{fileName},
+		#{fileType},
+		#{originalFileName}
+		)
+	</insert>
+
+	<update id="addHelpFile">
+		UPDATE COMM_CODE SET
+			com_code3 = #{fileName}
+		WHERE
+			com_code1 = 3002
+		AND com_code2 = #{code2}
+		AND code_lvl = 2
+	</update>
+
+	<resultMap type="com.klid.webapp.common.code.dto.CodeDto" id="resultAttachfile">
+		<result property="comCode2" column="com_code2"/>
+		<result property="comCode3" column="com_code3"/>
+		<result property="codeName" column="CODE_NAME"/>
+	</resultMap>
+	<select id="helpFileName" resultMap="resultAttachfile">
+		SELECT
+			com_code2,
+			com_code3,
+			CODE_NAME
+		FROM COMM_CODE
+		WHERE
+			com_code1 = 3002
+		AND com_code2 = #{code2}
+		AND code_lvl = 2
+	</select>
+</mapper>

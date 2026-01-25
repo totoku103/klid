@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component LANGUAGE_LEVEL="JDK_1_8" jdk="1.8" jdk_type="JavaSDK">
+	<output-test url="file://$MODULE_DIR$/target/test-classes"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<testFolder url="file://$MODULE_DIR$/src/test/java"/>
+		<excludeFolder url="file://$MODULE_DIR$/target"/>
+	</contentEntry>
+	<lib name="Maven: junit:junit:4.11" scope="TEST"/>
+	<lib name="Maven: org.hamcrest:hamcrest-core:1.3" scope="TEST"/>
+	<lib name="Maven: com.google.protobuf:protobuf-java:2.6.0" scope="RUNTIME"/>
+	<lib name="Maven: javax.servlet:javax.servlet-api:3.1.0" scope="PROVIDED"/>
+	<lib name="Maven: javax:javaee-web-api:7.0" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat7-websocket:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-websocket-api:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-catalina:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-servlet-api:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-annotations-api:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-api:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-coyote:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-juli:7.0.85" scope="PROVIDED"/>
+	<lib name="Maven: org.apache.tomcat:tomcat-util:7.0.85" scope="PROVIDED"/>
+	<levels>
+		<level name="Maven: org.webjars:highcharts:6.0.2" value="project"/>
+		<level name="Maven: junit:junit:4.11" value="project"/>
+		<level name="Maven: org.hamcrest:hamcrest-core:1.3" value="project"/>
+		<level name="Maven: org.logback-extensions:logback-ext-spring:0.1.4" value="project"/>
+		<level name="Maven: org.slf4j:slf4j-api:1.7.25" value="project"/>
+		<level name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" value="project"/>
+		<level name="Maven: org.slf4j:log4j-over-slf4j:1.7.25" value="project"/>
+		<level name="Maven: ch.qos.logback:logback-classic:1.2.3" value="project"/>
+		<level name="Maven: ch.qos.logback:logback-core:1.2.3" value="project"/>
+		<level name="Maven: commons-logging:commons-logging:1.2" value="project"/>
+		<level name="Maven: org.springframework:spring-context:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-beans:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-core:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-expression:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-web:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-webmvc:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-aop:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-orm:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-jdbc:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-tx:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework:spring-context-support:4.3.11.RELEASE" value="project"/>
+		<level name="Maven: org.springframework.security:spring-security-web:3.2.3.RELEASE" value="project"/>
+		<level name="Maven: aopalliance:aopalliance:1.0" value="project"/>
+		<level name="Maven: org.springframework.security:spring-security-core:3.2.3.RELEASE" value="project"/>
+		<level name="Maven: org.springframework.security:spring-security-config:3.2.3.RELEASE" value="project"/>
+		<level name="Maven: commons-net:commons-net:3.6" value="project"/>
+		<level name="Maven: com.oracle:ojdbc7:12.1.0.1" value="project"/>
+		<level name="Maven: mysql:mysql-connector-java:8.0.11" value="project"/>
+		<level name="Maven: com.google.protobuf:protobuf-java:2.6.0" value="project"/>
+		<level name="Maven: org.webjars:d3js:5.5.0" value="project"/>
+		<level name="Maven: org.webjars:webjars-locator:0.34" value="project"/>
+		<level name="Maven: org.webjars:webjars-locator-core:0.35" value="project"/>
+		<level name="Maven: org.apache.commons:commons-compress:1.9" value="project"/>
+		<level name="Maven: org.webjars:google-diff-match-patch:20121119-1" value="project"/>
+		<level name="Maven: org.webjars:highcharts:6.1.4" value="project"/>
+		<level name="Maven: org.webjars.bower:vertx3-eventbus-client:3.5.2" value="project"/>
+		<level name="Maven: org.webjars.bower:sockjs-client:1.1.5" value="project"/>
+		<level name="Maven: org.webjars.bower:requirejs:2.3.6" value="project"/>
+		<level name="Maven: org.webjars:requirejs-text:2.0.15" value="project"/>
+		<level name="Maven: org.webjars:requirejs:2.1.22" value="project"/>
+		<level name="Maven: org.apache.commons:commons-lang3:3.6" value="project"/>
+		<level name="Maven: org.apache.commons:commons-dbcp2:2.1.1" value="project"/>
+		<level name="Maven: org.apache.commons:commons-pool2:2.4.2" value="project"/>
+		<level name="Maven: commons-fileupload:commons-fileupload:1.3.1" value="project"/>
+		<level name="Maven: commons-io:commons-io:2.2" value="project"/>
+		<level name="Maven: commons-codec:commons-codec:1.10" value="project"/>
+		<level name="Maven: commons-discovery:commons-discovery:0.5" value="project"/>
+		<level name="Maven: commons-httpclient:commons-httpclient:3.1" value="project"/>
+		<level name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.1" value="project"/>
+		<level name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" value="project"/>
+		<level name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.1" value="project"/>
+		<level name="Maven: org.mybatis:mybatis:3.4.6" value="project"/>
+		<level name="Maven: org.mybatis:mybatis-spring:1.3.1" value="project"/>
+		<level name="Maven: cglib:cglib-nodep:3.2.6" value="project"/>
+		<level name="Maven: org.json:json:20151123" value="project"/>
+		<level name="Maven: jstl:jstl:1.2" value="project"/>
+		<level name="Maven: org.aspectj:aspectjrt:1.8.11" value="project"/>
+		<level name="Maven: org.aspectj:aspectjweaver:1.8.11" value="project"/>
+		<level name="Maven: com.sun.xml.security:xml-security-impl:1.0" value="project"/>
+		<level name="Maven: javax.servlet:javax.servlet-api:3.1.0" value="project"/>
+		<level name="Maven: javax:javaee-web-api:7.0" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat7-websocket:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-websocket-api:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-catalina:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-servlet-api:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-annotations-api:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-api:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-coyote:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-juli:7.0.85" value="project"/>
+		<level name="Maven: org.apache.tomcat:tomcat-util:7.0.85" value="project"/>
+		<level name="Maven: org.apache.poi:poi:3.15" value="project"/>
+		<level name="Maven: org.apache.commons:commons-collections4:4.1" value="project"/>
+		<level name="Maven: org.apache.poi:poi-ooxml:3.15" value="project"/>
+		<level name="Maven: org.apache.poi:poi-ooxml-schemas:3.15" value="project"/>
+		<level name="Maven: org.apache.xmlbeans:xmlbeans:2.6.0" value="project"/>
+		<level name="Maven: stax:stax-api:1.0.1" value="project"/>
+		<level name="Maven: com.github.virtuald:curvesapi:1.04" value="project"/>
+		<level name="Maven: org.apache.velocity:velocity:1.7" value="project"/>
+		<level name="Maven: commons-collections:commons-collections:3.2.1" value="project"/>
+		<level name="Maven: commons-lang:commons-lang:2.4" value="project"/>
+		<level name="Maven: org.jfree:jfreechart:1.0.19" value="project"/>
+		<level name="Maven: org.jfree:jcommon:1.0.23" value="project"/>
+		<level name="Maven: org.springframework.flex:spring-flex-core:1.5.2.RELEASE" value="project"/>
+		<level name="Maven: com.adobe.blazeds:blazeds-core:4.0.0.14931" value="project"/>
+		<level name="Maven: com.adobe.blazeds:blazeds-common:4.0.0.14931" value="project"/>
+		<level name="Maven: com.adobe.blazeds:blazeds-proxy:4.0.0.14931" value="project"/>
+		<level name="Maven: com.adobe.blazeds:blazeds-remoting:4.0.0.14931" value="project"/>
+		<level name="Maven: com.sun.mail:javax.mail:1.6.1" value="project"/>
+		<level name="Maven: javax.activation:activation:1.1" value="project"/>
+		<level name="Maven: com.opencsv:opencsv:4.0" value="project"/>
+		<level name="Maven: org.apache.commons:commons-text:1.1" value="project"/>
+		<level name="Maven: commons-beanutils:commons-beanutils:1.9.3" value="project"/>
+	</levels>
+</component>

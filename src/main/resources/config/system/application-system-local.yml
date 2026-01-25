@@ -1,0 +1,12 @@
+# System Configuration (Local Profile)
+app:
+  system:
+    homepath: E:\\reportTemplate
+    file:
+      upload-path: E:/ctrslogs/upload_dir/file/
+      report-template: E:\\reportTemplate/
+      upload-help-path: E:/ctrslogs/upload_dir/help/
+    log:
+      name: klid-web
+      path: ./log
+      level: DEBUG

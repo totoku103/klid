@@ -1,0 +1,476 @@
+[
+    {
+        "pageNo": 1,
+        "pageName": "대시보드",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-dsbd",
+        "children": [
+            {
+                "pageNo": 1,
+                "pageGrpNo": 3,
+                "pageGrpName": "대시보드",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 1,
+                        "pageGrpNo": 3,
+                        "menuNo": 4,
+                        "menuName": "대시보드",
+                        "orderNo": 0,
+                        "guid": "616D8144-FAF1-4BAE-9BB6-0B8F5F381130",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 2,
+        "pageName": "침해사고대응",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-alarm",
+        "children": [
+            {
+                "pageNo": 2,
+                "pageGrpNo": 9,
+                "pageGrpName": "침해사고대응",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 2,
+                        "pageGrpNo": 9,
+                        "menuNo": 10,
+                        "menuName": "사고신고 처리현황",
+                        "orderNo": 0,
+                        "guid": "A800930A-372D-41E2-BEDE-B40FFB5FDFAD",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 5,
+        "pageName": "보안정보",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-lock",
+        "children": [
+            {
+                "pageNo": 5,
+                "pageGrpNo": 11,
+                "pageGrpName": "공지사항",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 5,
+                        "pageGrpNo": 11,
+                        "menuNo": 15,
+                        "menuName": "공지사항",
+                        "orderNo": 0,
+                        "guid": "B4529762-C067-4731-9129-B84FF840063A",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 5,
+                "pageGrpNo": 13,
+                "pageGrpName": "보안자료실",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 5,
+                        "pageGrpNo": 13,
+                        "menuNo": 17,
+                        "menuName": "보안자료실",
+                        "orderNo": 0,
+                        "guid": "35E56A6F-B4CF-4255-8300-A55BA44F7BA6",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 5,
+                "pageGrpNo": 14,
+                "pageGrpName": "침해대응정보공유",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 5,
+                        "pageGrpNo": 14,
+                        "menuNo": 18,
+                        "menuName": "침해대응정보공유",
+                        "orderNo": 0,
+                        "guid": "11B3C551-A9E2-4361-AC5C-D45751AD5E64",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 6,
+        "pageName": "보고서",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-rpt",
+        "children": [
+            {
+                "pageNo": 6,
+                "pageGrpNo": 19,
+                "pageGrpName": "일일보고서",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 19,
+                        "menuNo": 22,
+                        "menuName": "일일실적보고서",
+                        "orderNo": 1,
+                        "guid": "28334395-B5A8-421C-AA8B-0A2993FE9E8A",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 19,
+                        "menuNo": 24,
+                        "menuName": "주간실적보고서",
+                        "orderNo": 2,
+                        "guid": "5D96EB60-4789-4C89-A146-EF33B8D96510",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 19,
+                        "menuNo": 25,
+                        "menuName": "시도별일일사고처리",
+                        "orderNo": 3,
+                        "guid": "AF77542E-119A-4DF1-97AB-6A46CD092FDD",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 6,
+                "pageGrpNo": 20,
+                "pageGrpName": "유형별보고서",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 20,
+                        "menuNo": 28,
+                        "menuName": "사고유형조회",
+                        "orderNo": 1,
+                        "guid": "A54369C9-AB15-4DC1-8181-2175E77E89C4",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 20,
+                        "menuNo": 29,
+                        "menuName": "공격국가조회",
+                        "orderNo": 2,
+                        "guid": "EB56AED2-8197-4FA4-A5DA-E86E5476D7DB",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 20,
+                        "menuNo": 30,
+                        "menuName": "우선순위조회",
+                        "orderNo": 3,
+                        "guid": "8747AA42-733A-441E-A3EA-AA18651774DD",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 20,
+                        "menuNo": 31,
+                        "menuName": "처리상태조회",
+                        "orderNo": 4,
+                        "guid": "ABE1D475-7304-46D3-AE93-3559628E5B0F",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 6,
+                        "pageGrpNo": 20,
+                        "menuNo": 115,
+                        "menuName": "시군구조회",
+                        "orderNo": 6,
+                        "guid": "0479E0D9-BBB2-4567-A827-E9173F0DBDC2",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 7,
+        "pageName": "문의센터",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-ipt",
+        "children": [
+            {
+                "pageNo": 7,
+                "pageGrpNo": 35,
+                "pageGrpName": "문의/의견",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 7,
+                        "pageGrpNo": 35,
+                        "menuNo": 37,
+                        "menuName": "문의/의견",
+                        "orderNo": 0,
+                        "guid": "270241B8-AA1C-4BBA-948F-B9AF8BBD74DD",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 8,
+        "pageName": "운영관리",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-mgnt",
+        "children": [
+            {
+                "pageNo": 8,
+                "pageGrpNo": 60,
+                "pageGrpName": "사용자관리",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 60,
+                        "menuNo": 123,
+                        "menuName": "사용자 변경 승인",
+                        "orderNo": 1,
+                        "guid": "37EFE475-2428-49B8-95CE-2AA78262631F",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 60,
+                        "menuNo": 124,
+                        "menuName": "사용자 변경 요청",
+                        "orderNo": 2,
+                        "guid": "FA5CF53F-A3F9-466F-8533-3E62E94695C3",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 60,
+                        "menuNo": 69,
+                        "menuName": "사용자관리",
+                        "orderNo": 3,
+                        "guid": "1D26DA5D-C6DA-4FD1-8D0B-6B82CC84058A",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 60,
+                        "menuNo": 70,
+                        "menuName": "SMS외부사용자관리",
+                        "orderNo": 4,
+                        "guid": "8D6E391F-8DE2-4A57-B182-C34E901408CB",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 8,
+                "pageGrpNo": 61,
+                "pageGrpName": "기관관리",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 61,
+                        "menuNo": 71,
+                        "menuName": "기관관리",
+                        "orderNo": 1,
+                        "guid": "9413D8BE-B9C3-48C1-81AA-178523E09C03",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 61,
+                        "menuNo": 80,
+                        "menuName": "기관별IP대역관리",
+                        "orderNo": 2,
+                        "guid": "2070E22A-A433-11E8-898A-408D5CF61E72",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 8,
+                "pageGrpNo": 63,
+                "pageGrpName": "로그관리",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 125,
+                        "menuName": "사용자 접속 로그 현황(요약)",
+                        "orderNo": 4,
+                        "guid": "98561932-0D0E-4312-A969-15FFCD40C09C",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 126,
+                        "menuName": "사용자 접속 로그 현황(일별)",
+                        "orderNo": 5,
+                        "guid": "9B82E46D-BD6C-48FC-A4B1-08AB5A612423",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 127,
+                        "menuName": "사용자 접속 로그 현황(기간별)",
+                        "orderNo": 6,
+                        "guid": "1F64D749-0BA6-4765-80CA-B1E050B9223F",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 128,
+                        "menuName": "사용자 접속 로그 현황(기관별)",
+                        "orderNo": 7,
+                        "guid": "ECD00E4F-2C5D-46B6-93BB-0A2156EC02AE",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 129,
+                        "menuName": "사용자 행위 로그 현황(요약)",
+                        "orderNo": 8,
+                        "guid": "365C0D93-B77E-43EF-90EE-CC709A9EFAEA",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 130,
+                        "menuName": "사용자 행위 로그 현황(일별)",
+                        "orderNo": 9,
+                        "guid": "0EF2C268-6946-4910-9C93-29F236B0646E",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 131,
+                        "menuName": "사용자 행위 로그 현황(기간별)",
+                        "orderNo": 10,
+                        "guid": "83626AED-467A-438B-9A67-2F83FB32A01A",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 63,
+                        "menuNo": 132,
+                        "menuName": "사용자 행위 로그 현황(기관별)",
+                        "orderNo": 11,
+                        "guid": "545E1470-DC0F-45C8-BA94-E068859A4694",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 8,
+                "pageGrpNo": 66,
+                "pageGrpName": "인수인계",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 8,
+                        "pageGrpNo": 66,
+                        "menuNo": 78,
+                        "menuName": "인수인계",
+                        "orderNo": 0,
+                        "guid": "2DE754D9-7E3D-488B-B44D-4E8B5BC05CB2",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "pageNo": 48,
+        "pageName": "홈페이지모니터링",
+        "orderNo": 0,
+        "webIconClass": "dc-mega-icon-nms",
+        "children": [
+            {
+                "pageNo": 48,
+                "pageGrpNo": 49,
+                "pageGrpName": "위변조",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 48,
+                        "pageGrpNo": 49,
+                        "menuNo": 82,
+                        "menuName": "위변조 URL 현황",
+                        "orderNo": 1,
+                        "guid": "050EC41F-9CE8-45FF-9E66-B96FAD9AD84F",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 48,
+                        "pageGrpNo": 49,
+                        "menuNo": 119,
+                        "menuName": "위변조 URL 이력",
+                        "orderNo": 2,
+                        "guid": "050EC41F-9CE8-45FF-9E66-B96FAD9AD27F",
+                        "menuAuth": "1"
+                    }
+                ]
+            },
+            {
+                "pageNo": 48,
+                "pageGrpNo": 116,
+                "pageGrpName": "URL 헬스체크",
+                "orderNo": 0,
+                "children": [
+                    {
+                        "pageNo": 48,
+                        "pageGrpNo": 116,
+                        "menuNo": 117,
+                        "menuName": "헬스체크 URL관리",
+                        "orderNo": 0,
+                        "guid": "54A0FF75-4813-45AC-B4E9-7A5D8B5FCAFD",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 48,
+                        "pageGrpNo": 116,
+                        "menuNo": 118,
+                        "menuName": "헬스체크 장애이력",
+                        "orderNo": 1,
+                        "guid": "1213A8BC-7D38-45FF-B734-92EFCDA89A04",
+                        "menuAuth": "1"
+                    },
+                    {
+                        "pageNo": 48,
+                        "pageGrpNo": 116,
+                        "menuNo": 120,
+                        "menuName": "일일 헬스체크 현황",
+                        "orderNo": 2,
+                        "guid": "6E13B83C-BC38-434F-BC34-22EAAD0E6504",
+                        "menuAuth": "1"
+                    }
+                ]
+            }
+        ]
+    }
+]

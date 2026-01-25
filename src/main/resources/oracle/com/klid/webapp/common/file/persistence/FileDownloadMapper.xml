@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.file.persistence.FileDownloadMapper">
+	<resultMap type="com.klid.webapp.common.file.dto.AttachfileDto" id="resultAttachfile">
+		<result property="fileName" 		column="FILE_NAME"/>
+		<result property="originalFileName" column="ORIGINAL_FILE_NAME"/>
+		<result property="athPath" column="ATH_PATH"/>
+	</resultMap>
+	
+	<select id="selectFileName" resultMap="resultAttachfile">
+		SELECT
+			FILE_NAME, 
+			ORIGIN_NAME		AS ORIGINAL_FILE_NAME,
+			FILE_PATH		AS ATH_PATH
+		FROM BULTN_FILE
+		WHERE 1=1		
+		<if test="fileNo != null">
+			AND FILE_NO = ${fileNo}
+		</if> 
+		<if test="boardNo != null">
+			AND BULTN_NO = ${boardNo}
+		</if> 				
+	</select>
+
+	<select id="selectAccFileName" resultMap="resultAttachfile">
+		SELECT
+			ATT_SEQ			AS FILE_NO,
+			INCI_NO,
+			ATH_PATH		AS ATH_PATH,
+			ATH_FILE_NM		AS FILE_NAME,
+			ATH_CNT_TYP,
+			REAL_NAME		AS ORIGINAL_FILE_NAME
+		FROM TBZATTAC
+		WHERE 1=1
+		AND ATT_SEQ = ${fileNo}
+
+	</select>
+</mapper>

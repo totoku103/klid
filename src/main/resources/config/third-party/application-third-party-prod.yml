@@ -1,0 +1,18 @@
+# Third Party Prod Settings
+spring:
+  config:
+    import:
+      - application-third-party.yml
+
+app:
+  ctrs:
+    url:
+      host: ""
+
+  vms:
+    url:
+      host: ""
+
+  ctss:
+    url:
+      host: ""

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.menu.persistence.MenuMapper">
+
+  <resultMap type="com.klid.webapp.common.menu.dto.PageDto" id="resultPage">
+  	<id property="pageNo" 					column="PAGE_NO"/>
+  	<result property="pageName" 			column="PAGE_NAME"/>
+  	<result property="orderNo" 				column="ORDER_NO"/>
+  	<result property="webIconClass" 		column="WEB_ICON_CLASS"/>
+  </resultMap>
+  <resultMap type="com.klid.webapp.common.menu.dto.PageGrpDto" id="resultPageGrp">
+  	<id property="pageNo" 					column="PAGE_NO"/>
+  	<id property="pageGrpNo" 				column="PAGE_GRP_NO"/>
+  	<result property="pageGrpName" 		column="PAGE_GRP_NAME"/>
+  	<result property="orderNo" 				column="PAGE_GRP_ORDER_NO"/>
+  </resultMap>
+  <resultMap type="com.klid.webapp.common.menu.dto.MenuDto" id="resultPageMenu">
+  	<id property="pageNo" 					column="PAGE_NO"/>
+  	<id property="pageGrpNo" 				column="PAGE_GRP_NO"/>
+  	<id property="menuNo" 					column="MENU_NO"/>
+  	<result property="menuName" 			column="MENU_NAME"/>
+  	<result property="guid" 					column="GUID"/>
+  	<result property="menuAuth" 			column="MENU_AUTH"/>
+  	<result property="orderNo" 				column="PAGE_MENU_ORDER_NO"/>
+  </resultMap>
+  <resultMap type="com.klid.webapp.common.menu.dto.PageDto" id="resultHierarchicalMenuList" extends="resultPage">
+  	<collection property="children" 	ofType="com.klid.webapp.common.menu.dto.PageGrpDto">
+	  	<id property="pageNo" 					column="PAGE_NO"/>
+	  	<id property="pageGrpNo" 				column="PAGE_GRP_NO"/>
+	  	<result property="pageGrpName" 		column="PAGE_GRP_NAME"/>
+	  	<result property="orderNo" 				column="PAGE_GRP_ORDER_NO"/>
+	  	<collection property="children"		resultMap="resultPageMenu"/>
+  	</collection>
+  </resultMap>
+
+  <resultMap id="resultLayoutMenu" type="com.klid.webapp.common.menu.dto.LayoutMenuDto">
+		<result property="menuName" 			column="MENU_NAME"/>
+		<result property="guid" 					column="GUID"/>
+		<result property="grpType" 					column="GRP_TYPE"/>
+	</resultMap>
+	<resultMap id="resultLayoutMenuCond" type="com.klid.webapp.common.menu.dto.LayoutMenuCondDto">
+		<result property="guid" 					column="GUID"/>
+		<result property="condType" 					column="COND_TYPE"/>
+	</resultMap>
+
+
+  <!-- 메뉴조회
+  	MENU_AUTH		1: User, 2: Admin, 3: System
+  -->
+  <select id="selectHierarchicalMenuList"  resultMap="resultHierarchicalMenuList">
+  	SELECT  	PAGE.MENU_NO AS PAGE_NO,
+		        PAGE.MENU_NAME AS PAGE_NAME,
+		        NVL(PAGE.VISIBLE_ORDER,0) AS PAGE_ORDER_NO,
+		        PAGE.SITE_NAME,
+		        PAGE_GROUP.MENU_NO AS PAGE_GRP_NO,
+		        PAGE_GROUP.MENU_NAME AS PAGE_GRP_NAME,
+		        NVL(PAGE_GROUP.VISIBLE_ORDER,00) AS PAGE_GRP_ODER_NO,
+		        MENU.MENU_NO AS MENU_NO,
+		        MENU.MENU_NAME AS MENU_NAME,
+		        MENU.GUID AS GUID,
+		        MENU.MENU_AUTH AS MENU_AUTH,
+		        NVL(MENU.VISIBLE_ORDER,0) AS PAGE_MENU_ORDER_NO,
+		        PAGE.WEB_ICON_CLASS
+	FROM    	COM_MENU PAGE, COM_MENU PAGE_GROUP, COM_MENU MENU
+	WHERE   	PAGE.MENU_KIND = 'PAGE'
+	AND     	PAGE_GROUP.MENU_KIND = 'PAGE_GROUP'
+	AND     	MENU.MENU_KIND = 'MENU'
+	AND     	PAGE.MENU_NO = PAGE_GROUP.MENU_PAGE_NO
+	AND     	PAGE.MENU_NO = MENU.MENU_PAGE_NO
+	AND     	PAGE_GROUP.MENU_NO = MENU.MENU_PAGE_GRP_NO
+	AND     	PAGE.SITE_NAME = PAGE_GROUP.SITE_NAME
+	AND     	PAGE.SITE_NAME = MENU.SITE_NAME
+	AND     	PAGE.SITE_NAME = 'Klid'
+	AND     	MENU.IS_WEBUSE = 1
+	AND 		MENU.GUID NOT IN ( SELECT GUID FROM COM_MENU_EXCLUDE WHERE AUTH_MAIN = #{authGrpNo})
+	<choose>
+		<when test="auth == 'System'">
+		</when>
+		<when test="auth == 'Admin'">
+			AND	MENU.MENU_AUTH IN ('1', '2')
+		</when>
+		<otherwise>
+			AND	MENU.MENU_AUTH = '1'
+		</otherwise>
+	</choose>
+	ORDER BY PAGE_ORDER_NO, PAGE_GRP_ODER_NO, PAGE_MENU_ORDER_NO
+  </select>
+
+	<select id="selectExcludeMenuList" resultType="com.klid.webapp.common.menu.dto.SimpleMenuDTO">
+		SELECT GUID
+			FROM COM_MENU_EXCLUDE
+		WHERE AUTH_MAIN = #{authGrpNo}
+	</select>
+
+	<select id="selectSimpleMenuList" resultType="com.klid.webapp.common.menu.dto.SimpleMenuDTO">
+		SELECT
+		  PAGE.MENU_NO                  AS PAGE_NO,
+		  PAGE.MENU_NAME                AS PAGE_NAME,
+		  PAGE_GROUP.MENU_NO            AS PAGE_GRP_NO,
+		  PAGE_GROUP.MENU_NAME          AS PAGE_GRP_NAME,
+		  MENU.MENU_NO                  AS MENU_NO,
+		  MENU.MENU_NAME                AS MENU_NAME,
+		  MENU.GUID                     AS GUID,
+		  MENU.MENU_AUTH                AS MENU_AUTH
+		FROM COM_MENU PAGE, COM_MENU PAGE_GROUP, COM_MENU MENU
+		WHERE PAGE.MENU_KIND = 'PAGE'
+			  AND PAGE_GROUP.MENU_KIND = 'PAGE_GROUP'
+			  AND MENU.MENU_KIND = 'MENU'
+			  AND PAGE.MENU_NO = PAGE_GROUP.MENU_PAGE_NO
+			  AND PAGE.MENU_NO = MENU.MENU_PAGE_NO
+			  AND PAGE_GROUP.MENU_NO = MENU.MENU_PAGE_GRP_NO
+			  AND PAGE.SITE_NAME = PAGE_GROUP.SITE_NAME
+			  AND PAGE.SITE_NAME = MENU.SITE_NAME
+			  AND MENU.MENU_AUTH IN ('1', '2')
+			  AND PAGE.SITE_NAME = 'Klid'
+			  AND MENU.IS_WEBUSE = 1
+			  <if test="_parameter.containsKey('targetAuthGrpNo')">
+			  AND 		MENU.GUID NOT IN ( SELECT GUID FROM COM_MENU_EXCLUDE WHERE AUTH_MAIN = #{targetAuthGrpNo})
+			  </if>
+	</select>
+
+
+  <select id="selectLayoutMenuList" resultMap="resultLayoutMenu">
+		SELECT MENU_NAME, GUID, GRP_TYPE
+		FROM COM_MENU_LAYOUT
+	</select>
+
+	<select id="selectLayoutMenuCondList" resultMap="resultLayoutMenuCond">
+		SELECT GUID, COND_TYPE
+		FROM COM_MENU_LAYOUT_TYPE
+		<if test="_parameter.containsKey('guid') and devKind1 != null">
+			WHERE GUID = #{guid}
+		</if>
+	</select>
+
+	<delete id="deleteExcludeMenuList">
+		DELETE	FROM COM_MENU_EXCLUDE WHERE AUTH_MAIN = #{authGrpNo}
+	</delete>
+
+	<insert id="insertExcludemenuList">
+		BEGIN
+		<foreach collection="guids" item="item">
+				INSERT INTO COM_MENU_EXCLUDE (AUTH_MAIN, GUID) VALUES (#{authGrpNo}, #{item});
+		</foreach>
+		END;
+	</insert>
+</mapper>

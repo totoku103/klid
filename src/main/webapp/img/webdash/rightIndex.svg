@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="110px" height="170px" viewBox="0 0 110 170" enable-background="new 0 0 110 170" xml:space="preserve">
+<g id="Back">
+	<rect x="4" y="37" opacity="0.25" fill="#FFFFFF" enable-background="new    " width="102" height="34"/>
+	<g>
+		
+			<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-33.1602" y1="-21.5996" x2="72.8398" y2="-21.5996" gradientTransform="matrix(1 0 0 -1 35.1602 63.4004)">
+			<stop  offset="0" style="stop-color:#707070"/>
+			<stop  offset="0.2796" style="stop-color:#D0D0D0"/>
+			<stop  offset="0.6075" style="stop-color:#A5A5A5"/>
+			<stop  offset="1" style="stop-color:#707070"/>
+		</linearGradient>
+		<path fill="url(#SVGID_1_)" d="M106,4v162H4V4H106 M108,2H2v166h106V2L108,2z"/>
+	</g>
+	
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="-31.1602" y1="42.9004" x2="70.8398" y2="42.9004" gradientTransform="matrix(1 0 0 -1 35.1602 63.4004)">
+		<stop  offset="0" style="stop-color:#072F4D"/>
+		<stop  offset="0.5" style="stop-color:#07407A"/>
+		<stop  offset="1" style="stop-color:#072F4D"/>
+	</linearGradient>
+	<rect x="4" y="4" fill="url(#SVGID_2_)" width="102" height="33"/>
+	
+		<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="-31.1602" y1="26.4004" x2="70.8398" y2="26.4004" gradientTransform="matrix(1 0 0 -1 35.1602 63.4004)">
+		<stop  offset="0" style="stop-color:#606060"/>
+		<stop  offset="0.2796" style="stop-color:#B9B9B9"/>
+		<stop  offset="0.6075" style="stop-color:#909090"/>
+		<stop  offset="1" style="stop-color:#606060"/>
+	</linearGradient>
+	<rect x="4" y="36" fill="url(#SVGID_3_)" width="102" height="2"/>
+	
+		<linearGradient id="SVGID_4_" gradientUnits="userSpaceOnUse" x1="-31.1782" y1="-55.0996" x2="70.8408" y2="-55.0996" gradientTransform="matrix(1 0 0 -1 35.1602 63.4004)">
+		<stop  offset="0" style="stop-color:#707070"/>
+		<stop  offset="0.2796" style="stop-color:#D0D0D0"/>
+		<stop  offset="0.6075" style="stop-color:#A5A5A5"/>
+		<stop  offset="1" style="stop-color:#707070"/>
+	</linearGradient>
+	<rect x="3.982" y="118" fill="url(#SVGID_4_)" width="102.019" height="1"/>
+	<path fill="#141414" d="M108,2v166H2V2H108 M108,0H2C0.896,0,0,0.896,0,2v166c0,1.104,0.896,2,2,2h106c1.104,0,2-0.896,2-2V2
+		C110,0.896,109.104,0,108,0L108,0z"/>
+</g>
+<g id="Icon">
+	<g>
+		<path fill="#FF3329" d="M46.649,128.426H21.314c-1.55,0-2.814,1.27-2.814,2.815v16.892c0,1.549,1.264,2.814,2.814,2.814h9.852
+			l-2.815,4.221v1.409h11.26v-1.409l-2.813-4.221h9.852c1.548,0,2.815-1.268,2.815-2.814v-16.892
+			C49.464,129.693,48.197,128.426,46.649,128.426z M33.981,149.415c-0.439,0-0.796-0.354-0.796-0.79
+			c0-0.439,0.357-0.796,0.796-0.796c0.438,0,0.793,0.354,0.793,0.796C34.775,149.061,34.42,149.415,33.981,149.415z M46.649,146.691
+			H21.314v-15.45h25.335V146.691z"/>
+		<g>
+			<circle fill="#FF3329" cx="25.689" cy="141.712" r="2.137"/>
+			<circle fill="#FF3329" cx="30.878" cy="136.217" r="1.526"/>
+			<circle fill="#FF3329" cx="36.177" cy="141.712" r="1.832"/>
+			<circle fill="#FF3329" cx="42.386" cy="136.217" r="1.984"/>
+			<g>
+				<polygon fill="#FF3329" points="36.163,142.348 30.939,136.88 26.02,142.027 25.358,141.396 30.939,135.555 36.216,141.076 
+					42.083,135.874 42.69,136.561 				"/>
+			</g>
+		</g>
+	</g>
+	<g display="none">
+		<path display="inline" fill="#FF3329" d="M46.642,128.434h-25.32c-1.55,0-2.813,1.268-2.813,2.813v16.882
+			c0,1.547,1.263,2.813,2.813,2.813h9.846l-2.813,4.219v1.408h11.254v-1.408l-2.813-4.219h9.847c1.547,0,2.813-1.267,2.813-2.813
+			v-16.882C49.455,129.7,48.188,128.434,46.642,128.434z M33.981,149.409c-0.439,0-0.796-0.354-0.796-0.789
+			c0-0.44,0.356-0.796,0.796-0.796c0.438,0,0.793,0.355,0.793,0.796C34.774,149.057,34.42,149.409,33.981,149.409z M46.642,146.688
+			h-25.32v-15.44h25.32V146.688z"/>
+		<path display="inline" fill="#FF3329" d="M38.634,140.743l1.924-1.923l-1.924-1.926v-2.728h-2.729l-1.924-1.923l-1.925,1.923
+			h-2.728v2.728l-1.924,1.926l1.924,1.923v2.729h2.728l1.925,1.922l1.924-1.922h2.729V140.743z M33.981,142.309v-6.977
+			c1.924,0,3.486,1.563,3.486,3.488C37.468,140.743,35.905,142.309,33.981,142.309z"/>
+	</g>
+	<g>
+		<path fill="#80EB45" d="M46.649,80.426H21.314c-1.55,0-2.814,1.269-2.814,2.815v16.892c0,1.549,1.264,2.814,2.814,2.814h9.852
+			l-2.815,4.221v1.409h11.26v-1.409l-2.813-4.221h9.852c1.548,0,2.815-1.268,2.815-2.814V83.241
+			C49.464,81.694,48.197,80.426,46.649,80.426z M33.981,101.415c-0.439,0-0.796-0.354-0.796-0.79c0-0.439,0.357-0.796,0.796-0.796
+			c0.438,0,0.793,0.354,0.793,0.796C34.775,101.061,34.42,101.415,33.981,101.415z M46.649,98.691H21.314v-15.45h25.335V98.691z"/>
+		<g>
+			<circle fill="#80EB45" cx="25.689" cy="93.712" r="2.137"/>
+			<circle fill="#80EB45" cx="30.878" cy="88.217" r="1.526"/>
+			<circle fill="#80EB45" cx="36.177" cy="93.712" r="1.832"/>
+			<circle fill="#80EB45" cx="42.386" cy="88.217" r="1.984"/>
+			<g>
+				<polygon fill="#80EB45" points="36.163,94.348 30.939,88.88 26.02,94.027 25.358,93.396 30.939,87.555 36.216,93.076 
+					42.083,87.874 42.69,88.561 				"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="txt">
+	<text transform="matrix(1 0 0 1 35.1772 28.4165)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="20">범례</text>
+	<text transform="matrix(1 0 0 1 15.1772 63.4165)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="20">모니터링</text>
+	<text transform="matrix(1 0 0 1 57.5107 102.416)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="20">정상</text>
+	<text transform="matrix(1 0 0 1 57.5107 149.416)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="20">장애</text>
+</g>
+</svg>

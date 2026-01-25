@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.userManagementHistory.persistence.UserManagementHistoryMapper">
+
+    <select id="selectCommUserRequestBySeq"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.CommUserRequestDto">
+        SELECT SEQ,
+               COMM_USER_SEQ,
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               LOGIN_FAIL_CNT,
+               PASS_RESET_YN,
+               LOCK_YN,
+               IP_ADDR,
+               OTP_KEY,
+               GPKI_SERIAL_NO,
+               INACTIVE_YN,
+               REQUEST_USER_SEQ,
+               REQUEST_TYPE,
+               REQUEST_REASON,
+               REQUEST_REG_DT,
+               REQUEST_INST_CD,
+               PROCESS_STATE,
+               PARENT_SEQ,
+               APPROVE_USER_SEQ,
+               APPROVE_REASON,
+               APPROVE_REG_DT,
+               APPROVE_INST_CD
+        from COMM_USER_REQUEST
+        WHERE SEQ = #{seq}
+    </select>
+
+    <select id="selectUserManagementHistoryGrid"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.HistoryGridResDto">
+WITH chain AS (
+    SELECT CONNECT_BY_ROOT t.SEQ AS ROOT_SEQ,
+           t.SEQ,
+           t.PARENT_SEQ,
+           t.PROCESS_STATE,
+           CASE
+               WHEN t.APPROVE_REG_DT IS NOT NULL THEN TO_DATE(t.APPROVE_REG_DT, 'YYYYMMDDHH24MISS')
+               ELSE TO_DATE(t.REQUEST_REG_DT, 'YYYYMMDDHH24MISS')
+               END               AS EVENT_DT
+    FROM COMM_USER_REQUEST t
+<where>
+    t.REQUEST_REG_DT &gt;= concat(regexp_replace(#{searchDto.searchDateFrom}, '\D', ''), '000000')
+AND t.REQUEST_REG_DT &lt;= concat(regexp_replace(#{searchDto.searchDateTo}, '\D', ''), '235959')
+    <if test="requestUserSeq != null">
+        AND t.REQUEST_USER_SEQ = #{requestUserSeq}
+    </if>
+    <if test="searchDto.searchRequestType != null and searchDto.searchRequestType != ''">
+        AND t.REQUEST_TYPE = #{searchDto.searchRequestType}
+    </if>
+    <if test="searchDto.searchInstitutionCode != null">
+        AND t.INST_CD IN ( SELECT Z.INST_CD FROM TSMINST Z CONNECT BY PRIOR Z.INST_CD = Z.PNT_INST_CD START WITH Z.INST_CD = #{searchDto.searchInstitutionCode} )
+    </if>
+</where>
+    START WITH t.PARENT_SEQ IS NULL
+    CONNECT BY PRIOR t.SEQ = t.PARENT_SEQ),
+     latest_pick AS (
+         SELECT c.ROOT_SEQ,
+                c.SEQ,
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.ROOT_SEQ
+                    ORDER BY c.EVENT_DT DESC, TO_NUMBER(c.SEQ) DESC
+                    ) AS RN
+         FROM chain c)
+SELECT LP.ROOT_SEQ              AS COMM_USER_REQUEST_SEQ,
+       T.SEQ                    AS LATEST_COMM_USER_REQUEST_SEQ,
+       T.COMM_USER_SEQ          AS ORIGIN_USER_SEQ,
+       T.INST_CD                AS ORIGIN_USER_INST_CODE,
+       USER_INST.INST_NM        AS ORIGIN_USER_INST_NAME,
+       T.USER_ID                AS ORIGIN_USER_ID,
+       T.USER_NAME              AS ORIGIN_USER_NAME,
+       T.REQUEST_USER_SEQ       AS REQUEST_USER_SEQ,
+       REQ_USER_INFO.USER_NAME  AS REQUEST_USER_NAME,
+       T.REQUEST_INST_CD        AS REQUEST_USER_INST_CODE,
+       REQ_INST.INST_NM         AS REQUEST_USER_INST_NAME,
+       T.REQUEST_TYPE,
+       T.REQUEST_REASON,
+       T.REQUEST_REG_DT,
+       T.PROCESS_STATE,
+       T.PARENT_SEQ,
+       T.APPROVE_USER_SEQ       AS APPROVE_USER_SEQ,
+       APPR_USER_INFO.USER_NAME AS APPROVE_USER_NAME,
+       T.APPROVE_INST_CD        AS APPROVE_USER_INST_CODE,
+       APPR_INST.INST_NM        AS APPROVE_USER_INST_NAME,
+       T.APPROVE_REASON,
+       T.APPROVE_REG_DT
+FROM COMM_USER_REQUEST T
+         JOIN latest_pick LP
+              ON LP.SEQ = T.SEQ
+                  AND LP.RN = 1
+         LEFT OUTER JOIN COMM_USER ORIGIN_USER
+                         ON T.COMM_USER_SEQ = ORIGIN_USER.SEQ
+         LEFT OUTER JOIN TSMINST USER_INST
+                         ON T.INST_CD = USER_INST.INST_CD
+         LEFT OUTER JOIN COMM_USER REQ_USER_INFO
+                         ON T.REQUEST_USER_SEQ = REQ_USER_INFO.SEQ
+         LEFT OUTER JOIN TSMINST REQ_INST
+                         ON T.REQUEST_INST_CD = REQ_INST.INST_CD
+         LEFT OUTER JOIN COMM_USER APPR_USER_INFO
+                         ON T.APPROVE_USER_SEQ = APPR_USER_INFO.SEQ
+         LEFT OUTER JOIN TSMINST APPR_INST
+                         ON T.APPROVE_INST_CD = APPR_INST.INST_CD
+<where>
+    <if test="searchDto.searchProcessState != null and searchDto.searchProcessState != ''">
+         AND T.PROCESS_STATE = #{searchDto.searchProcessState}
+    </if>
+    <if test="searchDto.searchUserName != null and searchDto.searchUserName != ''">
+        AND T.USER_NAME like '%' || #{searchDto.searchUserName, jdbcType=VARCHAR} || '%'
+    </if>
+</where>
+ORDER BY T.REQUEST_REG_DT DESC
+    </select>
+
+    <insert id="insertRequestReviewState">
+        insert into COMM_USER_REQUEST (SEQ, PARENT_SEQ, COMM_USER_SEQ, INST_CD, USER_ID, USER_NAME, USER_PWD, MOBL_PHN_NO,
+                                       OFFC_TEL_NO, EMAIL_ADDR, SMS_YN, USE_YN, REG_DT, LASTPWDMODIFIED, AUTH_MAIN, AUTH_SUB,
+                                       LOGIN_FAIL_CNT, PASS_RESET_YN, LOCK_YN, IP_ADDR, OTP_KEY, GPKI_SERIAL_NO, INACTIVE_YN,
+                                       REQUEST_USER_SEQ,
+                                       REQUEST_TYPE,
+                                       REQUEST_REASON,
+                                       REQUEST_REG_DT,
+                                       REQUEST_INST_CD,
+
+                                       APPROVE_USER_SEQ,
+                                       APPROVE_REASON,
+                                       APPROVE_REG_DT,
+                                       APPROVE_INST_CD,
+                                       PROCESS_STATE)
+        SELECT COMM_USER_REQUEST_SEQ.nextval,
+               SEQ,
+               COMM_USER_SEQ,
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               LOGIN_FAIL_CNT,
+               PASS_RESET_YN,
+               LOCK_YN,
+               IP_ADDR,
+               OTP_KEY,
+               GPKI_SERIAL_NO,
+               INACTIVE_YN,
+               REQUEST_USER_SEQ,
+               REQUEST_TYPE,
+               REQUEST_REASON,
+               REQUEST_REG_DT,
+               REQUEST_INST_CD,
+               #{requestUserSeq},
+               #{requestReason},
+               TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+               #{requestInstCd},
+               #{requestProcessState}
+        FROM COMM_USER_REQUEST
+        WHERE SEQ = #{seq}
+    </insert>
+
+    <select id="selectRequestTypeByCommUserRequestSeq"
+            resultType="com.klid.webapp.common.enums.UserManagementRequestTypes">
+        SELECT REQUEST_TYPE FROM COMM_USER_REQUEST WHERE SEQ = #{commUserRequestSeq}
+    </select>
+
+    <select id="selectLatestRequestProcessState"
+    resultType="com.klid.webapp.main.env.userManagementHistory.dto.LatestCommUserRequestProcessStateDto">
+        WITH CHAIN AS (SELECT CONNECT_BY_ROOT R.SEQ AS ROOT_SEQ,
+                           R.SEQ,
+                              R.PROCESS_STATE
+                       FROM COMM_USER_REQUEST R
+        START WITH R.SEQ = #{commUserRequestSeq}
+        CONNECT BY PRIOR R.SEQ = R.PARENT_SEQ)
+        SELECT ROOT_SEQ,
+               MAX(SEQ)                                                       AS LATEST_SEQ,
+               MAX(PROCESS_STATE) KEEP (DENSE_RANK LAST ORDER BY SEQ) AS LATEST_PROCESS_STATE
+        FROM CHAIN
+        GROUP BY ROOT_SEQ
+    </select>
+
+    <insert id="copyUserRequestForStateChange">
+        insert into COMM_USER_REQUEST (SEQ, PARENT_SEQ, COMM_USER_SEQ, INST_CD, USER_ID, USER_NAME, USER_PWD, MOBL_PHN_NO,
+                                       OFFC_TEL_NO, EMAIL_ADDR, SMS_YN, USE_YN, REG_DT, LASTPWDMODIFIED, AUTH_MAIN, AUTH_SUB,
+                                       LOGIN_FAIL_CNT, PASS_RESET_YN, LOCK_YN, IP_ADDR, OTP_KEY, GPKI_SERIAL_NO, INACTIVE_YN,
+                                       REQUEST_USER_SEQ,
+                                       REQUEST_TYPE,
+                                       REQUEST_REASON,
+                                       REQUEST_REG_DT,
+                                       REQUEST_INST_CD,
+                                       PROCESS_STATE)
+        SELECT COMM_USER_REQUEST_SEQ.nextval,
+               SEQ,
+               COMM_USER_SEQ,
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               LOGIN_FAIL_CNT,
+               PASS_RESET_YN,
+               LOCK_YN,
+               IP_ADDR,
+               OTP_KEY,
+               GPKI_SERIAL_NO,
+               INACTIVE_YN,
+               #{requestUserSeq},
+               REQUEST_TYPE,
+               #{requestReason},
+               TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+               #{requestInstCd},
+               #{requestProcessState}
+        FROM COMM_USER_REQUEST
+        WHERE SEQ = #{seq}
+          AND REQUEST_USER_SEQ = #{requestUserSeq}
+          AND PROCESS_STATE = #{beforeRequestProcessState}
+    </insert>
+
+    <select id="selectCommUserRequestUserInfo"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.SimpleUserInfoDto">
+        SELECT A.SEQ,
+               A.INST_CD,
+               I.INST_NM,
+               A.USER_ID,
+               A.USER_NAME,
+               A.USER_PWD,
+               A.MOBL_PHN_NO,
+               A.OFFC_TEL_NO,
+               A.EMAIL_ADDR,
+               A.SMS_YN,
+               A.USE_YN,
+               A.AUTH_MAIN,
+               M.CODE_NAME AS AUTH_MAIN_NAME,
+               A.AUTH_SUB,
+               S.CODE_NAME AS AUTH_SUB_NAME,
+               A.PASS_RESET_YN,
+               A.LOCK_YN,
+               A.IP_ADDR,
+               A.OTP_KEY,
+               A.GPKI_SERIAL_NO,
+               A.INACTIVE_YN
+        FROM COMM_USER_REQUEST A
+                 LEFT JOIN COMM_CODE M
+                           ON M.COM_CODE1 = 4008
+                               AND CONCAT('AUTH_MAIN_', M.COM_CODE2) = A.AUTH_MAIN
+                               AND M.USE_YN = 'Y'
+                 LEFT JOIN COMM_CODE S
+                           ON S.COM_CODE1 = 4009
+                               AND CONCAT('AUTH_SUB_', S.COM_CODE2) = A.AUTH_SUB
+                               AND S.USE_YN = 'Y'
+                 LEFT JOIN TSMINST I
+                           ON I.INST_CD = A.INST_CD
+        WHERE A.SEQ = #{seq}
+    </select>
+    <select id="selectCommUserUserInfo"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.SimpleUserInfoDto">
+        SELECT A.SEQ       AS COMM_USER_SEQ,
+               A.INST_CD,
+               I.INST_NM,
+               A.USER_ID,
+               A.USER_NAME,
+               A.USER_PWD,
+               A.MOBL_PHN_NO,
+               A.OFFC_TEL_NO,
+               A.EMAIL_ADDR,
+               A.SMS_YN,
+               A.USE_YN,
+               A.AUTH_MAIN,
+               M.CODE_NAME AS AUTH_MAIN_NAME,
+               A.AUTH_SUB,
+               S.CODE_NAME AS AUTH_SUB_NAME,
+               A.PASS_RESET_YN,
+               A.LOCK_YN,
+               A.IP_ADDR,
+               A.OTP_KEY,
+               A.GPKI_SERIAL_NO,
+               A.INACTIVE_YN
+        FROM COMM_USER A
+                 LEFT JOIN COMM_CODE M
+                           ON M.COM_CODE1 = 4008
+                               AND CONCAT('AUTH_MAIN_', M.COM_CODE2) = A.AUTH_MAIN
+                               AND M.USE_YN = 'Y'
+                 LEFT JOIN COMM_CODE S
+                           ON S.COM_CODE1 = 4009
+                               AND CONCAT('AUTH_SUB_', S.COM_CODE2) = A.AUTH_SUB
+                               AND S.USE_YN = 'Y'
+                 LEFT JOIN TSMINST I
+                           ON I.INST_CD = A.INST_CD
+        WHERE A.SEQ = #{seq}
+    </select>
+
+    <insert id="insertApproveRejectRecord">
+        INSERT INTO COMM_USER_REQUEST (SEQ,
+                                       PARENT_SEQ,
+                                       COMM_USER_SEQ,
+                                       INST_CD,
+                                       USER_ID,
+                                       USER_NAME,
+                                       USER_PWD,
+                                       MOBL_PHN_NO,
+                                       OFFC_TEL_NO,
+                                       EMAIL_ADDR,
+                                       SMS_YN,
+                                       USE_YN,
+                                       REG_DT,
+                                       LASTPWDMODIFIED,
+                                       AUTH_MAIN,
+                                       AUTH_SUB,
+                                       LOGIN_FAIL_CNT,
+                                       PASS_RESET_YN,
+                                       LOCK_YN,
+                                       IP_ADDR,
+                                       OTP_KEY,
+                                       GPKI_SERIAL_NO,
+                                       INACTIVE_YN,
+                                       REQUEST_USER_SEQ,
+                                       REQUEST_TYPE,
+                                       REQUEST_REASON,
+                                       REQUEST_REG_DT,
+                                       REQUEST_INST_CD,
+                                       PROCESS_STATE,
+                                       APPROVE_USER_SEQ,
+                                       APPROVE_INST_CD,
+                                       APPROVE_REASON,
+                                       APPROVE_REG_DT)
+        SELECT COMM_USER_REQUEST_SEQ.nextval,
+               SEQ,
+               COMM_USER_SEQ,
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               LOGIN_FAIL_CNT,
+               PASS_RESET_YN,
+               LOCK_YN,
+               IP_ADDR,
+               OTP_KEY,
+               GPKI_SERIAL_NO,
+               INACTIVE_YN,
+               REQUEST_USER_SEQ,
+               REQUEST_TYPE,
+               REQUEST_REASON,
+               REQUEST_REG_DT,
+               REQUEST_INST_CD,
+               #{requestProcessState},
+               #{approveUserSeq},
+               #{approveInstCd},
+               #{approveReason},
+               TO_CHAR(sysdate, 'yyyymmddhh24miss')
+        FROM COMM_USER_REQUEST
+        WHERE SEQ = #{commUserRequestSeq}
+    </insert>
+
+    <select id="selectCommUserByRequestSeq"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.SimpleUserInfoDto">
+        SELECT CU.SEQ      AS COMM_USER_SEQ,
+               CU.INST_CD,
+               I.INST_NM,
+               CU.USER_ID,
+               CU.USER_NAME,
+               CU.USER_PWD,
+               CU.MOBL_PHN_NO,
+               CU.OFFC_TEL_NO,
+               CU.EMAIL_ADDR,
+               CU.SMS_YN,
+               CU.USE_YN,
+               CU.AUTH_MAIN,
+               M.CODE_NAME AS AUTH_MAIN_NAME,
+               CU.AUTH_SUB,
+               S.CODE_NAME AS AUTH_SUB_NAME,
+               CU.PASS_RESET_YN,
+               CU.LOCK_YN,
+               CU.IP_ADDR,
+               CU.OTP_KEY,
+               CU.GPKI_SERIAL_NO,
+               CU.INACTIVE_YN
+        FROM COMM_USER CU
+                 LEFT JOIN COMM_CODE M
+                           ON M.COM_CODE1 = 4008
+                               AND M.COM_CODE2 = CU.AUTH_MAIN
+                               AND M.USE_YN = 'Y'
+                 LEFT JOIN COMM_CODE S
+                           ON S.COM_CODE1 = 4009
+                               AND S.COM_CODE2 = CU.AUTH_SUB
+                               AND S.USE_YN = 'Y'
+                 LEFT JOIN TSMINST I
+                           ON I.INST_CD = CU.INST_CD
+        WHERE CU.SEQ = (SELECT COMM_USER_SEQ
+                        FROM COMM_USER_REQUEST
+                        WHERE SEQ = #{commUserRequestSeq})
+    </select>
+
+    <update id="updateCommUserFromRequest"
+    parameterType="com.klid.webapp.main.env.userManagementHistory.dto.CommUserRequestDto">
+        UPDATE COMM_USER
+        <set>
+            <if test="dto.instCd != null">INST_CD = #{dto.instCd},</if>
+            <if test="dto.userName != null">USER_NAME = #{dto.userName},</if>
+            <if test="dto.userPwd != null">USER_PWD = #{dto.userPwd},</if>
+            <if test="dto.moblPhnNo != null">MOBL_PHN_NO = #{dto.moblPhnNo},</if>
+            <if test="dto.offcTelNo != null">OFFC_TEL_NO = #{dto.offcTelNo},</if>
+            <if test="dto.emailAddr != null">EMAIL_ADDR = #{dto.emailAddr},</if>
+            <if test="dto.smsYn != null">SMS_YN = #{dto.smsYn},</if>
+            <if test="dto.useYn != null">USE_YN = #{dto.useYn},</if>
+            <if test="dto.lastPwdModified != null">LASTPWDMODIFIED = #{dto.lastPwdModified},</if>
+            <if test="dto.authMain != null">AUTH_MAIN = #{dto.authMain},</if>
+            <if test="dto.authSub != null">AUTH_SUB = #{dto.authSub},</if>
+            <if test="dto.loginFailCnt != null">LOGIN_FAIL_CNT = #{dto.loginFailCnt},</if>
+            <if test="dto.passResetYn != null">PASS_RESET_YN = #{dto.passResetYn},</if>
+            <if test="dto.lockYn != null">LOCK_YN = #{dto.lockYn},</if>
+            <if test="dto.ipAddr != null">IP_ADDR = #{dto.ipAddr},</if>
+            <if test="dto.otpKey != null">
+              OTP_KEY = CASE WHEN #{dto.otpKey} = '-' THEN NULL ELSE #{dto.otpKey} END,
+            </if>
+            <if test="dto.gpkiSerialNo != null">
+                GPKI_SERIAL_NO = CASE WHEN #{dto.gpkiSerialNo} = '-' THEN NULL ELSE #{dto.gpkiSerialNo} END,
+            </if>
+            <if test="dto.inactiveYn != null">INACTIVE_YN = #{dto.inactiveYn},</if>
+        </set>
+        WHERE SEQ = #{dto.commUserSeq}
+    </update>
+
+    <update id="updateOtpSecretKeyIsNullByCommUserSeq">
+        UPDATE COMM_USER SET OTP_KEY = NULL WHERE SEQ = #{commUserSeq}
+    </update>
+
+    <update id="updateGpkiSerialNoIsNullByCommUserSeq">
+        UPDATE COMM_USER SET GPKI_SERIAL_NO = NULL WHERE SEQ = #{commUserSeq}
+    </update>
+
+    <insert id="insertCommUserFromRequest">
+        INSERT INTO COMM_USER (SEQ,
+                               INST_CD,
+                               USER_ID,
+                               USER_NAME,
+                               USER_PWD,
+                               MOBL_PHN_NO,
+                               OFFC_TEL_NO,
+                               EMAIL_ADDR,
+                               SMS_YN,
+                               USE_YN,
+                               REG_DT,
+                               LASTPWDMODIFIED,
+                               AUTH_MAIN,
+                               AUTH_SUB,
+                               LOGIN_FAIL_CNT,
+                               PASS_RESET_YN,
+                               LOCK_YN,
+                               INACTIVE_YN,
+                               IP_ADDR,
+                               OTP_KEY,
+                               GPKI_SERIAL_NO)
+        SELECT
+            (SELECT	NVL(MAX(TO_NUMBER(SEQ)),0) + 1 FROM COMM_USER),
+               INST_CD,
+               USER_ID,
+               USER_NAME,
+               USER_PWD,
+               MOBL_PHN_NO,
+               OFFC_TEL_NO,
+               EMAIL_ADDR,
+               SMS_YN,
+               USE_YN,
+               REG_DT,
+               LASTPWDMODIFIED,
+               AUTH_MAIN,
+               AUTH_SUB,
+               LOGIN_FAIL_CNT,
+               PASS_RESET_YN,
+               LOCK_YN,
+               INACTIVE_YN,
+               IP_ADDR,
+               OTP_KEY,
+               GPKI_SERIAL_NO
+        FROM COMM_USER_REQUEST
+        WHERE SEQ = #{commUserRequestSeq}
+    </insert>
+
+    <delete id="deleteCommUserFromRequest">
+        delete from comm_user where seq = #{seq}
+    </delete>
+
+    <select id="selectStandByRegUserIdList"
+            resultType="com.klid.webapp.main.env.userManagementHistory.dto.StandByRegUserIdDto">
+        SELECT P.SEQ,
+               P.USER_ID,
+               P.REQUEST_TYPE,
+               COALESCE(
+                       (SELECT C.PROCESS_STATE
+                        FROM COMM_USER_REQUEST C
+                        WHERE C.PARENT_SEQ = P.SEQ
+                          AND C.SEQ = (SELECT MAX(SEQ)
+                                       FROM COMM_USER_REQUEST
+                                       WHERE PARENT_SEQ = P.SEQ)),
+                       P.PROCESS_STATE
+               )                          AS LATEST_PROCESS_STATE,
+               (SELECT LISTAGG(SEQ, ',') within group ( ORDER BY SEQ )
+                FROM COMM_USER_REQUEST
+                WHERE PARENT_SEQ = P.SEQ) AS CHILD_SEQ
+        FROM COMM_USER_REQUEST P
+        WHERE P.PARENT_SEQ IS NULL
+          AND P.REQUEST_TYPE = 'REGISTRATION_REQUEST'
+          AND P.USER_ID = #{userId}
+    </select>
+</mapper>

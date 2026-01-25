@@ -1,0 +1,475 @@
+/*==============================================
+  통합 로그인 페이지 스타일시트
+  CTRS, VMS 통합 로그인 화면
+==============================================*/
+
+/* ===============================
+   1. BASE STYLES & UTILITIES
+=============================== */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* ===============================
+   2. BACKGROUND & LAYOUT
+=============================== */
+.login-background-image1 {
+    background: linear-gradient(0deg, #ffffff 0%, #8ac3ec 90%);
+    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.login-background-image2 {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+#login-form {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-container {
+    margin-top: 0;
+    width: 570px;
+    min-height: auto;
+}
+
+/* 미디어 쿼리에서 추가되는 .login-container 스타일 */
+@media (max-width: 768px) {
+    .login-container {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* ===============================
+   3. LOGIN BOX & TITLE
+=============================== */
+.login-title {
+    font: normal bold 35px/1.4 "맑은 고딕", "Malgun Gothic", sans-serif;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-box {
+    font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    padding: 50px 40px;
+}
+
+/* 미디어 쿼리에서 추가되는 .login-box 스타일 */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 25px 15px;
+    }
+}
+
+/* ===============================
+   4. TEXT & TYPOGRAPHY
+=============================== */
+.text-word-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: end;
+}
+.text-word-login {
+    position: relative;
+    top: 5px;
+    font-size: 35px;
+    font-weight: 700;
+    color: #2c3e50;
+    letter-spacing: -0.5px;
+}
+
+.text-word-login-message {
+    width: 100%;
+    font-size: 20px;
+    color: #6c7b7f;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.split-line {
+    display: block;
+    width: 100%;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e6ed, transparent);
+    margin: 5px 0;
+}
+
+/* ===============================
+   5. LAYOUT GRID SYSTEM
+=============================== */
+.input-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.row-1 {
+    height: 30px;
+}
+
+/* 미디어 쿼리에서 추가되는 .row 스타일 */
+@media (max-width: 768px) {
+    .row {
+        flex-wrap: wrap;
+        margin: 10px 0;
+    }
+}
+
+/* 미디어 쿼리에서 추가되는 .row-1 스타일 */
+@media (max-width: 768px) {
+    .row-1 {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+    }
+}
+
+.input-box-cell-1 {
+    flex: 0 0 120px;
+}
+
+.input-box-cell-2 {
+    flex: 1 1 auto;
+}
+
+.input-box-cell-2 > div:nth-of-type(2) {
+    margin-top: 10px;
+}
+
+.input-box-cell-3 {
+    flex: 0 0 120px;
+}
+
+.cell-center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===============================
+   6. INPUT FIELDS & ICONS
+=============================== */
+.input-text-with-icon-login-page {
+    width: 100%;
+    height: 42px;
+    padding-left: 45px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    color: #2c3e50;
+    font-size: 14px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.input-text-with-icon-login-page:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-text-with-icon-login-page::placeholder {
+    color: #a0a6b1;
+    font-size: 13px;
+}
+
+.input-text-with-icon-login-page:disabled,
+.input-text-with-icon-login-page[disabled] {
+    background: #f5f5f5;   /* 살짝 회색 배경 */
+    border-color: #dcdcdc; /* 옅은 테두리 */
+    color: #999999;        /* 글씨 흐리게 */
+    cursor: not-allowed;   /* 입력 불가 커서 */
+    opacity: 0.7;          /* 전체적으로 흐리게 */
+}
+
+/* placeholder 도 비활성화 시 더 흐리게 */
+.input-text-with-icon-login-page:disabled::placeholder {
+    color: #c0c0c0;
+}
+
+.img-icon-for-input-text-login-page {
+    position: relative;
+    left: 35px;
+    z-index: 10;
+    opacity: 0.7;
+}
+
+/* ===============================
+   7. BUTTONS & INTERACTIONS
+=============================== */
+.button-login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+    background: #005e9e;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.button-login-page:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.button-login-page:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.button-login-page:disabled,
+.button-login-page[disabled] {
+    background: #cccccc; /* 흐린 회색 배경 */
+    color: #666666;      /* 글씨 색도 연하게 */
+    cursor: not-allowed; /* 마우스 커서: 금지 표시 */
+    box-shadow: none;    /* 그림자 제거 */
+    transform: none;     /* hover/active 효과 제거 */
+    opacity: 0.7;        /* 투명도 살짝 줘서 비활성 느낌 */
+}
+
+
+/* ===============================
+   8. RADIO BUTTONS & FORM ELEMENTS
+=============================== */
+input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+    margin: 0;
+    cursor: pointer;
+}
+
+input[type="radio"] + label {
+    font-size: 14px;
+    color: #2c3e50;
+    font-weight: 500;
+    cursor: pointer;
+    padding-left: 5px;
+    user-select: none;
+}
+
+input[type="radio"]:checked + label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* ===============================
+   9. AUTHENTICATION SECTIONS
+=============================== */
+#multi-authenticate-type-container {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 10px;
+}
+
+#multi-authenticate-type-container span {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* ===============================
+   10. FOOTER STYLES
+=============================== */
+.footer-copyright {
+    font-size: 11px;
+    color: #8892b0;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.footer-copyright > .contact-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.footer-copyright strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+#manual-download-menu {
+    border: 1px solid #e1e5e9;
+    border-radius: 5px;
+    width: 150px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#manual-download-menu:hover {
+    background-color: #f5f7fa;
+    border-color: #005e9e;;
+}
+
+.manual-dropdown {
+    display: none;
+    position: absolute;
+    top: 20%;
+    left: 100%;
+    min-width: 200px;
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: center;
+}
+
+#manual-download-menu:hover .manual-dropdown {
+    display: flex;
+    flex-direction: column;
+}
+
+#manual-download-menu a {
+    text-decoration: none;
+    color: #8892b0;
+}
+
+#manual-download-menu a span {
+    text-decoration: none;
+    color: #8892b0;
+}
+
+.manual-dropdown a {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.manual-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.manual-dropdown a:hover {
+    background-color: #005e9e;
+    color: white;
+}
+
+#private-policy-info {
+    color: #667eea !important;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#private-policy-info:hover {
+    color: #764ba2 !important;
+}
+
+/* ===============================
+   11. RESPONSIVE DESIGN
+=============================== */
+
+/* 태블릿 및 소형 데스크톱 (768px 이하) - 추가 스타일 */
+@media (max-width: 768px) {
+    .login-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .text-word-login {
+        font-size: 28px;
+    }
+
+    .input-text-with-icon-login-page {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .input-box-cell-1,
+    .input-box-cell-3 {
+        flex: 0 0 60px;
+    }
+
+    .input-box-cell-2 {
+        margin: 10px 0;
+    }
+}
+
+/* 모바일 (480px 이하) - 추가 스타일 */
+@media (max-width: 480px) {
+    #login-form {
+        padding: 10px;
+    }
+
+    .login-title {
+        font-size: 20px;
+    }
+
+    .text-word-login {
+        font-size: 24px;
+    }
+
+    .input-text-with-icon-login-page {
+        width: 100%;
+        max-width: none;
+    }
+
+    .footer-copyright {
+        font-size: 10px;
+    }
+
+    fieldset {
+        width: 100% !important;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}

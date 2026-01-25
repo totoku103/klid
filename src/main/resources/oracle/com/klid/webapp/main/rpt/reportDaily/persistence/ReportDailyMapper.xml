@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportDaily.persistence.ReportDailyMapper">
+
+    <!-- 일일 실적 사고처리 현황 조회 -->
+    <select id="selectReportDayStat">
+        SELECT nvl(count(inci_acpn_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE inci_acpn_dt LIKE #{occrDt}%
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+
+    <!-- 일일 실적 사고처리 -->
+    <select id="selectReportDayTotal">
+        SELECT nvl(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1))),0) as worm_cnt,
+        nvl(count(inci_no)-(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1)))),0) as web_cnt
+        FROM TBZLEDGE
+        WHERE inci_acpn_dt between #{startDt} and #{endDt}
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+
+    <!-- 일일 실적 사고처리 현황  누계 조회 -->
+    <select id="selectReportSumStat">
+        SELECT total_cnt, end_cnt, ing_cnt
+        FROM ( SELECT nvl(count(inci_acpn_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE TO_DATE(inci_acpn_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+
+    <!-- 일일 실적 사고처리 현황 조회 -->
+    <select id="selectReportEndCnt">
+        SELECT nvl(count(inci_upd_dt), 0) total_cnt
+        FROM TBZLEDGE
+        WHERE AND inci_upd_dt LIKE #{occrDt}
+        AND inci_acpn_dt LIKE #{endDt}
+        AND inci_prcs_stat in ('12', '13', '15', '17')
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+
+    <!-- 유형별 사고내역  일일 조회 -->
+    <select id="selectReportDayType">
+        SELECT nvl(type_nm, '0.합 계') type_nm, nvl(sum(total_cnt), 0) total_cnt,
+        nvl(sum(inst1), 0) inst1, nvl(sum(inst2), 0) inst2, nvl(sum(inst3), 0) inst3,
+        nvl(sum(inst4), 0) inst4
+        FROM ( SELECT case com_code2 when '20' then '1.비인가접근'
+        when '30' then '2.서비스거부'
+        when '10' then '3.악성코드'
+        when '40' then '4.웹취약점'
+        when '70' then '5.정보수집'
+        else '6.기 타' end as type_nm,
+        total_cnt, inst1, inst2, inst3, inst4
+        FROM ( SELECT accd_typ_cd,
+        count(*) total_cnt,
+        count(decode(dcl_inst_cd, 1100000, 1, null)) inst1,
+        count(decode(dcl_inst_cd, 1400000, 1, null)) inst2,
+        count(decode(dcl_inst_cd, 1500000, 1, null)) inst3,
+        count(decode(dcl_inst_cd, 1600000, 1, null)) inst4
+        FROM tbzledge
+        WHERE inci_acpn_dt like #{occrDt}
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY accd_typ_cd ) a,
+        ( SELECT com_code2, code_name
+        FROM comm_code
+        WHERE com_code1 = '3002'
+        AND code_lvl = 2 ) b
+        WHERE a.accd_typ_cd (+) = b.com_code2 )
+        GROUP BY ROLLUP(type_nm)
+        ORDER BY type_nm
+    </select>
+
+    <!-- 유형별 사고내역  누계 조회 -->
+    <select id="selectReportSumType">
+        SELECT nvl(type_nm, '0.합계') type_nm, nvl(sum(total_cnt), 0) total_cnt
+        FROM ( SELECT case com_code2 when '20' then '1.비인가접근'
+        when '30' then '2.서비스거부'
+        when '10' then '3.악성코드'
+        when '40' then '4.웹취약점'
+        when '70' then '5.정보수집'
+        else '6.기타' end as type_nm,
+        total_cnt
+        FROM ( SELECT accd_typ_cd,
+        count(*) total_cnt
+        FROM tbzledge
+        WHERE TO_DATE(inci_acpn_dt,'yyyymmddhh24miss')
+        BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY ACCD_TYP_CD ) A,
+        ( SELECT COM_CODE2, CODE_NAME
+        FROM COMM_CODE
+        WHERE COM_CODE1 = '3002'
+        AND CODE_LVL = 2 ) B
+        WHERE A.ACCD_TYP_CD (+) = B.COM_CODE2 )
+        GROUP BY ROLLUP(TYPE_NM)
+        ORDER BY TYPE_NM
+
+    </select>
+
+    <!-- 탐지정책 일자 계산 -->
+    <select id="selectReportTmsDate">
+		SELECT TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'), 'YYYYMMDD') AS OCCR_DT,
+		CASE  WHEN TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'),'D' = '1' THEN -- 일요일
+		TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+		WHEN TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'),'D' = '7' THEN -- 토요일
+		TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+		WHEN TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'),'D' = '2' THEN -- 월요일
+		TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD')-3, 'YYYYMMDD')
+		ELSE TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD')-1, 'YYYYMMDD')END AS BEFORE_DT,
+		 CASE  WHEN TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'), 'D') IN ('1', '2') THEN -- 일요일, 월요일
+		 TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD')-3, 'YYYYMMDD')
+		  WHEN TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD'), 'D') = '7' THEN -- 토요일
+		 TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD')-2, 'YYYYMMDD')
+		 ELSE TO_CHAR(TO_DATE(#{occrDt}, 'YYYY-MM-DD')-1, 'YYYYMMDD') END AS TOTAL_DT
+	</select>
+
+    <!--  탐지정책 현황  일일 조회  -->
+    <select id="selectReportDayTms">
+		SELECT nvl(SUM(sum_cnt), 0) cnt0
+		, nvl(SUM(webhack_cnt), 0) web_cnt0
+		, nvl(SUM(malware_cnt), 0) mal_cnt0
+		, nvl(SUM(ddos_cnt), 0) cnt1
+		, nvl(SUM(info_cnt), 0) web_cnt1
+		, nvl(SUM(unauthorized_cnt), 0) mal_cnt1
+		, nvl(SUM(total_cnt), 0) total_cnt
+		FROM(
+		SELECT nvl(count(rulename), 0) sum_cnt
+		, nvl(count(case when rulename like '%_webhack%' then 1 else null end), 0) webhack_cnt
+		, nvl(count(case when rulename like '%_mal%' then 1 else null end), 0) malware_cnt
+		, nvl(count(case when rulename like '%_ddos%' then 1 else null end), 0) ddos_cnt
+		, 0 info_cnt
+		, nvl(count(case when rulename like '%_unauthorized%' then 1 else null end), 0) unauthorized_cnt
+		, 0 total_cnt
+		FROM tms.center_rule_info
+		WHERE group_code <![CDATA[ <> ]]> 0
+		AND lastupdatedt like #{occrDt}'%'
+
+		UNION ALL
+
+		SELECT 0 sum_cnt
+		, 0 webhack_cnt
+		, 0 malware_cnt
+		, 0 ddos_cnt
+		, 0 info_cnt
+		, 0 unauthorized_cnt
+		, nvl(count(*), 0) total_cnt
+		FROM tms.center_rule_info
+		WHERE group_code <![CDATA[ <> ]]> 0
+		AND TO_DATE(lastupdatedt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{totalDt},'yyyy-mm-dd')
+		AND TO_DATE(#{occrDt2},'yyyymmdd')+1
+		AND id NOT IN(
+		SELECT id
+		FROM center_rule_info
+		WHERE lastupdatedt LIKE '20110602%'
+		AND rulename NOT LIKE 'L_%Nateon%'
+		)
+		)
+	</select>
+
+    <!-- 시도별 일일 사고처리 현황  일일 조회 -->
+    <select id="selectReportDayInciSum">
+        SELECT nvl(inst_nm, '합계') inst_nm, decode(inst_nm, '', '0', local_cd) local_cd,
+        total_cnt, end_cnt, ing_cnt
+        FROM ( SELECT b.inst_nm,
+        min(b.local_cd) local_cd,
+        nvl(SUM(total_cnt), 0) total_cnt,
+        nvl(SUM(end_cnt),0) end_cnt,
+        nvl(SUM(ing_cnt), 0) ing_cnt
+        FROM ( SELECT #{InciTrnsInstCd},
+        nvl(count(inci_acpn_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE TO_DATE(inci_acpn_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY #{InciTrnsInstCd} )a,
+        ( SELECT inst_cd, inst_nm, nvl(replace(local_cd, 170, 75), '0') local_cd
+        FROM tsminst
+        <if test="instCd==''">
+            WHERE pnt_inst_cd = #{instCd}
+        </if>
+        <if test="instCd!=''">
+            WHERE local_cd = #{localCd}
+        </if>
+        AND INST_CD NOT IN (SELECT com_code2 FROM COMM_CODE
+        WHERE com_code1 = '4002'
+        AND code_lvl = '2' )
+        AND INST_CD <![CDATA[ <> ]]> 1200000 )b
+        WHERE a.#{InciTrnsInstCd} (+) = b.inst_cd
+        GROUP BY ROLLUP(b.inst_nm) )
+        <if test="instCd==''">
+            ORDER BY to_number(local_cd)
+        </if>
+        <if test="instCd!=''">
+            ORDER BY to_number(local_cd), DECODE(inst_nm, (select inst_nm from tsminst where inst_cd = #{instCd}), 2)
+        </if>
+
+    </select>
+
+    <!-- 시도별 일일 사고처리 현황 누계 조회 -->
+    <select id="selectReportSumInci">
+        SELECT nvl(inst_nm, '합계') inst_nm, decode(inst_nm, '', '0', local_cd) local_cd, total_cnt, end_cnt, ing_cnt
+        FROM ( SELECT b.inst_nm,
+        min(b.local_cd) local_cd,
+        nvl(SUM(total_cnt), 0) total_cnt,
+        nvl(SUM(end_cnt),0) end_cnt,
+        nvl(SUM(ing_cnt), 0) ing_cnt
+        FROM ( SELECT #{InciTrnsInstCd},
+        nvl(count(inci_acpn_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE TO_DATE(inci_acpn_dt,'yyyymmddhh24miss')
+        BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY #{InciTrnsInstCd} )a,
+        ( SELECT inst_cd, inst_nm, nvl(replace(local_cd, 170, 75), '0') local_cd
+        FROM tsminst
+        <if test="instCd==''">
+            WHERE pnt_inst_cd = #{instCd}
+        </if>
+        <if test="instCd!=''">
+            WHERE local_cd = #{localCd}
+        </if>
+
+        AND INST_CD NOT IN (SELECT com_code2 FROM COMM_CODE
+        WHERE com_code1 = '4002'
+        AND code_lvl = '2' )
+        AND INST_CD <![CDATA[ <> ]]> 1200000 )b
+        WHERE a.#{InciTrnsInstCd} (+) = b.inst_cd
+        GROUP BY ROLLUP(b.inst_nm) )
+        <if test="instCd==''">
+            ORDER BY to_number(local_cd)
+        </if>
+        <if test="instCd!=''">
+            ORDER BY to_number(local_cd), DECODE(inst_nm, (select inst_nm from tsminst where inst_cd = #{instCd}), 2)
+        </if>
+    </select>
+
+    <!-- 일주 실적 사고처리 현황  누계 조회 -->
+    <select id="selectReportYearSumStat">
+        SELECT total_cnt, end_cnt, ing_cnt
+        FROM ( SELECT nvl(count(inci_upd_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE TO_DATE(inci_upd_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        )
+    </select>
+
+    <!-- 일일 일주 사고처리 현황 조회 -->
+    <select id="selectReportWeekEndCnt">
+        SELECT nvl(count(inci_upd_dt), 0) total_cnt
+        FROM TBZLEDGE
+        WHERE TO_DATE(inci_upd_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        AND inci_prcs_stat in ('12', '13', '15', '17')
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+    <!-- 유형별 사고내역  일주 조회 -->
+    <select id="selectReportWeekType">
+        SELECT nvl(type_nm, '0.합 계') type_nm, nvl(sum(total_cnt), 0) total_cnt,
+        nvl(sum(inst1), 0) inst1, nvl(sum(inst2), 0) inst2, nvl(sum(inst3), 0) inst3,
+        nvl(sum(inst4), 0) inst4
+        FROM ( SELECT case com_code2 when '20' then '1.비인가접근'
+        when '30' then '2.서비스거부'
+        when '10' then '3.악성코드'
+        when '40' then '4.웹취약점'
+        when '70' then '5.정보수집'
+        else '6.기 타' end as type_nm,
+        total_cnt, inst1, inst2, inst3, inst4
+        FROM ( SELECT accd_typ_cd,
+        count(*) total_cnt,
+        count(decode(dcl_inst_cd, 1100000, 1, null)) inst1,
+        count(decode(dcl_inst_cd, 1400000, 1, null)) inst2,
+        count(decode(dcl_inst_cd, 1500000, 1, null)) inst3,
+        count(decode(dcl_inst_cd, 1600000, 1, null)) inst4
+        FROM tbzledge
+        WHERE TO_DATE(inci_acpn_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyy-mm-dd')
+        AND TO_DATE(#{endDt},'yyyy-mm-dd')+1
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY accd_typ_cd ) a,
+        ( SELECT com_code2, code_name
+        FROM comm_code
+        WHERE com_code1 = '3002'
+        AND code_lvl = 2 ) b
+        WHERE a.accd_typ_cd (+) = b.com_code2 )
+        GROUP BY ROLLUP(type_nm)
+        ORDER BY type_nm
+    </select>
+
+    <!-- 일일 보안관제결과 통보양식 - 통계 -->
+    <select id="selectReportResultTotal">
+        SELECT nvl(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))),0) as nis_cnt,
+        nvl(count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))),0) as cnt_cnt,
+        nvl(count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1))),0) as tng_cnt,
+        nvl(count(inci_no),0) as tot_cnt,
+        nvl(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1))),0) as worm_cnt,
+        nvl(count(inci_no)-(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) +
+        count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1)))),0) as web_cnt
+        FROM TBZLEDGE
+        WHERE inci_acpn_dt between #{startDt} and #{endDt}
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+    </select>
+
+    <!-- 일일 보안관제결과 통보양식 - 악성코드 리스트 -->
+    <select id="selectReportResultList">
+        SELECT substr(inci_ttl,instr(inci_ttl, '[')+1, instr(inci_ttl, ']')-instr(inci_ttl, '[')-1) as search_nm,
+        inst.inst_nm,
+        getInstCodeName(dcl_inst_cd) as dcl_inst_cd_nm
+        FROM TBZLEDGE tbzledge
+        join(
+        select inst.inst_nm, inst.inst_cd, local.local_cd
+        from tsminst inst
+        join tsmlocal local
+        on inst.local_cd = local.local_cd
+        ) inst
+        on tbzledge.dmg_inst_cd = inst.inst_cd
+        WHERE tbzledge.dcl_inst_cd in ('1400000','1100000','1500000')
+        and inci_acpn_dt between ? and ?
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        and inst_cd not in 1200000
+        and accd_typ_cd = '10'
+        order by dcl_inst_cd_nm, search_nm
+    </select>
+
+    <!-- 일일 보안관제결과 통보양식 - 악성코드외 리스트 -->
+    <select id="selectReportResultExceptlist">
+        SELECT substr(inci_acpn_dt,0,4) AS inci_acpn_yr,
+        substr(inci_acpn_dt,5,2) AS inci_acpn_mm,
+        substr(inci_acpn_dt,7,2) AS inci_acpn_dd,
+        substr(inci_acpn_dt,9,2) AS inci_acpn_hr,
+        substr(inci_acpn_dt,11,2) AS inci_acpn_mi,
+        ledge.inci_no,
+        inst.inst_nm,
+        getCommCodeName('3002', accd_typ_cd) AS accd_typ_cd_nm,
+        attip.ip_addr,
+        accd_typ_cd
+        FROM TBZLEDGE ledge
+        join(
+        select inst.inst_nm, inst.inst_cd, local.local_cd
+        from tsminst inst
+        join tsmlocal local
+        on inst.local_cd = local.local_cd
+        ) inst
+        on ledge.dmg_inst_cd = inst.inst_cd
+        left join(
+        SELECT inci_no, SUBSTR(MAX(SYS_CONNECT_BY_PATH(ip_addr, ', ')), 3) ip_addr
+        FROM (
+        SELECT inci_no, ip_addr, ROW_NUMBER() over (PARTITION BY inci_no ORDER BY inci_no) rnum
+        FROM tbzattip )
+        START WITH rnum = 1
+        CONNECT BY PRIOR rnum = rnum-1 AND PRIOR inci_no = inci_no
+        GROUP BY inci_no
+        ORDER BY inci_no
+        ) attip
+        on ledge.inci_no = attip.inci_no
+        WHERE ledge.dcl_inst_cd in ('1400000','1100000','1500000')
+        and inci_acpn_dt between #{startDt} and #{endDt}
+        and accd_typ_cd in ('20','30','40','50','60','70')
+        and dmg_inst_cd <![CDATA[ <> ]]> 1200000
+        order by inci_acpn_dt
+    </select>
+
+    <!-- 탐지정책 현황  일주 조회 -->
+    <select id="selectReportWeekTms">
+        SELECT nvl(SUM(sum_cnt), 0) cnt0
+        , nvl(SUM(webhack_cnt), 0) web_cnt0
+        , nvl(SUM(malware_cnt), 0) mal_cnt0
+        , nvl(SUM(ddos_cnt), 0) cnt1
+        , nvl(SUM(info_cnt), 0) web_cnt1
+        , nvl(SUM(unauthorized_cnt), 0) mal_cnt1
+        , nvl(SUM(total_cnt), 0) total_cnt
+        FROM(
+        SELECT nvl(count(rulename), 0) sum_cnt
+        , nvl(count(case when rulename like '%_webhack%' then 1 else null end), 0) webhack_cnt
+        , nvl(count(case when rulename like '%_mal%' then 1 else null end), 0) malware_cnt
+        , nvl(count(case when rulename like '%_ddos%' then 1 else null end), 0) ddos_cnt
+        , 0 info_cnt
+        , nvl(count(case when rulename like '%_unauthorized%' then 1 else null end), 0) unauthorized_cnt
+        , 0 total_cnt
+        FROM tms.center_rule_info
+        WHERE group_code <![CDATA[ <> ]]> 0
+        AND TO_DATE(lastupdatedt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{occrDt3},'yyyy-mm-dd')
+        AND TO_DATE(#{occrDt1},'yyyymmdd')+1
+        UNION ALL
+
+        SELECT 0 sum_cnt
+        , 0 webhack_cnt
+        , 0 malware_cnt
+        , 0 ddos_cnt
+        , 0 info_cnt
+        , 0 unauthorized_cnt
+        , nvl(count(*), 0) total_cnt
+        FROM tms.center_rule_info
+        WHERE group_code <![CDATA[ <> ]]> 0
+        AND TO_DATE(lastupdatedt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{totalSDt},'yyyy-mm-dd')
+        AND TO_DATE(#{totalEDt},'yyyymmdd')+1
+        AND id NOT IN(
+        SELECT id
+        FROM center_rule_info
+        WHERE lastupdatedt LIKE '20110602%'
+        AND rulename NOT LIKE 'L_%Nateon%'
+        )
+        )
+    </select>
+
+    <!-- 시도별 일일 사고처리 현황  일일 조회 처리 -->
+    <select id="selectReportDayInciProc">
+        SELECT nvl(inst_nm, '처리') inst_nm, decode(inst_nm, '', '0', local_cd) local_cd,
+        total_cnt, end_cnt, ing_cnt
+        FROM ( SELECT b.inst_nm,
+        min(b.local_cd) local_cd,
+        nvl(SUM(total_cnt), 0) total_cnt,
+        nvl(SUM(end_cnt),0) end_cnt,
+        nvl(SUM(ing_cnt), 0) ing_cnt
+        FROM ( SELECT #{inciTrnsInstCd},
+        nvl(count(inci_acpn_dt), 0) total_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+        nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+        FROM TBZLEDGE
+        WHERE inci_acpn_dt LIKE #{occrDt}'%'
+        <if test="instCd==''">
+            <include refid="Common.dmgInstCd"/>
+        </if>
+        GROUP BY #{inciTrnsInstCd} )a,
+        ( SELECT inst_cd, inst_nm, nvl(local_cd, '0') local_cd
+        FROM tsminst
+        <if test="instCd==''">
+            WHERE pnt_inst_cd = #{instCd}
+        </if>
+        <if test="instCd!=''">
+            WHERE local_cd = #{localCd}
+        </if>
+        AND INST_CD NOT IN (SELECT com_code2 FROM COMM_CODE
+        WHERE com_code1 = '4002'
+        AND code_lvl = '2' )
+        AND INST_CD <![CDATA[ <> ]]> 1200000 )b
+        WHERE a.#{inciTrnsInstCd} (+) = b.inst_cd
+        GROUP BY ROLLUP(b.inst_nm) )
+        <if test="instCd==''">
+            ORDER BY to_number(local_cd)
+        </if>
+        <if test="instCd!=''">
+            ORDER BY to_number(local_cd), DECODE(inst_nm, (select inst_nm from tsminst where inst_cd = #{instCd}), 2)
+        </if>
+    </select>
+
+    <!-- getReport_Sum_stat -->
+
+</mapper>

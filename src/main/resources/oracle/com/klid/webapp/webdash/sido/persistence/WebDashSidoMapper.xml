@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.webdash.sido.persistence.WebDashSidoMapper">
+
+
+    <resultMap type="com.klid.webapp.webdash.sido.dto.WebDashSidoDto" id="resultNoticeList">
+        <result property="title" column="TITLE"/>
+        <result property="ymd" column="YMD"/>
+    </resultMap>
+
+    <select id="getNoticeList" resultMap="resultNoticeList">
+        SELECT
+        *
+        FROM (
+        SELECT
+        NVL(A.BULTN_TITLE,' ') AS TITLE,
+        NVL(TO_CHAR(TO_DATE(A.REG_DATE, 'yyyymmdd HH24MISS'),'YYYY.MM.DD'),' ') AS YMD
+        FROM
+        BULTN A
+        LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+        WHERE
+        1 = 1
+        AND A.USE_YN = 'Y'
+        AND A.BULTN_TYPE = 'notice'
+
+        <if test="sAuthMain != null and sAuthMain != ''">
+            <choose>
+                <when test="sAuthMain == 'AUTH_MAIN_3'">
+                    AND
+                    (
+                    A.ORGAN_CODE IN (
+                    SELECT inst_cd FROM tsminst
+                    CONNECT BY PRIOR inst_cd = pnt_inst_cd
+                    START WITH inst_cd = #{sInstCd}
+                    )
+                    OR A.ORGAN_CODE = 1100000
+                    )
+                    AND A.OPEN_SCOPE LIKE '%3%'
+                </when>
+                <when test="sAuthMain == 'AUTH_MAIN_4'">
+                    AND
+                    (
+                    A.ORGAN_CODE IN (
+                    SELECT inst_cd FROM tsminst
+                    CONNECT BY PRIOR inst_cd = pnt_inst_cd
+                    START WITH inst_cd = #{sInstCd}
+                    )
+                    OR A.ORGAN_CODE = 1100000 OR A.ORGAN_CODE = #{sPntInstCd}
+                    )
+                    AND A.OPEN_SCOPE LIKE '%4%'
+                </when>
+                <when test="sAuthMain == 'AUTH_MAIN_2'">
+                    AND A.OPEN_SCOPE LIKE '%2%'
+                    AND A.CATE_NO IN (2,3)
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+        </if>
+        ORDER BY
+        A.BULTN_NO DESC
+        )WHERE
+        ROWNUM <![CDATA[ <= ]]>  #{listSize}
+    </select>
+
+    <select id="getSecuList" resultMap="resultNoticeList">
+    SELECT
+    *
+    FROM (
+    SELECT
+       NVL(A.BULTN_TITLE,' ') AS TITLE,
+        NVL(TO_CHAR(TO_DATE(A.REG_DATE, 'yyyymmdd HH24MISS'),'YYYY.MM.DD'),' ') AS YMD
+    FROM
+        BULTN A
+    LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+    WHERE
+    1 = 1
+    AND A.USE_YN = 'Y'
+    AND A.BULTN_TYPE = 'secu_data'
+    AND ( A.ORGAN_CODE =  (select pnt_inst_cd from tsminst where inst_cd = #{sInstCd} ) OR A.ORGAN_CODE = #{sInstCd} )
+        <if test="sAuthMain != null and sAuthMain != ''">
+            <choose>
+                <when test="sAuthMain == 'AUTH_MAIN_2'">
+                    AND A.CATE_NO IN (4,5,7)
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+        </if>
+    ORDER BY
+    A.BULTN_NO DESC
+    )WHERE
+    ROWNUM <![CDATA[ <= ]]>  #{listSize}
+</select>
+
+
+    <resultMap type="com.klid.webapp.webdash.sido.dto.WebDashSidoDto" id="resultForgeryCheck">
+        <result property="instCd" column="INST_CD"/>
+        <result property="cnt" column="CNT"/>
+        <result property="instNm" column="INST_NM"/>
+    </resultMap>
+
+    <select id="getForgeryCheck" resultMap="resultForgeryCheck">
+ SELECT INST_CD , count(inst_cd) AS CNT, (select inst_nm from tsminst where inst_cd = b.inst_cd) AS INST_NM
+     FROM (select (select local_cd from tsminst where inst_cd = a.inst_cd) as local_cd
+                , inst_cd
+                 , (select inst_level from tsminst where inst_cd = a.inst_cd) as inst_level
+             from forgery_url a
+            where last_res in (5,4)
+              and a.depth=3 ) b
+    WHERE local_cd = #{localCd}
+    GROUP BY inst_cd
+</select>
+
+    <select id="getHcCheck" resultMap="resultForgeryCheck">
+SELECT INST_CD, count(inst_cd) AS CNT, (select inst_nm from tsminst where inst_cd = b.inst_cd ) AS INST_NM
+     FROM (select (select local_cd from tsminst where inst_cd = a.inst_cd) as local_cd
+                , inst_cd
+                , (select inst_level from tsminst where inst_cd = a.inst_cd) as inst_level
+             from HM_HC_URL a
+            where last_res != 200
+              and  a.use_yn=1
+              and  a.check_sido_yn=1) b
+    WHERE local_cd =  #{localCd}
+    GROUP BY inst_cd
+</select>
+
+    <resultMap type="com.klid.webapp.webdash.sido.dto.WebDashSidoDto" id="resultProcess">
+        <result property="instCd" column="INST_CD"/>
+        <result property="totalCnt" column="TOTAL_CNT"/>
+        <result property="instNm" column="INST_NM"/>
+        <result property="processCnt" column="PROCESS_CNT"/>
+        <result property="completeCnt" column="COMPLETE_CNT"/>
+        <result property="rnum" column="RNUM"/>
+        <result property="dataCnt" column="DATA_CNT"/>
+    </resultMap>
+
+    <select id="getProcess" resultMap="resultProcess">
+        with
+        local_to_pnt_inst AS (
+        select pnt_inst_cd from  tsminst where local_cd = #{localCd} and inst_level = 2 and rownum = 1
+        ),
+        pri AS (SELECT
+        INCI_TRNS_RCPT_INST_CD AS                                                                      dmg_inst_cd,
+        NVL(COUNT(TRANS_INCI_PRCS_STAT), 0)                                                            total_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0)          end_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', NULL, '12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1 = 1
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND (d.INCI_TRNS_RCPT_INST_CD = (select * from local_to_pnt_inst) OR dmg_inst_cd IN (SELECT inst_cd
+        FROM tsminst
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd = (select * from local_to_pnt_inst)))
+        AND (d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT inst_cd
+        FROM tsminst
+        WHERE inst_cd <![CDATA[ <> ]]> (select * from local_to_pnt_inst)
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd = (select * from local_to_pnt_inst))
+        OR INCI_TRNS_RCPT_SIDO_INST_CD IS NULL
+        )
+        AND ( INCI_PRCS_STAT IS NULL OR INCI_PRCS_STAT=0 OR  INCI_PRCS_STAT>10)--개발원 이관요청건 안나오게(20190521)
+        GROUP BY INCI_TRNS_RCPT_INST_CD
+        UNION ALL
+        SELECT
+        DCL_INST_CD AS                                                                                 dmg_inst_cd,
+        NVL(COUNT(TRANS_INCI_PRCS_STAT), 0)                                                            total_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0)          end_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', NULL, '12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1 = 1
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND d.DCL_INST_CD IN ((select * from local_to_pnt_inst))
+        AND (d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT inst_cd
+        FROM tsminst
+        WHERE inst_cd <![CDATA[ <> ]]> (select * from local_to_pnt_inst)
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd = (select * from local_to_pnt_inst))
+        OR INCI_TRNS_RCPT_SIDO_INST_CD IS NULL)
+        GROUP BY DCL_INST_CD
+        UNION ALL
+        SELECT
+        INCI_TRNS_RCPT_SIDO_INST_CD AS                                                                 dmg_inst_cd,
+        NVL(COUNT(TRANS_INCI_PRCS_STAT), 0)                                                            total_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0)          end_cnt,
+        NVL(COUNT(DECODE(TRANS_INCI_PRCS_STAT, '13', NULL, '12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1 = 1
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND (d.INCI_TRNS_RCPT_INST_CD IN (SELECT inst_cd
+        FROM tsminst
+        WHERE inst_cd <![CDATA[ <> ]]> (select * from local_to_pnt_inst)
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd = (select * from local_to_pnt_inst))
+        OR d.INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT inst_cd
+        FROM tsminst
+        WHERE inst_cd <![CDATA[ <> ]]> (select * from local_to_pnt_inst)
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd = (select * from local_to_pnt_inst)))
+        GROUP BY INCI_TRNS_RCPT_SIDO_INST_CD
+        ),
+        inst AS (
+        SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd, inst_level
+        FROM tsminst
+        WHERE local_cd = #{localCd} AND USE_YN ='Y' AND INST_CD NOT IN (SELECT com_code2
+        FROM COMM_CODE
+        WHERE com_code1 = '4002' AND code_lvl = '2')
+        AND INST_CD <![CDATA[ <> ]]> 1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 )
+        SELECT
+            sub.inst_cd,
+            sub.inst_nm,
+            SUM( sub.total_cnt ) as total_cnt,
+            SUM( sub.complete_cnt ) as complete_cnt,
+            SUM( sub.process_cnt ) as process_cnt,
+            sub.rnum
+        from
+        (
+        select t2.inst_cd as inst_cd,decode(t2.inst_level,1,'본청',inst_nm) as inst_nm,
+        nvl(pri.total_cnt,0) as total_cnt, nvl(pri.end_cnt, 0) as complete_cnt, nvl(pri.ing_cnt,0) as process_cnt, inst_level as rnum  from pri, inst t2
+        where t2.INST_CD=pri.dmg_inst_cd(+)
+        )sub
+        GROUP BY
+            sub.inst_cd,
+            sub.inst_nm,
+            sub.rnum
+        ORDER BY
+            sub.rnum ASC,
+	        sub.inst_cd ASC
+</select>
+
+    <resultMap type="com.klid.webapp.webdash.sido.dto.WebDashSidoDto" id="resultRegionStatusManual">
+        <result property="receiptCnt" column="RECEIPT_CNT"/>
+        <result property="processCnt" column="PROCESS_CNT"/>
+        <result property="completeCnt" column="COMPLETE_CNT"/>
+    </resultMap>
+
+    <select id="getRegionStatusManual" resultMap="resultRegionStatusManual">
+        WITH
+        local_to_pnt_inst AS (
+        select pnt_inst_cd from  tsminst where local_cd = #{localCd} and inst_level = 2 and rownum = 1
+        ), inst AS (
+        SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd
+        FROM tsminst
+        WHERE local_cd = #{localCd}
+        AND INST_CD NOT IN (SELECT com_code2
+        FROM COMM_CODE
+        WHERE com_code1 = '4002' AND code_lvl = '2')
+        AND INST_CD <![CDATA[ <> ]]>1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 ),
+        tree AS ( SELECT inst_cd
+        FROM tsminst
+        CONNECT BY PRIOR inst_cd = pnt_inst_cd
+        START WITH inst_cd =  (select * from local_to_pnt_inst) ),
+        pri AS ( SELECT NVL(inst_nm, '합계')     inst_nm,
+        DECODE(inst_nm, '', '0', local_cd) local_cd,
+        nvl(total_cnt, 0) AS     total_cnt,
+        nvl(end_cnt, 0) AS     end_cnt,
+        nvl(ing_cnt, 0) AS     ing_cnt
+        FROM (SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+        NVL( COUNT(TRANS_INCI_PRCS_STAT), 0) total_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', NULL,'12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1=1
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND (d.INCI_TRNS_RCPT_INST_CD =  (select * from local_to_pnt_inst) OR dmg_inst_cd =   (select * from local_to_pnt_inst))
+        AND (d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT * FROM tree
+        WHERE INST_cd <![CDATA[ <> ]]>  (select * from local_to_pnt_inst))
+        OR INCI_TRNS_RCPT_SIDO_INST_CD IS NULL)
+        AND ( INCI_PRCS_STAT IS NULL OR INCI_PRCS_STAT=0 OR  INCI_PRCS_STAT>10)--개발원 이관요청건 안나오게(20190521)
+        GROUP BY INCI_TRNS_RCPT_INST_CD
+        UNION ALL
+        SELECT DCL_INST_CD AS dmg_inst_cd,
+        NVL( COUNT(TRANS_INCI_PRCS_STAT), 0) total_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', NULL,'12', NULL, '15', NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1=1
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND d.DCL_INST_CD IN (  (select * from local_to_pnt_inst))
+        AND (d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT * FROM tree
+        WHERE INST_cd <![CDATA[ <> ]]>  (select * from local_to_pnt_inst))
+        OR INCI_TRNS_RCPT_SIDO_INST_CD IS NULL)
+        GROUP BY DCL_INST_CD
+        UNION ALL
+        SELECT INCI_TRNS_RCPT_SIDO_INST_CD AS dmg_inst_cd,
+        NVL( COUNT(TRANS_INCI_PRCS_STAT), 0) total_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', 1, '12',  1, '15', 1, '17', 1, NULL)), 0) end_cnt,
+        NVL( COUNT( DECODE(TRANS_INCI_PRCS_STAT, '13', NULL,'12', NULL,'15',  NULL, '17', NULL, 1)), 0) ing_cnt
+        FROM TBZLEDGE d
+        WHERE 1=1
+        AND inci_ttl NOT LIKE '%훈련%'
+        AND inci_ttl NOT LIKE '%확인%'
+        AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+        AND (d.INCI_TRNS_RCPT_INST_CD IN (SELECT * FROM tree
+        WHERE INST_cd <![CDATA[ <> ]]>  (select * from local_to_pnt_inst))
+        OR d.INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT * FROM tree
+        WHERE INST_CD <![CDATA[ <> ]]>  (select * from local_to_pnt_inst)))
+        GROUP BY INCI_TRNS_RCPT_SIDO_INST_CD) T1, inst T2
+        WHERE T2.INST_CD=t1.dmg_inst_cd (+)
+        ORDER BY TO_NUMBER(local_cd), DECODE(inst_nm, (SELECT inst_nm FROM tsminst WHERE inst_cd  =    (select * from local_to_pnt_inst)), 2)
+        )
+        SELECT
+        sum(total_cnt) AS RECEIPT_CNT,
+        sum(end_cnt)   AS COMPLETE_CNT,
+        sum(ing_cnt)   AS PROCESS_CNT
+        FROM pri
+</select>
+
+
+    <select id="getSidoList" resultType="com.klid.webapp.webdash.sido.dto.WebDashSidoDto">
+    SELECT   INST_CD AS instCd,
+               DECODE(INST_LEVEL,'1','본청',INST_NM) AS instNm
+          FROM TSMINST
+         WHERE  INST_CD IN
+                      (    SELECT INST_CD
+                             FROM TSMINST
+                              CONNECT BY PRIOR INST_CD = PNT_INST_CD
+                       START WITH INST_CD = #{instCd}
+                       )
+                       AND USE_YN ='Y'
+   ORDER BY INST_CD ASC
+ </select>
+
+</mapper>
+
+
+
+
+
+
+

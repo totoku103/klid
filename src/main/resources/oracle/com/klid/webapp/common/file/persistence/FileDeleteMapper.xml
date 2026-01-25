@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.file.persistence.FileDeleteMapper">
+
+	<delete id="deleteFileInfo">
+		<!-- DELETE FROM CM_ATTACHFILE WHERE 1=1 <if test="fileNo != null"> AND 
+			FILE_NO = ${fileNo} </if> <if test="boardNo != null"> AND BOARD_NO = ${boardNo} 
+			</if> -->
+		DELETE FROM BULTN_FILE 
+		WHERE 1=1
+		<if test="fileNo != null">
+			AND FILE_NO = ${fileNo}
+		</if>
+		<if test="boardNo != null">
+			AND BULTN_NO = ${boardNo}
+		</if>
+	</delete>
+
+	<delete id="deleteAccFileInfo">
+		DELETE FROM TBZATTAC
+		WHERE 1=1
+		<if test="fileNo != null">
+			AND ATT_SEQ = ${fileNo}
+		</if>
+	</delete>
+</mapper>

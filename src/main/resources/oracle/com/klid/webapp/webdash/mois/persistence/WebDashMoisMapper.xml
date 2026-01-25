@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.webdash.mois.persistence.WebDashMoisMapper">
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultThreatNow">
+		<result property="pastThreat" 		column="PAST_THREAT"/>
+		<result property="nowThreat" 		column="NOW_THREAT"/>
+		<result property="instCd"			column="INST_CD"/>
+		<result property="modDt"			column="MOD_DT"/>
+	</resultMap>
+
+	<select id="getThreatNow" resultMap="resultThreatNow">
+SELECT PAST_THREAT, NOW_THREAT, INST_CD, MOD_DT FROM (SELECT PAST_THREAT, NOW_THREAT, INST_CD, TO_CHAR(MOD_DT, 'yyyy.MM.dd') AS MOD_DT, MOD_DT AS MOD_DTs
+  FROM THREAT_NOW ORDER BY MOD_DTs DESC
+  ) WHERE rownum=1
+</select>
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultHmHcUrl">
+		<result property="instCd" 		column="INST_CD"/>
+		<result property="instNm" 		column="INST_NM"/>
+		<result property="lastRes"		column="LAST_RES"/>
+		<result property="localNm" 		column="LOCAL_NM"/>
+		<result property="localCd" 		column="LOCAL_CD"/>
+	</resultMap>
+
+	<select id="getHmHcUrlCenter" resultMap="resultHmHcUrl">
+SELECT INST_CD, REPLACE(INST_NM, ' 홈페이지') AS INST_NM, LAST_RES
+  FROM HM_HC_URL
+ WHERE MOIS_YN = 1
+ ORDER BY INST_NM
+</select>
+
+	<select id="getHmHcUrlRegion" resultMap="resultHmHcUrl">
+ SELECT LOCAL_CD, (SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD =B.LOCAL_CD) AS LOCAL_NM, SUM(LAST_RES_INFO) AS LAST_RES
+  FROM
+    (
+    SELECT INST_CD, INST_NM, LAST_RES, (SELECT LOCAL_CD FROM TSMINST WHERE INST_CD = A.INST_CD) AS LOCAL_CD,
+             DECODE(LAST_RES, 200,0,1) AS LAST_RES_INFO
+      FROM HM_HC_URL A
+     WHERE MOIS_YN = 0
+      AND A.CHECK_YN=1
+      AND A.USE_YN=1
+    ) B
+GROUP BY LOCAL_CD
+</select>
+
+	<select id="getForgeryRegion" resultMap="resultHmHcUrl">
+ SELECT LOCAL_CD, (SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD =B.LOCAL_CD) AS LOCAL_NM, SUM(LAST_RES_INFO) AS LAST_RES
+  FROM
+    (
+    SELECT INST_CD, INST_NM, LAST_RES, (SELECT LOCAL_CD FROM TSMINST WHERE INST_CD = A.INST_CD) AS LOCAL_CD,
+             DECODE(LAST_RES, 5,1,4,1,0) AS LAST_RES_INFO
+      FROM FORGERY_URL A
+     WHERE  A.DEPTH=3
+    ) B
+    WHERE LOCAL_CD != 1
+GROUP BY LOCAL_CD
+</select>
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultRegionStatus">
+		<result property="localCd" 		column="LOCAL_CD"/>
+		<result property="localNm" 		column="LOCAL_NM"/>
+		<result property="receiptCnt"	column="RECEIPT_CNT"/>
+		<result property="processCnt"	column="PROCESS_CNT"/>
+		<result property="completeCnt"	column="COMPLETE_CNT"/>
+	</resultMap>
+
+	<select id="getRegionStatus" resultMap="resultRegionStatus">
+ SELECT nvl(inst_nm, '합계') local_nm, decode(inst_nm, '', '0', local_cd) local_cd, total_cnt as RECEIPT_CNT, end_cnt as complete_cnt, ing_cnt as PROCESS_CNT
+					FROM ( SELECT b.inst_nm,
+					min(b.local_cd) local_cd,
+					nvl(SUM(total_cnt), 0) total_cnt,
+					nvl(SUM(end_cnt),0) end_cnt,
+					nvl(SUM(ing_cnt), 0) ing_cnt
+					FROM ( SELECT dmg_inst_cd,
+					nvl(count(inci_acpn_dt), 0) total_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+					FROM TBZLEDGE d
+					WHERE
+					1=1
+					AND TO_DATE(d.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(TO_CHAR(SYSDATE - 1, 'yyyymmdd') || '060000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '055959', 'yyyymmddhh24miss')
+					AND EXISTS (
+					SELECT inst_cd
+					FROM tsminst
+					WHERE tsminst.inst_cd = d.dmg_inst_cd
+					AND pnt_inst_cd = 1100000
+					AND INST_CD NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND INST_CD <![CDATA[ <> ]]> 1200000)
+					AND inci_no like 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					GROUP BY dmg_inst_cd )a,
+					( SELECT inst_cd, inst_nm, nvl(replace(local_cd, 170, 75), '0') local_cd
+					FROM tsminst
+					WHERE pnt_inst_cd = 1100000
+					AND INST_CD NOT IN (SELECT com_code2 FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2'  )
+					AND INST_CD <![CDATA[ <> ]]> 1200000 )b
+					WHERE a.dmg_inst_cd (+) = b.inst_cd
+					GROUP BY ROLLUP(b.inst_nm) )
+					ORDER BY to_number(local_cd)
+</select>
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultRegionStatusAuto">
+		<result property="regTime" 		column="REG_TIME"/>
+		<result property="localNm" 		column="LOCAL_NM"/>
+		<result property="sumJson"	    column="SUM_JSON"/>
+	</resultMap>
+
+	<select id="getRegionStatusAuto" resultType="String">
+select SUM_JSON as value, REG_TIME, LOCAL_NM from HM_DASH_LC where level_type=1 and local_nm='지역총합'
+and REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE - 1, 'yyyymmdd') || '060000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '055959', 'yyyymmddhh24miss')
+</select>
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultRegionStatusManual">
+		<result property="receiptCnt" 		column="RECEIPT_CNT"/>
+		<result property="processCnt" 		column="PROCESS_CNT"/>
+		<result property="completeCnt"	    column="COMPLETE_CNT"/>
+	</resultMap>
+
+	<select id="getRegionStatusManual" resultMap="resultRegionStatusManual">
+		SELECT
+		nvl(count(inci_acpn_dt), 0)                                                              RECEIPT_CNT,
+		nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, NULL)), 0)          COMPLETE_CNT,
+		nvl(count(decode(inci_prcs_stat, '13', NULL, '12', NULL, '15', NULL, '17', NULL, 1)), 0) PROCESS_CNT
+		FROM TBZLEDGE a
+		WHERE 1 = 1
+		AND TO_DATE(a.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(TO_CHAR(SYSDATE - 1, 'yyyymmdd') || '060000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '055959', 'yyyymmddhh24miss')
+		AND EXISTS(SELECT inst_cd
+		FROM tsminst
+		WHERE
+		tsminst.inst_cd = a.dmg_inst_cd AND pnt_inst_cd = 1100000
+		AND INST_CD NOT IN (SELECT com_code2
+		FROM COMM_CODE
+		WHERE
+		com_code1 = '4002' AND code_lvl = '2')
+		AND INST_CD <![CDATA[ <> ]]> 1200000) AND inci_no LIKE 'CT%'
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+</select>
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultDashConfigList">
+		<result property="workCp1" 			column="WORK_CP1"/>
+		<result property="workCp2" 			column="WORK_CP2"/>
+		<result property="workCp3"			column="WORK_CP3"/>
+		<result property="workPs1"			column="WORK_PS1"/>
+		<result property="workPs2" 			column="WORK_PS2"/>
+		<result property="workPs3"			column="WORK_PS3"/>
+		<result property="workMng1" 		column="WORK_MNG1"/>
+		<result property="workMng2" 		column="WORK_MNG2"/>
+		<result property="workMng3"			column="WORK_MNG3"/>
+		<result property="workCon1" 		column="WORK_CON1"/>
+		<result property="workCon2" 		column="WORK_CON2"/>
+		<result property="workCon3"	 		column="WORK_CON3"/>
+		<result property="attCnt" 			column="ATT_CNT"/>
+		<result property="nirsCdM" 			column="NIRS_CD_M"/>
+		<result property="nirsCdA" 			column="NIRS_CD_A"/>
+		<result property="nirsCdD" 			column="NIRS_CD_D"/>
+		<result property="nirsDdM" 			column="NIRS_DD_M"/>
+		<result property="nirsDdA" 			column="NIRS_DD_A"/>
+		<result property="nirsDdD" 			column="NIRS_DD_D"/>
+		<result property="nirsHkM" 			column="NIRS_HK_M"/>
+		<result property="nirsHkA" 			column="NIRS_HK_A"/>
+		<result property="nirsHkD" 			column="NIRS_HK_D"/>
+		<result property="nirsEtM" 			column="NIRS_ET_M"/>
+		<result property="nirsEtA" 			column="NIRS_ET_A"/>
+		<result property="nirsEtD" 			column="NIRS_ET_D"/>
+		<result property="klidCdM" 			column="KLID_CD_M"/>
+		<result property="klidCdA" 			column="KLID_CD_A"/>
+		<result property="klidCdD" 			column="KLID_CD_D"/>
+		<result property="klidDdM" 			column="KLID_DD_M"/>
+		<result property="klidDdA" 			column="KLID_DD_A"/>
+		<result property="klidDdD" 			column="KLID_DD_D"/>
+		<result property="klidHkM" 			column="KLID_HK_M"/>
+		<result property="klidHkA" 			column="KLID_HK_A"/>
+		<result property="klidHkD" 			column="KLID_HK_D"/>
+		<result property="klidEtM" 			column="KLID_ET_M"/>
+		<result property="klidEtA" 			column="KLID_ET_A"/>
+		<result property="klidEtD" 			column="KLID_ET_D"/>
+		<result property="gtAv" 			column="GT_AV"/>
+		<result property="gtMax" 			column="GT_MAX"/>
+		<result property="ctAv" 			column="CT_AV"/>
+		<result property="ctMax" 			column="CT_MAX"/>
+		<result property="ssAv" 			column="SS_AV"/>
+		<result property="ssMax" 			column="SS_MAX"/>
+		<result property="gtRst" 			column="GT_RST"/>
+		<result property="ctRst" 			column="CT_RST"/>
+		<result property="ssRst" 			column="SS_RST"/>
+		<result property="errSvr"	 		column="ERR_SVR"/>
+		<result property="errNet" 			column="ERR_NET"/>
+		<result property="errStr" 			column="ERR_STR"/>
+		<result property="errBak" 			column="ERR_BAK"/>
+		<result property="errHom" 			column="ERR_HOM"/>
+		<result property="noti1" 			column="NOTI1"/>
+		<result property="noti2" 			column="NOTI2"/>
+		<result property="secu1" 			column="SECU1"/>
+		<result property="secu2" 			column="SECU2"/>
+		<result property="crtTime"	 		column="CRT_TIME"/>
+		<result property="modTime" 			column="MOD_TIME"/>
+		<result property="datTime" 			column="DAT_TIME"/>
+	</resultMap>
+
+	<select id="getDashConfigList" resultMap="resultDashConfigList">
+ SELECT
+ 		NVL(WORK_CP1,' ') AS WORK_CP1,
+ 		NVL(WORK_CP2,' ') AS WORK_CP2,
+ 		NVL(WORK_CP3,' ') AS WORK_CP3,
+		WORK_PS1,
+		WORK_PS2,
+		WORK_PS3,
+		NVL(WORK_MNG1,' ') AS WORK_MNG1,
+		NVL(WORK_MNG2,' ') AS WORK_MNG2,
+		NVL(WORK_MNG3,' ') AS WORK_MNG3,
+		NVL(WORK_CON1,' ') AS WORK_CON1,
+		NVL(WORK_CON2,' ') AS WORK_CON2,
+		NVL(WORK_CON3,' ') AS WORK_CON3,
+		ATT_CNT,
+		NIRS_CD_M,
+		NIRS_CD_A,
+		NIRS_CD_D,
+		NIRS_DD_M,
+		NIRS_DD_A,
+		NIRS_DD_D,
+		NIRS_HK_M,
+		NIRS_HK_A,
+		NIRS_HK_D,
+		NIRS_ET_M,
+		NIRS_ET_A,
+		NIRS_ET_D,
+		KLID_CD_M,
+		KLID_CD_A,
+		KLID_CD_D,
+		KLID_DD_M,
+		KLID_DD_A,
+		KLID_DD_D,
+		KLID_HK_M,
+		KLID_HK_A,
+		KLID_HK_D,
+		KLID_ET_M,
+		KLID_ET_A,
+		KLID_ET_D,
+		GT_AV,
+		GT_MAX,
+		CT_AV,
+		CT_MAX,
+		SS_AV,
+		SS_MAX,
+		NVL(GT_RST,' ') AS GT_RST,
+		NVL(CT_RST,' ') AS CT_RST,
+		NVL(SS_RST,' ') AS SS_RST,
+		ERR_SVR,
+		ERR_NET,
+		ERR_STR,
+		ERR_BAK,
+		ERR_HOM,
+		NVL(NOTI1,' ') AS NOTI1,
+		NVL(NOTI2,' ') AS NOTI2,
+		NVL(SECU1,' ') AS SECU1,
+		NVL(SECU2,' ') AS SECU2,
+		CRT_TIME,
+		MOD_TIME,
+		DAT_TIME
+	FROM
+		HM_MOIS_DASH
+	WHERE DAT_TIME = TO_DATE(#{datTime},'yyyy-mm-dd')
+</select>
+
+	<resultMap type="com.klid.webapp.webdash.mois.dto.WebDashMoisDto" id="resultDashChartSum">
+		<result property="nirsAsum" 		column="NIRS_A_SUM"/>
+		<result property="nirsMsum" 		column="NIRS_M_SUM"/>
+		<result property="klidAsum"			column="KLID_A_SUM"/>
+		<result property="klidMsum"			column="KLID_M_SUM"/>
+		<result property="datTime"			column="DAT_TIME"/>
+	</resultMap>
+
+	<select id="getDashChartSum" resultMap="resultDashChartSum">
+SELECT
+		NVL(A.NIRS_A_SUM,0) AS NIRS_A_SUM,
+		NVL(A.NIRS_M_SUM,0) AS NIRS_M_SUM,
+		NVL(A.KLID_A_SUM,0) AS KLID_A_SUM,
+		NVL(A.KLID_M_SUM,0) AS KLID_M_SUM,
+		B.DAT_TIME AS DAT_TIME
+FROM(
+	 SELECT
+			  SUM(NIRS_CD_A + NIRS_DD_A +NIRS_HK_A +NIRS_ET_A) AS NIRS_A_SUM
+			, SUM(NIRS_CD_M + NIRS_DD_M +NIRS_HK_M +NIRS_ET_M) AS NIRS_M_SUM
+			, SUM(KLID_CD_A + KLID_DD_A +KLID_HK_A +KLID_ET_A) AS KLID_A_SUM
+			, SUM(KLID_CD_M + KLID_DD_M +KLID_HK_M +KLID_ET_M) AS KLID_M_SUM
+			, TO_CHAR(DAT_TIME,'YYYY-MM-DD')AS DAT_TIME
+	 FROM    HM_MOIS_DASH
+	 WHERE   DAT_TIME BETWEEN #{datTime1} AND #{datTime2}
+	 GROUP BY DAT_TIME
+	 )A,
+	 (
+		SELECT TO_CHAR(TO_DATE(#{datTime1}, 'YYYY-MM-DD') + NUM-1, 'YYYY-MM-DD') AS DAT_TIME
+		FROM (
+			SELECT ROWNUM NUM
+			FROM DICTIONARY
+			WHERE ROWNUM <![CDATA[ <= ]]> TO_DATE(#{datTime2}, 'YYYY-MM-DD') - TO_DATE(#{datTime1}, 'YYYY-MM-DD')  + 1
+		)
+	)B
+WHERE 	A.DAT_TIME(+) = B.DAT_TIME
+ORDER BY DAT_TIME
+</select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+

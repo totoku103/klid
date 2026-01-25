@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.grp.persistence.GrpMapper">  
+	<resultMap type="com.klid.webapp.common.grp.dto.GrpDto" id="resultGrpTree">
+	    <result property="grpNo"            		column="GRP_NO"/>
+	    <result property="grpParent" 			column="GRP_PARENT"/>
+		<result property="grpRef"         		column="GRP_REF"/>
+		<result property="grpName"         		column="GRP_NAME"/>
+		<result property="isLeaf" 					column="ISLEAF"/>
+		<result property="devKind2" 				column="DEV_KIND2"/>
+		<result property="devIp" 					column="DEV_IP"/>
+	</resultMap>
+	<resultMap type="com.klid.webapp.common.grp.dto.GrpDto" id="resultGrpTree2" extends="resultGrpTree">
+	    <result property="grpRefString"         	column="GRP_REF_STR"/>
+	</resultMap>
+	<resultMap type="com.klid.webapp.common.grp.dto.AuthGrpDto" id="resultAuthGrp">
+	    <result property="grpNo"            	column="GRP_NO"/>
+		<result property="grpName"         		column="GRP_NAME"/>
+		<result property="authMain"         	column="AUTH_MAIN"/>
+	</resultMap>
+	
+	<resultMap type="com.klid.webapp.common.grp.dto.GrpDto" extends="resultGrpTree" id="resultNetworkGrpTree">
+		<result property="grpRefString" column="GRP_REF_STRING"/>
+	</resultMap>
+	   
+  	<!-- 그룹명 중복체크 -->
+  	<select id="selectGrpDuplCnt" resultType="int">
+  		SELECT	COUNT(*)
+  		<choose>
+  			<when test="type == 'SEARCH'">
+  				FROM	CM_SEARCH_GROUP
+  			</when>
+  			<when test="type == 'AUTH'">
+  				FROM	COM_AUTH_GROUP
+  			</when>
+  			<otherwise>
+  				FROM	NT_CFG_GROUP
+  			</otherwise>
+  		</choose>
+ 		WHERE	GRP_NAME = #{grpName}
+ 		<if test="_parameter.containsKey('grpType')">
+ 			AND	GRP_TYPE = #{grpType}
+ 		</if>
+ 		<if test="_parameter.containsKey('grpNo')">
+ 			AND	GRP_NO != #{grpNo}
+ 		</if>
+  	</select>
+  	
+  	<!-- NT_CFG_LEAF 생성 프로시저 호출 -->
+	<update id="procSpMakeGrpLeaf" statementType="CALLABLE" parameterType="hashmap">
+		CALL SP_MAKE_LEAF()
+	</update>
+  
+  	<!-- ======================================= 
+		권한그룹
+	========================================-->
+	<!-- 권한그룹 리스트 조회 -->
+	<select id="selectAuthGrpList" resultMap="resultAuthGrp">
+		/*SELECT	GRP_NO,
+	 				GRP_NAME
+		FROM		COM_AUTH_GROUP
+		ORDER BY GRP_NAME*/
+		SELECT
+			AUTH_MAIN
+		FROM	ROLE_AUTH
+		GROUP BY AUTH_MAIN
+		ORDER BY AUTH_MAIN
+	</select>
+	
+	<!-- 권한그룹 추가 -->
+	<insert id="insertAuthGrp">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM COM_AUTH_GROUP
+		</selectKey>
+		INSERT INTO COM_AUTH_GROUP (
+			GRP_NO, GRP_NAME
+		)
+		VALUES (
+			#{grpNo}, #{grpName}
+		)
+	</insert>
+	
+	<!-- 권한그룹 수정 -->
+	<update id="updateAuthGrp">
+		BEGIN
+			<foreach collection="list" item="item">
+				UPDATE	COM_AUTH_GROUP
+				SET		GRP_NAME = #{item.grpName}
+				WHERE	GRP_NO = #{item.grpNo};
+			</foreach>
+		END;
+	</update>
+	
+	<!-- 권한그룹 삭제 -->
+	<delete id="deleteAuthGrp">
+		BEGIN
+			<!-- 알람 -->
+			DELETE FROM COM_AUTH_INFO WHERE GRP_NO = #{grpNo};
+			<!-- 이벤트 -->
+			DELETE FROM COM_AUTH_CODE WHERE GRP_NO = #{grpNo};
+			<!-- 제외메뉴 -->
+			DELETE FROM COM_AUTH_EXCEPT_MENU WHERE GRP_NO = #{grpNo};
+			<!-- 권한그룹 -->
+			DELETE FROM COM_AUTH_GROUP WHERE GRP_NO = #{grpNo};
+		END;
+	</delete>
+	
+	
+	<!-- ======================================= 
+		기본그룹
+	========================================-->
+	<!-- 권한그룹을 생성할 전체 기본그룹 리스트 조회 -->
+	<select id="selectAuthConfDefaultGrpTreeListAll" resultMap="resultGrpTree">
+		SELECT DISTINCT
+					A.GRP_PARENT,
+					TO_CHAR(A.GRP_NO) AS GRP_NO,
+					B.ISLEAF,
+					A.GRP_REF,
+					A.GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP A, NT_CFG_LEAF B
+		WHERE   	A.GRP_TYPE = 1
+		AND     	A.GRP_NO = B.SUB_NO
+		AND     	A.GRP_NO != 0 
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+	
+	<!-- 기본그룹 리스트 전체 조회 -->
+	<select id="selectDefaultGrpTreeListAll" resultMap="resultGrpTree">
+		SELECT DISTINCT
+					A.GRP_PARENT,
+					TO_CHAR(A.GRP_NO) AS GRP_NO,
+					B.ISLEAF,
+					A.GRP_REF,
+					A.GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP A, NT_CFG_LEAF B
+		WHERE   	A.GRP_TYPE = 1
+		AND     	A.GRP_NO = B.SUB_NO
+		AND     	A.GRP_NO != 0 
+		<!--AND     	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>-->
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+
+	<!-- 기본그룹 리스트 조회 -->
+	<select id="selectDefaultGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+					SELECT DISTINCT
+								A.GRP_PARENT,
+								TO_CHAR(A.GRP_NO) AS GRP_NO,
+								B.ISLEAF,
+								A.GRP_REF,
+								A.GRP_NAME || '(' || NVL(C.CNT, 0) || ')' AS GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP A, NT_CFG_LEAF B, 
+								(
+								SELECT	Y.GRP_NO, COUNT(*) AS CNT 
+								FROM 	CM_DEV10 X, NT_CFG_LEAF Y 
+								WHERE 	X.GRP_NO = Y.SUB_NO 
+								<if test="_parameter.containsKey('devKindList') and devKindList.length > 0">
+									AND	X.DEV_KIND2 IN (
+																<foreach collection="devKindList" item="devKind2" separator=",">
+																	#{devKind2}
+																</foreach>
+																)
+								</if>
+								GROUP BY Y.GRP_NO
+								) C
+					WHERE   	A.GRP_TYPE = 1
+					AND     	A.GRP_NO = B.SUB_NO
+					AND		A.GRP_NO = C.GRP_NO(+)
+					AND     	A.GRP_NO != 0
+					AND     	REPLACE(A.GRP_NAME,' ','') NOT IN ('기본장비그룹', '미등록장비그룹')
+					<!--AND     	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>-->
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	GRP_NO AS GRP_PARENT,
+								GRP_NO || '_' || MNG_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								NVL(USER_DEV_NAME, DEV_NAME) AS GRP_NAME,
+								DEV_KIND2,
+								DEV_IP
+					FROM		CM_DEV10
+					WHERE	1=1
+						<!--GRP_NO IN <include refid="Common.selectAuthGrpNos" />-->
+						<if test="_parameter.containsKey('devKindList') and devKindList.length > 0">
+							AND	DEV_KIND2 IN (
+														<foreach collection="devKindList" item="devKind2" separator=",">
+															#{devKind2}
+														</foreach>
+														)
+						</if>
+					</if>
+					) 
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+
+	<!-- VM서버 리스트 조회 -->
+	<select id="selectVmSvrGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+		SELECT DISTINCT
+		A.GRP_PARENT,
+		TO_CHAR(A.GRP_NO) AS GRP_NO,
+		B.ISLEAF,
+		A.GRP_REF,
+		A.GRP_NAME || '(' || NVL(C.CNT, 0) || ')' AS GRP_NAME,
+		'GROUP' AS DEV_KIND2,
+		'' AS DEV_IP
+		FROM		NT_CFG_GROUP A, NT_CFG_LEAF B,
+		(
+		SELECT	Y.GRP_NO, COUNT(*) AS CNT
+		FROM 	CM_DEV10 X, NT_CFG_LEAF Y
+		WHERE 	X.GRP_NO = Y.SUB_NO
+		AND ( X.DEV_KIND1='VM' OR DEV_KIND2='SERVER')
+		<if test="_parameter.containsKey('devKindList') and devKindList.length > 0">
+			AND	X.DEV_KIND2 IN (
+			<foreach collection="devKindList" item="devKind2" separator=",">
+				#{devKind2}
+			</foreach>
+			)
+		</if>
+		GROUP BY Y.GRP_NO
+		) C
+		WHERE   	A.GRP_TYPE = 1
+		AND     	A.GRP_NO = B.SUB_NO
+		AND		A.GRP_NO = C.GRP_NO(+)
+		AND     	A.GRP_NO != 0
+		AND     	REPLACE(A.GRP_NAME,' ','') NOT IN ('기본장비그룹', '미등록장비그룹')
+		<!--AND     	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>-->
+		<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+			UNION ALL
+			SELECT	GRP_NO AS GRP_PARENT,
+			GRP_NO || '_' || MNG_NO AS GRP_NO,
+			0 AS ISLEAF,
+			0 AS GRP_REF,
+			NVL(USER_DEV_NAME, DEV_NAME) AS GRP_NAME,
+			DEV_KIND2,
+			DEV_IP
+			FROM		CM_DEV10
+			WHERE	1=1
+			<!--GRP_NO IN <include refid="Common.selectAuthGrpNos" />-->
+			AND (DEV_KIND1='VM' OR DEV_KIND2='SERVER')
+			<if test="_parameter.containsKey('devKindList') and devKindList.length > 0">
+				AND	DEV_KIND2 IN (
+				<foreach collection="devKindList" item="devKind2" separator=",">
+					#{devKind2}
+				</foreach>
+				)
+			</if>
+		</if>
+		)
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+
+	<!-- 기본그룹 리스트 조회 (L4세션용) -->
+	<select id="selectL4DefaultGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+					SELECT DISTINCT
+								A.GRP_PARENT,
+								TO_CHAR(A.GRP_NO) AS GRP_NO,
+								B.ISLEAF,
+								A.GRP_REF,
+								A.GRP_NAME || '(' || NVL(C.CNT, 0) || ')' AS GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP A, NT_CFG_LEAF B,
+								(
+								SELECT	Y.GRP_NO, COUNT(*) AS CNT 
+								FROM 	CM_DEV10 X, NT_CFG_LEAF Y 
+								WHERE 	X.GRP_NO = Y.SUB_NO 
+								AND		X.DEV_KIND2 = 'L4SWITCH'
+								<if test="_parameter.containsKey('model') and model == 'Alteon'">
+									AND	REPLACE(X.MODEL, ' ', '') = 'Alteon6420'
+								</if>
+								AND		(DEV_NAME IS NULL OR DEV_NAME NOT LIKE '%GSLB%')
+								GROUP BY Y.GRP_NO
+								) C
+					WHERE   	A.GRP_TYPE = 1
+					AND     	A.GRP_NO = B.SUB_NO
+					AND		A.GRP_NO = C.GRP_NO(+)
+					AND     	A.GRP_NO != 0
+					AND     	REPLACE(A.GRP_NAME,' ','') NOT IN ('기본장비그룹', '미등록장비그룹')
+					<!--AND     	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>-->
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	GRP_NO AS GRP_PARENT,
+								GRP_NO || '_' || MNG_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								NVL(USER_DEV_NAME, DEV_NAME) AS GRP_NAME,
+								DEV_KIND2,
+								DEV_IP
+					FROM		CM_DEV10
+					WHERE	1=1
+						<!--GRP_NO IN <include refid="Common.selectAuthGrpNos" />-->
+					AND		DEV_KIND2 = 'L4SWITCH'
+					<if test="_parameter.containsKey('model') and model == 'Alteon'">
+						AND	REPLACE(MODEL, ' ', '') = 'Alteon6420'
+					</if>
+					AND		(DEV_NAME IS NULL OR DEV_NAME NOT LIKE '%GSLB%')
+					</if>
+					) 
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<!-- 기본그룹 리스트 조회 (AP화면용) 
+		- 카운팅을 AP개수를 표시
+	-->
+	<select id="selectApDefaultGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+					SELECT DISTINCT
+								A.GRP_PARENT,
+								TO_CHAR(A.GRP_NO) AS GRP_NO,
+								B.ISLEAF,
+								A.GRP_REF,
+								A.GRP_NAME || '(' || NVL(C.CNT, 0) || ')' AS GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP A, NT_CFG_LEAF B,
+								(
+								SELECT	Y.GRP_NO, COUNT(*) AS CNT 
+								FROM 	CM_DEV10 X, NT_CFG_LEAF Y, 
+											(
+											SELECT DISTINCT V.*
+											FROM		CM_DEV_AP V, CM_DEV_AP_SUB W
+											WHERE	V.AP_NO = W.AP_NO
+											) Z
+								WHERE 	X.MNG_NO = Z.MNG_NO
+								AND		Z.GRP_NO = Y.SUB_NO 
+								AND		X.DEV_KIND2 IN ('AP_CONTROLLER', 'AP_ALONE')
+								GROUP BY Y.GRP_NO
+								) C
+					WHERE   	A.GRP_TYPE = 1
+					AND     	A.GRP_NO = B.SUB_NO
+					AND		A.GRP_NO = C.GRP_NO(+)
+					AND     	A.GRP_NO != 0
+					AND     	REPLACE(A.GRP_NAME,' ','') NOT IN ('기본장비그룹', '미등록장비그룹')
+					<!--AND     	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>-->
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	GRP_NO AS GRP_PARENT,
+								GRP_NO || '_' || MNG_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								NVL(USER_DEV_NAME, DEV_NAME) AS GRP_NAME,
+								DEV_KIND2,
+								DEV_IP
+					FROM		CM_DEV10
+					WHERE	1=1
+						<!--GRP_NO IN <include refid="Common.selectAuthGrpNos" />-->
+					AND		DEV_KIND2 IN ('AP_CONTROLLER', 'AP_ALONE')
+					</if>
+					) 
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<!-- 기본그룹 추가 -->
+	<insert id="insertDefaultGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 1, #{grpParent}, 0
+		)
+	</insert>
+	
+	<!-- 기본그룹 수정 -->
+	<update id="updateDefaultGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName},
+					GRP_PARENT = #{grpParent}
+		WHERE	GRP_NO = #{grpNo}
+	</update>
+	
+	<!-- 기본그룹 삭제 -->
+	<delete id="deleteDefaultGroup">
+		BEGIN
+			UPDATE CM_DEV10 SET GRP_NO = 1 WHERE GRP_NO IN (SELECT DISTINCT SUB_NO FROM NT_CFG_LEAF WHERE GRP_NO = #{grpNo});
+			UPDATE NT_CFG_SUBNET SET GRP_NO = 0 WHERE	GRP_NO IN (SELECT DISTINCT SUB_NO FROM NT_CFG_LEAF WHERE GRP_NO = #{grpNo});
+			DELETE FROM NT_CFG_GROUP WHERE GRP_NO IN (SELECT DISTINCT SUB_NO FROM NT_CFG_LEAF WHERE GRP_NO = #{grpNo});
+		END;
+	</delete>
+	
+	
+	<!-- ======================================= 
+		조회그룹
+	========================================-->
+	<!-- 조회그룹 리스트 조회 -->
+	<select id="selectSearchGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+				 	SELECT	GRP_PARENT,
+				 				TO_CHAR(GRP_NO) AS GRP_NO,
+				 				0 AS ISLEAF,
+				 				0 AS GRP_REF,
+				 				GRP_NAME,
+				 				'GROUP' AS DEV_KIND2,
+				 				'' AS IP
+					FROM		CM_SEARCH_GROUP
+					WHERE	USER_ID = #{userId}
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	C.GRP_NO AS GRP_PARENT,
+								C.GRP_NO || '_' || A.MNG_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								NVL(A.USER_DEV_NAME, A.DEV_NAME) AS GRP_NAME,
+								A.DEV_KIND2,
+								A.DEV_IP
+					FROM		CM_DEV10 A, CM_SEARCH_DEV B, CM_SEARCH_GROUP C
+					WHERE	A.MNG_NO = B.MNG_NO
+					AND		B.GRP_NO = C.GRP_NO
+					AND		B.USER_ID = C.USER_ID
+					AND		B.USER_ID = #{userId}
+						<if test="_parameter.containsKey('devKind2') and devKind2 != null">
+							AND	A.DEV_KIND2 = #{devKind2}
+						</if>
+					</if>
+					)
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<!-- 조회그룹 추가 -->
+	<insert id="insertSearchGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM CM_SEARCH_GROUP WHERE USER_ID = #{userId}
+		</selectKey>
+		INSERT INTO CM_SEARCH_GROUP (
+			GRP_NO, GRP_NAME, USER_ID, GRP_PARENT
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, #{userId}, #{grpParent}
+		)
+	</insert>
+	
+	<!-- 조회그룹 수정 -->
+	<update id="updateSearchGroup">
+		UPDATE	CM_SEARCH_GROUP
+		SET		GRP_NAME = #{grpName},
+					GRP_PARENT = #{grpParent}
+		WHERE	GRP_NO = #{grpNo}
+		AND		USER_ID = #{userId}
+	</update>
+	
+	<!-- 조회그룹 삭제 -->
+	<delete id="deleteSearchGroup">
+		BEGIN
+			DELETE
+			FROM		CM_SEARCH_DEV
+			WHERE	GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		CM_SEARCH_GROUP
+										WHERE	USER_ID = #{userId}
+										START WITH GRP_NO = #{grpNo}
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+										
+			DELETE
+			FROM		CM_SEARCH_GROUP
+			WHERE	GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		CM_SEARCH_GROUP
+										WHERE	USER_ID = #{userId}
+										START WITH GRP_NO = #{grpNo}
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</delete>
+	
+	
+	<!-- ======================================= 
+		회선그룹
+	========================================-->
+	<!-- 회선그룹 조회 -->
+	<select id="selectIfGrpTreeList" resultMap="resultGrpTree">
+		SELECT	GRP_PARENT,
+					TO_CHAR(GRP_NO) AS GRP_NO,
+					0 AS ISLEAF,
+					GRP_REF,
+					GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP
+		WHERE	GRP_TYPE = 8
+		ORDER BY GRP_NAME
+	</select>
+	
+	<!-- 회선그룹 추가 -->
+	<insert id="insertIfGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 8, #{grpParent}, 0
+		)
+	</insert>
+	
+	<!-- 회선그룹 수정 -->
+	<update id="updateIfGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName},
+					GRP_PARENT = #{grpParent}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 8
+	</update>
+	
+	<!-- 회선그룹 삭제 -->
+	<delete id="deleteIfGroup">
+		BEGIN
+			DELETE 
+			FROM 	CM_IF_GROUP 
+			WHERE 	GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo}
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+			DELETE 
+			FROM 	NT_CFG_GROUP 
+			WHERE	GRP_TYPE = 8
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo}
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</delete>
+	
+  
+  	<!-- ======================================= 
+		서버그룹
+	========================================-->
+	<!-- 서버그룹 조회 -->
+	<select id="selectServerGrpTreeList" resultMap="resultGrpTree">
+		SELECT	*
+		FROM		(
+					SELECT	GRP_PARENT,
+								TO_CHAR(GRP_NO) AS GRP_NO,
+								0 AS ISLEAF,
+								GRP_REF,
+								GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP
+					WHERE	GRP_TYPE = 7
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	GRP_NO AS GRP_PARENT,
+								GRP_NO || '_' || SVR_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								NAME AS GRP_NAME,
+								'SERVER' AS DEV_KIND2,
+								IP AS DEV_IP
+					FROM		NT_CFG_SERVER
+					WHERE	GRP_NO IN (
+												SELECT	GRP_NO
+												FROM		NT_CFG_GROUP
+												WHERE	GRP_TYPE = 7
+												<!--AND		GRP_REF IN <include refid="Common.selectAuthGrpNos" />-->
+												)
+					</if>
+					<if test="_parameter.containsKey('isContainDev2') and isContainDev2 == 'true'">
+					UNION ALL SELECT
+		                  -1         AS GRP_PARENT,
+		                  TO_CHAR(0) AS GRP_NO,
+		                  0          AS ISLEAF,
+		                  1          AS GRP_REF,
+		                  '전체'       AS GRP_NAME,
+		                  'GROUP'    AS DEV_KIND2,
+		                  ''         AS DEV_IP
+                		FROM DUAL
+					UNION ALL
+					SELECT
+					  GRP_PARENT,
+					  TO_CHAR(GRP_NO) AS GRP_NO,
+					  0               AS ISLEAF,
+					  GRP_REF,
+					  GRP_NAME,
+					  'GROUP'         AS DEV_KIND2,
+					  ''              AS DEV_IP
+					FROM NT_CFG_GROUP
+					WHERE GRP_TYPE = 1
+					UNION ALL
+					SELECT
+					  GRP_NO     AS GRP_PARENT,
+					  'VS_' || SRC_SVR_NO AS GRP_NO,
+					  0          AS ISLEAF,
+					  1          AS GRP_REF,
+					  DEV_NAME   AS GRP_NAME,
+					  'VSERVER'   AS DEV_KIND2,
+					  DEV_IP     AS DEV_IP
+					FROM CM_DEV10
+					WHERE DEV_KIND1 = 'VSERVER'
+					UNION ALL
+					SELECT
+					  GRP_NO     AS GRP_PARENT,
+					  'VM_' || SRC_SVR_NO AS GRP_NO,
+					  0          AS ISLEAF,
+					  1          AS GRP_REF,
+					  DEV_NAME   AS GRP_NAME,
+					  'VM'   AS DEV_KIND2,
+					  SRC_GUID     AS DEV_IP
+					FROM CM_DEV10
+					WHERE DEV_KIND1 = 'VM'
+					</if>
+					) 
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+
+	<!-- 서버장비 조회 -->
+	<select id="selectSvrDevTreeList" resultMap="resultGrpTree">
+	      SELECT *
+			FROM (SELECT A.GRP_NO AS GRP_PARENT,
+						 TO_CHAR (A.SVR_NO) AS GRP_NO,
+						 0 AS ISLEAF,
+						 B.GRP_REF,
+						 A.NAME AS GRP_NAME,
+						 'GROUP' AS DEV_KIND2,
+						 '' AS DEV_IP
+					FROM NT_CFG_SERVER A, NT_CFG_GROUP B
+				   WHERE A.GRP_NO = B.GRP_NO AND B.GRP_TYPE = 7)
+		ORDER BY GRP_PARENT, DECODE (DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<insert id="insertSvrGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 7, #{grpParent}, 0, #{grpRef}
+		)
+	</insert>
+	
+	<update id="updateSvrGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName},
+					GRP_PARENT = #{grpParent},
+					GRP_REF = #{grpRef}
+		WHERE	GRP_NO = #{grpNo}
+	</update>
+	
+	<delete id="deleteSvrGroup">
+		BEGIN
+			<choose>
+				<when test="isSvrDelete == 'true'">
+					DELETE
+					FROM		NT_CFG_SERVER
+				</when>
+				<otherwise>
+					UPDATE	NT_CFG_SERVER
+					SET		GRP_NO = (SELECT MIN(GRP_NO) FROM NT_CFG_GROUP WHERE GRP_TYPE = 7)
+				</otherwise>
+			</choose>
+					WHERE	GRP_NO IN (
+												SELECT 	GRP_NO
+												FROM		NT_CFG_GROUP
+												WHERE	GRP_TYPE = 7
+												START WITH GRP_NO = #{grpNo}
+												CONNECT BY PRIOR GRP_NO = GRP_PARENT
+												);
+		
+			DELETE 
+			FROM 	NT_CFG_GROUP 
+			WHERE 	GRP_NO = #{grpNo} 
+			AND 		GRP_TYPE = 7;
+		END;
+	</delete>
+	
+	
+	<!-- ======================================= 
+		망그룹
+	========================================-->
+	<select id="selectMangGrpTreeList" resultMap="resultGrpTree2">
+		SELECT	*
+		FROM		(
+					SELECT	GRP_PARENT,
+								TO_CHAR(GRP_NO) AS GRP_NO,
+								0 AS ISLEAF,
+								GRP_REF,
+								(SELECT GRP_NAME FROM NT_CFG_GROUP WHERE GRP_NO = A.GRP_REF AND ROWNUM = 1) AS GRP_REF_STR,
+								GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP A
+					WHERE	GRP_TYPE = 3
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	A.GRP_NO AS GRP_PARENT,
+								A.GRP_NO || '_' || A.NET_NO || '_' || A.IF_INOUT AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								'' AS GRP_REF_STR,
+								NVL(C.USER_DEV_NAME, C.DEV_NAME) || ' [' || B.IF_NAME || 
+								DECODE(B.USER_IF_NAME, NULL, (DECODE(B.IF_ALIAS, NULL, NULL, '(' || B.IF_ALIAS || ')')), '(' || B.USER_IF_NAME || ')')
+								|| ' - ' || DECODE(A.IF_INOUT, 'I', 'IN', 'O', 'OUT', A.IF_INOUT) || ']' AS GRP_NAME,
+								C.DEV_KIND2,
+								C.DEV_IP
+					FROM		NT_CFG_NET A, CM_DEV20 B, CM_DEV10 C
+					WHERE	A.MNG_NO = B.MNG_NO
+					AND		B.MNG_NO = C.MNG_NO
+					AND		A.IF_NO = B.IF_IDX
+					</if>
+					)
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<insert id="insertMangGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 3, #{grpParent}, 0, #{grpRef}
+		)
+	</insert>
+	
+	<update id="updateMangGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_PARENT = #{grpParent},
+					GRP_REF = #{grpRef},
+					GRP_NAME = #{grpName}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 3
+	</update>
+	
+	<update id="deleteMangGroup">
+		BEGIN
+			DELETE 
+			FROM 	NT_CFG_NET 
+			WHERE 	GRP_NO  IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 3
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+										
+			DELETE
+			FROM		NT_CFG_GROUP
+			WHERE	GRP_TYPE = 3
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 3
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</update>
+	
+	<!-- ======================================= 
+		망흐름그룹
+	========================================-->
+	<select id="selectMangFlowGrpTreeList" resultMap="resultGrpTree2">
+		SELECT	*
+		FROM		(
+					SELECT	GRP_PARENT,
+								TO_CHAR(GRP_NO) AS GRP_NO,
+								0 AS ISLEAF,
+								GRP_REF,
+								(SELECT GRP_NAME FROM NT_CFG_GROUP WHERE GRP_NO = A.GRP_REF AND ROWNUM = 1) AS GRP_REF_STR,
+								GRP_NAME,
+								'GROUP' AS DEV_KIND2,
+								'' AS DEV_IP
+					FROM		NT_CFG_GROUP A
+					WHERE	GRP_TYPE = 5
+					<if test="_parameter.containsKey('isContainDev') and isContainDev == 'true'">
+					UNION ALL
+					SELECT	A.GRP_NO AS GRP_PARENT,
+								A.GRP_NO || '_' || A.MNET_NO AS GRP_NO,
+								0 AS ISLEAF,
+								0 AS GRP_REF,
+								'' AS GRP_REF_STR,
+								NVL(D.USER_DEV_NAME, D.DEV_NAME) || ' [' || B.IF_NAME || ' → ' || C.IF_NAME || ']' AS GRP_NAME,
+								D.DEV_KIND2,
+								D.DEV_IP
+					FROM		NT_CFG_MNET A, CM_DEV20 B, CM_DEV20 C, CM_DEV10 D
+					WHERE	A.MNG_NO = B.MNG_NO
+					AND		A.MNG_NO = C.MNG_NO
+					AND		A.MNG_NO = D.MNG_NO
+					AND		A.IN_IF_NO = B.IF_IDX
+					AND		A.OUT_IF_NO = C.IF_IDX
+					</if>
+					)
+		ORDER BY GRP_PARENT, DECODE(DEV_KIND2, 'GROUP', 0, 1), GRP_NAME
+	</select>
+	
+	<insert id="insertMangFlowGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 5, #{grpParent}, 0, #{grpRef}
+		)
+	</insert>
+	
+	<update id="updateMangFlowGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_PARENT = #{grpParent},
+					GRP_REF = #{grpRef},
+					GRP_NAME = #{grpName}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 5
+	</update>
+	
+	<update id="deleteMangFlowGroup">
+		BEGIN
+			DELETE 
+			FROM 	NT_CFG_MNET 
+			WHERE 	GRP_NO  IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 5
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+										
+			DELETE
+			FROM		NT_CFG_GROUP
+			WHERE	GRP_TYPE = 5
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 5
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</update>
+	
+
+	<!-- ======================================= 
+		서비스그룹
+	========================================-->
+	<select id="selectServiceGrpTreeList" resultMap="resultGrpTree">
+		SELECT	GRP_PARENT,
+					TO_CHAR(GRP_NO) AS GRP_NO,
+					0 AS ISLEAF,
+					GRP_REF,
+					GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP
+		WHERE	GRP_TYPE = 2
+		<if test="_parameter.containsKey('isContainTop') and isContainTop == 'false'">
+			AND	GRP_PARENT != 0
+		</if>
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+
+	<insert id="insertServiceGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 2, (SELECT GRP_NO FROM NT_CFG_GROUP WHERE GRP_TYPE = 2 AND GRP_PARENT = 0), 0, 1
+		)
+	</insert>
+	
+	<update id="updateServiceGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 2
+	</update>
+	
+	<update id="deleteServiceGroup">
+		BEGIN
+			DELETE 
+			FROM 	NT_CFG_SERVICE 
+			WHERE 	GRP_NO  IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 2
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+										
+			DELETE
+			FROM		NT_CFG_GROUP
+			WHERE	GRP_TYPE = 2
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 2
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</update>
+	
+
+	<!-- ======================================= 
+		서비스포트그룹
+	========================================-->
+	<select id="selectSvcPortGrpList" resultMap="resultGrpTree">
+		SELECT	GRP_PARENT,
+					TO_CHAR(GRP_NO) AS GRP_NO,
+					0 AS ISLEAF,
+					GRP_REF,
+					GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP
+		WHERE	GRP_TYPE = 9
+		AND		GRP_PARENT != 0
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+	
+	<insert id="insertSvcPortGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 9, (SELECT GRP_NO FROM NT_CFG_GROUP WHERE GRP_TYPE = 9 AND GRP_PARENT = 0)
+		)
+	</insert>
+	
+	<update id="updateSvcPortGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 9
+	</update>
+	
+	<update id="deleteSvcPortGroup">
+		BEGIN
+			DELETE 
+			FROM 	CM_SVC_PORT 
+			WHERE 	GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 9
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+			
+			DELETE 
+			FROM 	NT_CFG_GROUP
+			WHERE	GRP_TYPE = 9
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 9
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</update>
+	
+  	<!-- ======================================= 
+		As그룹
+	========================================-->
+	<select id="selectAsGrpTreeList" resultMap="resultGrpTree">
+		SELECT	GRP_PARENT,
+					TO_CHAR(GRP_NO) AS GRP_NO,
+					GRP_FLAG AS ISLEAF,
+					GRP_REF,
+					GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP
+		WHERE	GRP_TYPE = 4
+					<if test="_parameter.containsKey('isContainTop') and isContainTop == 'false'">
+						AND	GRP_PARENT != 0
+					</if>
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+	
+	<insert id="insertAsGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 4, (SELECT GRP_NO FROM NT_CFG_GROUP WHERE GRP_TYPE = 4 AND GRP_PARENT = 0), 0, 1
+		)
+	</insert>
+	
+	<update id="updateAsGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 4
+	</update>
+	
+	<update id="deleteAsGroup">
+		BEGIN
+			DELETE 
+			FROM 	NT_CFG_AS
+			WHERE 	GRP_NO  IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 4
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+										
+			DELETE
+			FROM		NT_CFG_GROUP
+			WHERE	GRP_TYPE = 4
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 4
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</update>
+	
+	
+	<!-- ======================================= 
+		App그룹
+	========================================-->
+	<select id="selectAppGrpTreeList" resultMap="resultGrpTree">
+		SELECT	GRP_PARENT,
+					TO_CHAR(GRP_NO) AS GRP_NO,
+					GRP_FLAG AS ISLEAF,
+					GRP_REF,
+					GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM		NT_CFG_GROUP
+		WHERE	GRP_TYPE = 6
+				<if test="_parameter.containsKey('isContainTop') and isContainTop == 'false'">
+					AND	GRP_PARENT != 0
+				</if>
+		ORDER BY GRP_PARENT, GRP_NAME
+	</select>
+	
+	<insert id="insertAppGroup">
+		<selectKey keyProperty="grpNo" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(GRP_NO), 0) + 1 FROM NT_CFG_GROUP
+		</selectKey>
+		INSERT INTO NT_CFG_GROUP (
+			GRP_NO, GRP_NAME, GRP_TYPE, GRP_PARENT, GRP_FLAG, GRP_REF
+		)
+		VALUES (
+			#{grpNo}, #{grpName}, 6, (SELECT GRP_NO FROM NT_CFG_GROUP WHERE GRP_TYPE = 6 AND GRP_PARENT = 0), #{isLeaf}, 1
+		)
+	</insert>
+	
+	<update id="updateAppGroup">
+		UPDATE	NT_CFG_GROUP
+		SET		GRP_NAME = #{grpName},
+					GRP_FLAG=#{isLeaf}
+		WHERE	GRP_NO = #{grpNo}
+		AND		GRP_TYPE = 6
+	</update>	
+	
+	<delete id="deleteAppGroup">
+		BEGIN
+			DELETE 
+			FROM 	NT_CFG_PORT
+			WHERE 	GRP_NO  IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 6
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+			DELETE
+			FROM		NT_CFG_GROUP
+			WHERE	GRP_TYPE = 6
+			AND		GRP_NO IN (
+										SELECT	GRP_NO
+										FROM		NT_CFG_GROUP
+										START WITH GRP_NO = #{grpNo} AND GRP_TYPE = 6
+										CONNECT BY PRIOR GRP_NO = GRP_PARENT
+										);
+		END;
+	</delete>
+
+
+	<!-- ======================================= 
+		기관그룹
+	========================================-->
+	<select id="selectInstGrpTreeList" resultMap="resultGrpTree">
+<!-- 		SELECT -->
+<!--                   -1         AS GRP_PARENT, -->
+<!--                   TO_CHAR(0) AS GRP_NO, -->
+<!--                   0          AS ISLEAF, -->
+<!--                   1          AS GRP_REF, -->
+<!--                   '전체'       AS GRP_NAME, -->
+<!--                   'GROUP'    AS DEV_KIND2 -->
+<!-- 		FROM DUAL -->
+<!-- 		UNION ALL -->
+		SELECT	PNT_INST_CD AS GRP_PARENT,
+					TO_CHAR(INST_CD) AS GRP_NO,
+					INST_LEVEL AS ISLEAF,
+					1 AS GRP_REF,
+					INST_NM AS GRP_NAME,
+					'GROUP' AS DEV_KIND2
+		FROM	TSMINST
+		WHERE	1=1
+		AND INST_CD IN (
+      			SELECT	INST_CD
+				FROM	TSMINST
+				WHERE	1=1
+				START WITH INST_CD = (
+					SELECT	INST_CD
+					FROM	COMM_USER
+					WHERE	USER_ID = #{userId}
+				)
+				CONNECT BY PRIOR INST_CD = PNT_INST_CD
+      	)
+		ORDER BY INST_LEVEL, INST_NM
+	</select>
+</mapper>

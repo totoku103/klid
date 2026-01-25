@@ -1,0 +1,12 @@
+# System Configuration (Prod Profile)
+app:
+  system:
+    homepath: z:\\db\\home\\klid\\webapp
+    file:
+      upload-path: z:\\ctrslogs\\upload_dir\\file\\
+      report-template: z:\\reportTemplate\\
+      upload-help-path: z:\\ctrslogs\\upload_dir\\help\\
+    log:
+      name: klid-web
+      path: ./log
+      level: DEBUG

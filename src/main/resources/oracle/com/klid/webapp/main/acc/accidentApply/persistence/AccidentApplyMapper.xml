@@ -1,0 +1,2770 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.acc.accidentApply.persistence.AccidentApplyMapper">
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getApplyResultMap">
+		<result property="accdTypCd"			column="ACCD_TYP_CD"/>
+		<result property="acpnMthd"				column="ACPN_MTHD"/>
+		<result property="attCrgr"				column="ATT_CRGR"/>
+		<result property="attDept"				column="ATT_DEPT"/>
+		<result property="attDtlsVia"			column="ATT_DTLS_VIA"/>
+		<result property="attEmail"				column="ATT_EMAIL"/>
+		<result property="attInstNm"			column="ATT_INST_NM"/>
+		<result property="attNatnCd"			column="ATT_NATN_CD"/>
+		<result property="attSvrNm"				column="ATT_SVR_NM"/>
+		<result property="attTelNo"				column="ATT_TEL_NO"/>
+		<result property="attTypCd"				column="ATT_TYP_CD"/>
+		<result property="attVia"				column="ATT_VIA"/>
+		<result property="crgr"					column="CRGR"/>
+		<result property="dclCrgr"				column="DCL_CRGR"/>
+		<result property="dclCrgrId"			column="DCL_CRGR_ID"/>
+		<result property="dclDept"				column="DCL_DEPT"/>
+		<result property="dclEmail"				column="DCL_EMAIL"/>
+		<result property="dclHpNo"				column="DCL_HP_NO"/>
+		<result property="dclInstCd"			column="DCL_INST_CD"/>
+		<result property="dclMail"				column="DCL_MAIL"/>
+		<result property="dclTelNo"				column="DCL_TEL_NO"/>
+		<result property="dmgCpgr"				column="DMG_CPGR"/>
+		<result property="dmgCrgr"				column="DMG_CRGR"/>
+		<result property="dmgDept"				column="DMG_DEPT"/>
+		<result property="dmgEmail"				column="DMG_EMAIL"/>
+		<result property="dmgHpNo"				column="DMG_HP_NO"/>
+		<result property="dmgInstCd"			column="DMG_INST_CD"/>
+		<result property="dmgNatnCd"			column="DMG_NATN_CD"/>
+		<result property="dmgSvrNm"				column="DMG_SVR_NM"/>
+		<result property="dmgSvrUsrNm"			column="DMG_SVR_USR_NM"/>
+		<result property="dmgTelNo"				column="DMG_TEL_NO"/>
+		<result property="dngrGr"				column="DNGR_GR"/>
+		<result property="histoModifiedYn"		column="HISTO_MODIFIED_YN"/>
+		<result property="inciAcpnCd"			column="INCI_ACPN_CD"/>
+		<result property="inciAcpnDt"			column="INCI_ACPN_DT"/>
+		<result property="inciBelowCont"		column="INCI_BELOW_CONT"/>
+		<result property="inciBgnDt"			column="INCI_BGN_DT"/>
+		<result property="inciDclCont"			column="INCI_DCL_CONT"/>
+		<result property="inciDt"				column="INCI_DT"/>
+		<result property="inciDttNm"			column="INCI_DTT_NM"/>
+		<result property="inciEndCont"			column="INCI_END_CONT"/>
+		<result property="inciEndDt"			column="INCI_END_DT"/>
+		<result property="inciInvsCont"			column="INCI_INVS_CONT"/>
+		<result property="inciNo"				column="INCI_NO"/>
+		<result property="inciNoMulti"			column="INCI_NO_MULTI"/>
+		<result property="inciPrcsStat"			column="INCI_PRCS_STAT"/>
+		<result property="inciPrty"				column="INCI_PRTY"/>
+		<result property="inciTrnsCfdt"			column="INCI_TRNS_CFDT"/>
+		<result property="inciTrnsRcptInstCd"	column="INCI_TRNS_RCPT_INST_CD"/>
+		<result property="inciTrnsRcptSidoInstCd"	column="INCI_TRNS_RCPT_SIDO_INST_CD"/>
+		<result property="inciTrnsReqInstCd"	column="INCI_TRNS_REQ_INST_CD"/>
+		<result property="inciTrnsRqdt"			column="INCI_TRNS_RQDT"/>
+		<result property="inciTrnsRslt"			column="INCI_TRNS_RSLT"/>
+		<result property="inciTrnsYn"			column="INCI_TRNS_YN"/>
+		<result property="inciTtl"				column="INCI_TTL"/>
+		<result property="inciTypCd"			column="INCI_TYP_CD"/>
+		<result property="inciUpdDt"			column="INCI_UPD_DT"/>
+		<result property="innciNoBefore"		column="INNCI_NO_BEFORE"/>
+		<result property="ipsIp"				column="IPS_IP"/>
+		<result property="ncscNo"				column="NCSC_NO"/>
+		<result property="netDiv"				column="NET_DIV"/>
+		<result property="osNm"					column="OS_NM"/>
+		<result property="packetKey"			column="PACKET_KEY"/>
+		<result property="recoInciCd"			column="RECO_INCI_CD"/>
+		<result property="riskLevel"			column="RISK_LEVEL"/>
+		<result property="riskValue"			column="RISK_VALUE"/>
+		<result property="tmsIp"				column="TMS_IP"/>
+		<result property="transInciPrcsStat"	column="TRANS_INCI_PRCS_STAT"/>
+		<result property="transSidoPrcsStat"	column="TRANS_SIDO_PRCS_STAT"/>
+		<result property="trtMthdCd"			column="TRT_MTHD_CD"/>
+
+		<!-- 서브쿼리 name -->
+		<result property="recoInciName"			column="recoInciName"/>
+		<result property="dclInstName"			column="dclInstName"/>
+		<result property="dmgInstName"			column="dmgInstName"/>
+		<result property="accdTypName"			column="accdTypName"/>
+		<result property="inciPrcsStatName"		column="inciPrcsStatName"/>
+		<result property="transInciPrcsStatName" column="transInciPrcsStatName"/>
+		<result property="transSidoPrcsStatName" column="transSidoPrcsStatName"/>
+		<result property="inciPrtyName"			column="inciPrtyName"/>
+		<result property="acpnMthdName"			column="acpnMthdName"/>
+		<result property="riskLevelName"		column="riskLevelName"/>
+		<result property="netDivName"			column="netDivName"/>
+		<result property="attTypName"			column="attTypName"/>
+		<result property="attViaName"			column="attViaName"/>
+		<result property="attDtlsViaName"		column="attDtlsViaName"/>
+		<result property="weekYn"				column="WEEK_YN"/>
+		<result property="remarks"				column="REMARKS"/>
+		<result property="dmgInstNm"			column="dmgInstNm"/>
+		<result property="attNatnNm"			column="attNatnNm"/>
+		<result property="dmgNatnNm"			column="dmgNatnNm"/>
+		<result property="tranSigunName"		column="tranSigunName"/>
+
+		<result property="applyMultiYn" column="applyMultiYn"/>
+		<result property="transMultiYn" column="transMultiYn"/>
+
+		<result property="instCd" 		column="INST_CD"/>
+		<result property="nationCd" 	column="NATION_CD"/>
+		<result property="comCode2" 	column="COM_CODE2"/>
+		<result property="dmgInstDepth" column="dmgInstDepth"/>
+		<result property="remarksCd" 	column="remarksCd"/>
+		<result property="dmgIp" 		column="dmgIp"/>
+		<result property="attIp" 		column="attIp"/>
+		<result property="attRemarks"	column="ATT_REMARKS"/>
+		<result property="num"	column="num"/>
+		<result property="siEndDt"		column="siEndDt"/>
+	</resultMap>
+
+	<select id="getAccidentApplyList" resultMap="getApplyResultMap">
+        SELECT * FROM
+        (
+            SELECT
+            a.ACCD_TYP_CD,
+			a.ACPN_MTHD,
+			a.ATT_CRGR,
+			a.ATT_DEPT,
+			a.ATT_DTLS_VIA,
+			a.ATT_EMAIL,
+			a.ATT_INST_NM,
+			a.ATT_NATN_CD,
+			a.ATT_SVR_NM,
+			a.ATT_TEL_NO,
+			a.ATT_TYP_CD,
+			a.ATT_VIA,
+
+			a.CRGR,
+			a.DCL_CRGR,
+			a.DCL_CRGR_ID,
+			a.DCL_DEPT,
+			a.DCL_DETP,
+			a.DCL_EMAIL,
+			a.DCL_HP_NO,
+			a.DCL_INST_CD,
+			a.DCL_MAIL,
+			a.DCL_TEL_NO,
+
+			a.DMG_CPGR,
+			a.DMG_CRGR,
+			a.DMG_DEPT,
+			a.DMG_EMAIL,
+			a.DMG_HP_NO,
+			a.DMG_INST_CD,
+			a.DMG_NATN_CD,
+			a.DMG_SVR_NM,
+			a.DMG_SVR_USR_NM,
+			a.DMG_TEL_NO,
+            a.DNGR_GR,
+			a.HISTO_MODIFIED_YN,
+
+			a.INCI_ACPN_CD,
+			TO_DATE(a.INCI_ACPN_DT,'YYYY-MM-DD HH24:MI:SS') AS INCI_ACPN_DT,
+			a.INCI_BGN_DT,
+			TO_DATE(a.INCI_DT,'YYYY-MM-DD HH24:MI:SS') AS INCI_DT,
+			a.INCI_DTT_NM,
+			a.INCI_END_CONT,
+			a.INCI_END_DT,
+			a.INCI_NO,
+			a.INCI_NO_MULTI,
+			a.INCI_PRCS_STAT,
+			a.INCI_PRTY,
+			a.INCI_TRNS_CFDT,
+			a.INCI_TRNS_RCPT_INST_CD,
+			a.INCI_TRNS_REQ_INST_CD,
+			a.INCI_TRNS_RQDT,
+			a.INCI_TRNS_RSLT,
+			a.INCI_TRNS_YN,
+			a.INCI_TTL,
+			a.INCI_TYP_CD,
+			TO_DATE(a.INCI_UPD_DT,'YYYY-MM-DD HH24:MI:SS') AS INCI_UPD_DT,
+			a.INNCI_NO_BEFORE,
+			a.IPS_IP,
+			a.NCSC_NO,
+			a.NET_DIV,
+			a.OS_NM,
+			a.PACKET_KEY,
+			a.RECO_INCI_CD,
+			a.RISK_LEVEL,
+			a.RISK_VALUE,
+			a.TMS_IP,
+			a.TRANS_INCI_PRCS_STAT,
+		    a.TRANS_SIDO_PRCS_STAT,
+			a.TRT_MTHD_CD,
+			a.ATT_REMARKS,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4001' and c.com_code2 =
+			a.reco_inci_cd
+            ) AS recoInciName,
+            (
+            SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dcl_Inst_Cd
+            ) AS dclInstName,
+            (
+            SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dmg_Inst_Cd
+            ) AS dmgInstName,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3002' AND c.com_code2 =
+			a.accd_typ_cd
+            ) AS accdTypName,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+			a.inci_prcs_stat
+            ) AS inciPrcsStatName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+			a.trans_inci_prcs_stat
+			) AS transInciPrcsStatName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+			a.trans_sido_prcs_stat
+			) AS transSidoPrcsStatName,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3006' AND '00'||c.com_code2 =
+			a.inci_prty
+            ) AS inciPrtyName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4004' and c.com_code2 =
+			a.net_div
+			) AS netDivName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4006' and TO_NUMBER(c.com_code2,'9') =
+			a.remarks
+			) AS remarks,
+			NVL((
+			SELECT inst_nm FROM TSMINST WHERE inst_cd = a.INCI_TRNS_RCPT_SIDO_INST_CD AND USE_YN = 'Y'
+			),'-') AS tranSigunName,
+			(CASE
+				WHEN
+					a.WEEK_YN = 0
+				THEN
+					'주중'
+				ELSE
+					'주말'
+			END) AS WEEK_YN,
+			INCI_TTL || '[' || INCI_DTT_NM || ']' as INCI_TTL_DTT,
+			TO_DATE(SUB.HSTY_CRT_DT,'YYYY-MM-DD HH24:MI:SS') AS siEndDt,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3004 and '00' || c.com_code2 =
+			a.acpn_Mthd
+			) AS acpnMthdName
+            FROM TBZLEDGE a
+			LEFT join(
+				SELECT
+				h.inci_no,
+				max(h.HSTY_CRT_DT) HSTY_CRT_DT
+				FROM TBHHISTO h
+				INNER JOIN TSMINST t ON h.inst_cd = t.inst_cd
+				AND t.INST_LEVEL = 1 AND t.DEPTH = 1
+				WHERE 1=1
+				AND h.ttl LIKE '%종결되었습니다.'
+				group by inci_no
+			)SUB ON SUB.inci_no = a.inci_no
+			WHERE 1=1
+			<if test="sAuthMain != null and sAuthMain != ''">
+				<choose>
+					<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+						AND
+						(INCI_TRNS_RCPT_INST_CD IN (1100000, #{sInstCd})
+						OR (INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT inst_cd FROM tsminst
+						CONNECT BY PRIOR inst_cd=pnt_inst_cd
+						START WITH inst_cd= #{sInstCd}
+						))
+						OR (DCL_INST_CD IN (#{sInstCd}) )
+						)
+						AND INCI_ACPN_DT between #{startDt} and #{endDt}
+						AND TRANS_SIDO_PRCS_STAT != 99
+                        AND (TRANS_INCI_PRCS_STAT > 0 OR TRANS_SIDO_PRCS_STAT > 0)
+						<!-- and TRANS_INCI_PRCS_STAT > 0  -->
+					</when>
+					<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+						AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+						AND INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+						AND TRANS_SIDO_PRCS_STAT <![CDATA[ > ]]> 0
+						AND TRANS_SIDO_PRCS_STAT != 99
+					</when>
+					<when test="sAuthMain == 'AUTH_MAIN_2'">
+						AND a.inci_no LIKE 'CT%'
+						AND length(a.inci_no) <![CDATA[ < ]]>  16
+					</when>
+					<otherwise>
+						AND 2=2
+					</otherwise>
+				</choose>
+			</if>
+			<if test="date1 != null and date1 != ''">
+				<choose>
+					<when test="srchDateType == 'inciAcpnDt'">
+						AND a.INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<when test="srchDateType == 'inciUpdDt'">
+						AND a.INCI_UPD_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<when test="srchDateType == 'siEndDt'">
+						AND SUB.HSTY_CRT_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<otherwise>
+						and 1=1
+					</otherwise>
+				</choose>
+			</if>
+			<if test="netDiv != null and netDiv != ''">
+				and a.NET_DIV = #{netDiv}
+			</if>
+            <if test="recoInciCd != null and recoInciCd != ''">
+                AND a.RECO_INCI_CD = #{recoInciCd}
+            </if>
+            <if test="inciPrcsStatCd != null and inciPrcsStatCd != ''">
+                AND a.INCI_PRCS_STAT = #{inciPrcsStatCd}
+            </if>
+		<if test="transInciPrcsStatCd != null and transInciPrcsStatCd != ''">
+			AND a.TRANS_INCI_PRCS_STAT = #{transInciPrcsStatCd}
+		</if>
+		<if test="transSidoPrcsStatCd != null and transSidoPrcsStatCd != ''">
+			AND a.TRANS_SIDO_PRCS_STAT = #{transSidoPrcsStatCd}
+		</if>
+            <if test="accdTypCd != null and accdTypCd != ''">
+                AND a.ACCD_TYP_CD = #{accdTypCd}
+            </if>
+            <if test="inciPrtyCd != null and inciPrtyCd != ''">
+                AND a.INCI_PRTY = #{inciPrtyCd}
+            </if>
+            <if test="inciTtl != null and inciTtl != ''">
+                AND (UPPER(a.INCI_TTL) LIKE '%' ||UPPER( #{inciTtl}) || '%' OR UPPER(a.INCI_DTT_NM) LIKE '%' ||UPPER( #{inciTtl}) || '%')
+            </if>
+			<if test="inciNo != null and inciNo != ''">
+				AND UPPER(a.INCI_NO) LIKE'%' ||UPPER( #{inciNo}) || '%'
+			</if>
+			<if test="weekYn != null and weekYn != ''">
+				AND a.WEEK_YN = #{weekYn}
+			</if>
+			<if test="InciDclCont != null">
+				AND
+				(
+				<foreach collection="InciDclCont" item="item" separator="OR" >
+					UPPER(a.INCI_DCL_CONT) LIKE '%' ||UPPER( #{item} )|| '%'
+				</foreach>
+				)
+			</if>
+			<if test="InciInvsCont != null">
+				AND
+				(
+				<foreach collection="InciInvsCont" item="item" separator="OR" >
+					UPPER(a.INCI_INVS_CONT) LIKE '%' ||UPPER( #{item}) || '%'
+				</foreach>
+				)
+			</if>
+			<if test="InciBelowCont != null">
+				AND
+				(
+				<foreach collection="InciBelowCont" item="item" separator="OR" >
+					UPPER(a.INCI_BELOW_CONT) LIKE '%' ||UPPER( #{item}) || '%'
+				</foreach>
+				)
+			</if>
+			<if test="attIp != null and attIp != ''">
+				AND a.INCI_NO IN (
+					SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR LIKE '%' || #{attIp} || '%'
+					)
+			</if>
+			<if test="dmgIp != null and dmgIp != ''">
+				AND a.INCI_NO IN (
+					SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{dmgIp} || '%'
+				)
+			</if>
+			<!--<if test="srchAcpnMthd != null and srchAcpnMthd != ''">-->
+				<!--AND a.ACPN_MTHD = #{srchAcpnMthd}-->
+			<!--</if>-->
+			<if test="srchAcpnMthd != null and srchAcpnMthd != ''">
+				AND a.ACPN_MTHD IN (
+					<foreach collection="srchAcpnMthdList" item="item" separator=",">
+						#{item}
+					</foreach>
+				)
+			</if>
+
+        )
+        WHERE 1=1
+		<if test="totalTitle != null and totalTitle != ''">
+		  AND (
+				UPPER(INCI_NO) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			    UPPER(INCI_TTL) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			    UPPER(dmgInstName) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			    UPPER(dclInstName) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+				(
+				INCI_NO IN (
+					SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{totalTitle} || '%'
+					)
+				) OR
+				(
+				INCI_NO IN (
+					SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR  LIKE '%' || #{totalTitle} || '%'
+					)
+				)
+			)
+		</if>
+		<if test="dmgInstName != null and dmgInstName != ''">
+		  AND dmgInstName LIKE '%' || #{dmgInstName} || '%'
+		</if>
+        <if test="dclInstName != null and dclInstName != ''">
+          AND dclInstName LIKE '%' || #{dclInstName} || '%'
+        </if>
+        ORDER BY INCI_ACPN_DT DESC, inci_no
+	</select>
+
+	<!--<select id="selectAccidentApplyList" fetchSize="100" resultType="java.util.HashMap">-->
+		<!--SELECT * FROM-->
+		<!--(-->
+		<!--SELECT-->
+		<!--ROWNUM as num,-->
+		<!--a.ACCD_TYP_CD as accdTypCd,-->
+		<!--a.ACPN_MTHD ,-->
+		<!--a.ATT_CRGR,-->
+		<!--a.ATT_DEPT,-->
+		<!--a.ATT_DTLS_VIA,-->
+		<!--a.ATT_EMAIL,-->
+		<!--a.ATT_INST_NM,-->
+		<!--a.ATT_NATN_CD,-->
+		<!--a.ATT_SVR_NM,-->
+		<!--a.ATT_TEL_NO,-->
+		<!--a.ATT_TYP_CD,-->
+		<!--a.ATT_VIA,-->
+
+		<!--a.CRGR,-->
+		<!--a.DCL_CRGR as dclCrgr,-->
+		<!--a.DCL_CRGR_ID,-->
+		<!--a.DCL_DEPT,-->
+		<!--a.DCL_DETP,-->
+		<!--a.DCL_EMAIL,-->
+		<!--a.DCL_HP_NO,-->
+		<!--a.DCL_INST_CD as dclInstCd,-->
+		<!--a.DCL_MAIL,-->
+		<!--a.DCL_TEL_NO,-->
+
+		<!--a.DMG_CPGR,-->
+		<!--a.DMG_CRGR,-->
+		<!--a.DMG_DEPT,-->
+		<!--a.DMG_EMAIL,-->
+		<!--a.DMG_HP_NO,-->
+		<!--a.DMG_INST_CD as dmgInstCd,-->
+		<!--a.DMG_NATN_CD,-->
+		<!--a.DMG_SVR_NM,-->
+		<!--a.DMG_SVR_USR_NM,-->
+		<!--a.DMG_TEL_NO,-->
+		<!--a.DNGR_GR,-->
+		<!--a.HISTO_MODIFIED_YN,-->
+
+		<!--a.INCI_ACPN_CD,-->
+		<!--TO_DATE(a.INCI_ACPN_DT,'YYYY-MM-DD HH24:MI:SS') AS inciAcpnDt,-->
+		<!--a.INCI_BELOW_CONT,-->
+		<!--a.INCI_BGN_DT,-->
+		<!--a.INCI_DCL_CONT as inciDclCont,-->
+		<!--a.INCI_DT,-->
+
+		<!--concat(concat(concat(a.INCI_TTL,  '['),NVL(a.INCI_DTT_NM,a.INCI_TTL)),']')	as inciTtlDtt,-->
+
+		<!--NVL(a.INCI_DTT_NM, '') as inciDttNm,-->
+		<!--a.INCI_END_CONT,-->
+		<!--a.INCI_END_DT,-->
+		<!--a.INCI_INVS_CONT as inciInvsCont,-->
+		<!--a.INCI_NO as inciNo,-->
+		<!--a.INCI_NO_MULTI,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.inci_prcs_stat-->
+		<!--) as inciPrcsStat,-->
+		<!--(SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3006' AND '00'||c.com_code2 = a.inci_prty) as inciPrty,-->
+		<!--a.INCI_TRNS_CFDT,-->
+		<!--a.INCI_TRNS_RCPT_INST_CD,-->
+		<!--a.INCI_TRNS_REQ_INST_CD,-->
+		<!--a.INCI_TRNS_RQDT,-->
+		<!--a.INCI_TRNS_RSLT,-->
+		<!--a.INCI_TRNS_YN,-->
+		<!--a.INCI_TTL as inciTtl,-->
+		<!--a.INCI_TYP_CD,-->
+		<!--a.INCI_UPD_DT,-->
+		<!--a.INNCI_NO_BEFORE,-->
+		<!--a.IPS_IP,-->
+		<!--a.NCSC_NO,-->
+		<!--a.NET_DIV,-->
+		<!--a.OS_NM,-->
+		<!--a.PACKET_KEY,-->
+		<!--a.RECO_INCI_CD,-->
+		<!--a.RISK_LEVEL,-->
+		<!--a.RISK_VALUE,-->
+		<!--a.TMS_IP,-->
+		<!--nvl((-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.trans_inci_prcs_stat-->
+		<!--),'없음')  as transInciPrcsStat,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.trans_sido_prcs_stat-->
+		<!--) as transSidoPrcsStat,-->
+		<!--a.TRT_MTHD_CD,-->
+		<!--a.ATT_REMARKS,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4001' and c.com_code2 =-->
+		<!--a.reco_inci_cd-->
+		<!--) AS recoInciName,-->
+		<!--(-->
+		<!--SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dcl_Inst_Cd-->
+		<!--) AS dclInstName,-->
+		<!--(-->
+		<!--SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dmg_Inst_Cd-->
+		<!--) AS dmgInstName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3002' AND c.com_code2 =-->
+		<!--a.accd_typ_cd-->
+		<!--) AS accdTypName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.inci_prcs_stat-->
+		<!--) AS inciPrcsStatName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.trans_inci_prcs_stat-->
+		<!--) AS transInciPrcsStatName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =-->
+		<!--a.trans_sido_prcs_stat-->
+		<!--) AS transSidoPrcsStatName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3006' AND '00'||c.com_code2 =-->
+		<!--a.inci_prty-->
+		<!--) AS inciPrtyName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4004' and c.com_code2 =-->
+		<!--a.net_div-->
+		<!--) AS netDivName,-->
+		<!--(-->
+		<!--SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4006' and TO_NUMBER(c.com_code2,'9') =-->
+		<!--a.remarks-->
+		<!--) AS remarks,-->
+		<!--(CASE-->
+		<!--WHEN-->
+		<!--a.WEEK_YN = 0-->
+		<!--THEN-->
+		<!--'주중'-->
+		<!--ELSE-->
+		<!--'주말'-->
+		<!--END) AS weekYn-->
+		<!--FROM TBZLEDGE a-->
+		<!--WHERE 1=1-->
+		<!--<if test="sAuthMain != null and sAuthMain != ''">-->
+			<!--<choose>-->
+				<!--<when test="sAuthMain == 'AUTH_MAIN_3'"> &lt;!&ndash; 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 &ndash;&gt;-->
+					<!--AND (a.INCI_TRNS_RCPT_INST_CD = #{sInstCd} OR  a.DCL_INST_CD = #{sInstCd})-->
+				<!--</when>-->
+				<!--<when test="sAuthMain == 'AUTH_MAIN_4'"> &lt;!&ndash; 시군구 담당자는 시에서 이관한 사고만 조회 &ndash;&gt;-->
+					<!--AND a.TRANS_SIDO_PRCS_STAT != 0-->
+					<!--AND a.INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}-->
+				<!--</when>-->
+				<!--<when test="sAuthMain == 'AUTH_MAIN_2'">-->
+					<!--AND a.INCI_NO LIKE 'CT%'-->
+					<!--AND a.INCI_PRCS_STAT <![CDATA[ > ]]> 0-->
+					<!--AND length(a.inci_no) <![CDATA[ < ]]>  16-->
+				<!--</when>-->
+				<!--<otherwise>-->
+					<!--AND 2=2-->
+				<!--</otherwise>-->
+			<!--</choose>-->
+		<!--</if>-->
+		<!--<if test="date1 != null and date1 != ''">-->
+			<!--and a.INCI_ACPN_DT between #{startDt} and #{endDt}-->
+		<!--</if>-->
+		<!--<if test="netDiv != null and netDiv != ''">-->
+			<!--and a.NET_DIV = #{netDiv}-->
+		<!--</if>-->
+		<!--<if test="recoInciCd != null and recoInciCd != ''">-->
+			<!--AND a.RECO_INCI_CD = #{recoInciCd}-->
+		<!--</if>-->
+		<!--<if test="inciPrcsStatCd != null and inciPrcsStatCd != ''">-->
+			<!--AND a.INCI_PRCS_STAT = #{inciPrcsStatCd}-->
+		<!--</if>-->
+		<!--<if test="accdTypCd != null and accdTypCd != ''">-->
+			<!--AND a.ACCD_TYP_CD = #{accdTypCd}-->
+		<!--</if>-->
+		<!--<if test="inciPrtyCd != null and inciPrtyCd != ''">-->
+			<!--AND a.INCI_PRTY = #{inciPrtyCd}-->
+		<!--</if>-->
+		<!--<if test="inciTtl != null and inciTtl != ''">-->
+			<!--AND a.INCI_TTL LIKE '%' || #{inciTtl} || '%'-->
+		<!--</if>-->
+		<!--<if test="inciNo != null and inciNo != ''">-->
+			<!--AND a.INCI_NO LIKE '%' || #{inciNo} || '%'-->
+		<!--</if>-->
+		<!--<if test="weekYn != null and weekYn != ''">-->
+			<!--AND a.WEEK_YN = #{weekYn}-->
+		<!--</if>-->
+		<!--<if test="InciDclCont != null">-->
+			<!--AND-->
+			<!--(-->
+			<!--<foreach collection="InciDclCont" item="item" separator="OR" >-->
+				<!--a.INCI_DCL_CONT LIKE '%' || #{item} || '%'-->
+			<!--</foreach>-->
+			<!--)-->
+		<!--</if>-->
+		<!--<if test="InciInvsCont != null">-->
+			<!--AND-->
+			<!--(-->
+			<!--<foreach collection="InciInvsCont" item="item" separator="OR" >-->
+				<!--a.INCI_INVS_CONT LIKE '%' || #{item} || '%'-->
+			<!--</foreach>-->
+			<!--)-->
+		<!--</if>-->
+		<!--<if test="InciBelowCont != null">-->
+			<!--AND-->
+			<!--(-->
+			<!--<foreach collection="InciBelowCont" item="item" separator="OR" >-->
+				<!--a.INCI_BELOW_CONT LIKE '%' || #{item} || '%'-->
+			<!--</foreach>-->
+			<!--)-->
+		<!--</if>-->
+		<!--<if test="attIp != null and attIp != ''">-->
+			<!--AND INCI_NO IN (-->
+			<!--SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR LIKE '%' || #{attIp} || '%'-->
+			<!--)-->
+		<!--</if>-->
+		<!--<if test="dmgIp != null and dmgIp != ''">-->
+			<!--AND INCI_NO IN (-->
+			<!--SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{dmgIp} || '%'-->
+			<!--)-->
+		<!--</if>-->
+
+		<!--)-->
+		<!--WHERE 1=1-->
+		<!--<if test="totalTitle != null and totalTitle != ''">-->
+			<!--AND (-->
+			<!--INCI_NO LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--INCI_TTL LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--dmgInstName LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--dclInstName LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--INCI_DCL_CONT LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--INCI_INVS_CONT LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--INCI_BELOW_CONT LIKE '%' || #{totalTitle} || '%' OR-->
+			<!--(-->
+			<!--INCI_NO IN (-->
+			<!--SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{totalTitle} || '%'-->
+			<!--)-->
+			<!--) OR-->
+			<!--(-->
+			<!--INCI_NO IN (-->
+			<!--SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR  LIKE '%' || #{totalTitle} || '%'-->
+			<!--)-->
+			<!--)-->
+			<!--)-->
+		<!--</if>-->
+		<!--<if test="dmgInstName != null and dmgInstName != ''">-->
+			<!--AND dmgInstName LIKE '%' || #{dmgInstName} || '%'-->
+		<!--</if>-->
+		<!--<if test="dclInstName != null and dclInstName != ''">-->
+			<!--AND dclInstName LIKE '%' || #{dclInstName} || '%'-->
+		<!--</if>-->
+		<!--ORDER BY inciAcpnDt DESC-->
+	<!--</select>-->
+	<select id = "selectAccidentApplyList" fetchSize="100" resultType="java.util.HashMap">
+		SELECT ROWNUM AS NUM, TT.*
+		FROM
+		(
+		SELECT
+		a.ACCD_TYP_CD as accdTypCd,
+		a.ACPN_MTHD,
+		a.ATT_CRGR,
+		a.ATT_DEPT,
+		a.ATT_DTLS_VIA,
+		a.ATT_EMAIL,
+		a.ATT_INST_NM,
+		a.ATT_NATN_CD,
+		a.ATT_SVR_NM,
+		a.ATT_TEL_NO,
+		a.ATT_TYP_CD,
+		a.ATT_VIA,
+
+		a.CRGR,
+		a.DCL_CRGR as dclCrgr,
+		a.DCL_CRGR_ID,
+		a.DCL_DEPT,
+		a.DCL_DETP,
+		a.DCL_EMAIL,
+		a.DCL_HP_NO	  AS dclHpNo,
+		a.DCL_INST_CD as dclInstCd,
+		a.DCL_MAIL,
+		a.DCL_TEL_NO,
+
+		a.DMG_CPGR,
+		a.DMG_CRGR,
+		a.DMG_DEPT,
+		a.DMG_EMAIL,
+		a.DMG_HP_NO	   AS dmgHpNo,
+		a.DMG_INST_CD as dmgInstCd,
+		a.DMG_NATN_CD,
+		a.DMG_SVR_NM,
+		a.DMG_SVR_USR_NM,
+		a.DMG_TEL_NO,
+		a.DNGR_GR,
+		a.HISTO_MODIFIED_YN,
+
+		a.INCI_ACPN_CD,
+		TO_DATE(a.INCI_ACPN_DT,'YYYY-MM-DD HH24:MI:SS') AS inciAcpnDt,
+		TO_DATE(a.INCI_DT,'YYYY-MM-DD HH24:MI:SS') AS inciDt,
+		a.INCI_BELOW_CONT,
+		a.INCI_BGN_DT,
+		a.INCI_DCL_CONT as inciDclCont,
+		a.INCI_DT,
+		a.INCI_DTT_NM AS inciDttNm,
+		a.INCI_END_CONT,
+		a.INCI_END_DT,
+		a.INCI_INVS_CONT,
+		a.INCI_NO AS inciNo,
+		a.INCI_NO_MULTI,
+		a.INCI_PRCS_STAT,
+		a.INCI_PRTY,
+		a.INCI_TRNS_CFDT,
+		a.INCI_TRNS_RCPT_INST_CD,
+		a.INCI_TRNS_REQ_INST_CD,
+		a.INCI_TRNS_RQDT,
+		a.INCI_TRNS_RSLT,
+
+		a.INCI_TTL AS inciTTL,
+		concat(concat(concat(a.INCI_TTL,  '['),NVL(a.INCI_DTT_NM,a.INCI_TTL)),']')	as inciTtlDtt,
+
+		a.INCI_TYP_CD,
+		TO_DATE(a.INCI_UPD_DT,'YYYY-MM-DD HH24:MI:SS') AS inciUpdDt,
+		a.INNCI_NO_BEFORE,
+		a.IPS_IP,
+		a.NCSC_NO,
+		a.NET_DIV,
+		a.OS_NM,
+		a.PACKET_KEY,
+		a.RECO_INCI_CD,
+		a.RISK_LEVEL,
+		a.RISK_VALUE,
+		a.TMS_IP,
+		a.TRANS_INCI_PRCS_STAT,
+		a.TRANS_SIDO_PRCS_STAT,
+		a.TRT_MTHD_CD,
+		a.ATT_REMARKS,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4001' and c.com_code2 =
+		a.reco_inci_cd
+		) AS recoInciName,
+		(
+		SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dcl_Inst_Cd
+		) AS dclInstName,
+		(
+		SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = a.dmg_Inst_Cd
+		) AS dmgInstName,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3002' AND c.com_code2 =
+		a.accd_typ_cd
+		) AS accdTypName,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+		a.inci_prcs_stat
+		) AS inciPrcsStat,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+		a.trans_inci_prcs_stat
+		) AS transInciPrcsStat,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3001' AND c.com_code2 =
+		a.trans_sido_prcs_stat
+		) AS transSidoPrcsStat,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3006' AND '00'||c.com_code2 =
+		a.inci_prty
+		) AS inciPrty,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4004' and c.com_code2 =
+		a.net_div
+		) AS netDivName,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '4006' and TO_NUMBER(c.com_code2,'9') =
+		a.remarks
+		) AS remarks,
+		NVL((
+		SELECT inst_nm FROM TSMINST WHERE inst_cd = a.INCI_TRNS_RCPT_SIDO_INST_CD AND USE_YN = 'Y'
+		),'-') AS tranSigunName,
+		(CASE
+		WHEN
+		a.WEEK_YN = 0
+		THEN
+		'주중'
+		ELSE
+		'주말'
+		END) AS WEEK_YN,
+		TO_DATE(SUB.HSTY_CRT_DT,'YYYY-MM-DD HH24:MI:SS') AS siEndDt,
+		(
+		SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3004 and '00' || c.com_code2 =
+		a.acpn_Mthd
+		) AS acpnMthdName
+		FROM TBZLEDGE a
+		LEFT join(
+		SELECT
+		h.inci_no,
+		max(h.HSTY_CRT_DT) HSTY_CRT_DT
+		FROM TBHHISTO h
+		INNER JOIN TSMINST t ON h.inst_cd = t.inst_cd
+		AND t.INST_LEVEL = 1 AND t.DEPTH = 1
+		WHERE 1=1
+		AND h.ttl LIKE '%종결되었습니다.'
+		group by inci_no
+		)SUB ON SUB.inci_no = a.inci_no
+		WHERE 1=1
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+					AND
+					(INCI_TRNS_RCPT_INST_CD IN (1100000, #{sInstCd})
+					OR INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd=pnt_inst_cd
+					START WITH inst_cd= #{sInstCd}
+					)
+					OR DCL_INST_CD IN (#{sInstCd})
+					)
+					AND INCI_ACPN_DT between #{startDt} and #{endDt}
+					AND TRANS_SIDO_PRCS_STAT != 99
+					AND (TRANS_INCI_PRCS_STAT > 0 OR TRANS_SIDO_PRCS_STAT > 0)
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+					AND INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+					AND TRANS_SIDO_PRCS_STAT <![CDATA[ > ]]> 0
+					AND TRANS_SIDO_PRCS_STAT != 99
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND a.inci_no LIKE 'CT%'
+					AND length(a.inci_no) <![CDATA[ < ]]>  16
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+		<if test="date1 != null and date1 != ''">
+			<choose>
+					<when test="srchDateType == 'inciAcpnDt'">
+						AND a.INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<when test="srchDateType == 'inciUpdDt'">
+						AND a.INCI_UPD_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<when test="srchDateType == 'siEndDt'">
+						AND SUB.HSTY_CRT_DT BETWEEN #{startDt} AND #{endDt}
+					</when>
+					<otherwise>
+						and 1=1
+					</otherwise>
+				</choose>
+		</if>
+		<if test="netDiv != null and netDiv != ''">
+			and a.NET_DIV = #{netDiv}
+		</if>
+		<if test="recoInciCd != null and recoInciCd != ''">
+			AND a.RECO_INCI_CD = #{recoInciCd}
+		</if>
+		<if test="inciPrcsStatCd != null and inciPrcsStatCd != ''">
+			AND a.INCI_PRCS_STAT = #{inciPrcsStatCd}
+		</if>
+		<if test="transInciPrcsStatCd != null and transInciPrcsStatCd != ''">
+			AND a.TRANS_INCI_PRCS_STAT = #{transInciPrcsStatCd}
+		</if>
+		<if test="transSidoPrcsStatCd != null and transSidoPrcsStatCd != ''">
+			AND a.TRANS_SIDO_PRCS_STAT = #{transSidoPrcsStatCd}
+		</if>
+		<if test="accdTypCd != null and accdTypCd != ''">
+			AND a.ACCD_TYP_CD = #{accdTypCd}
+		</if>
+		<if test="inciPrtyCd != null and inciPrtyCd != ''">
+			AND a.INCI_PRTY = #{inciPrtyCd}
+		</if>
+		<if test="inciTtl != null and inciTtl != ''">
+			AND (UPPER(a.INCI_TTL) LIKE '%' ||UPPER( #{inciTtl}) || '%' OR UPPER(a.INCI_DTT_NM) LIKE '%' ||UPPER( #{inciTtl}) || '%')
+		</if>
+		<if test="inciNo != null and inciNo != ''">
+			AND a.INCI_NO LIKE '%' || #{inciNo} || '%'
+		</if>
+		<if test="weekYn != null and weekYn != ''">
+			AND a.WEEK_YN = #{weekYn}
+		</if>
+		<if test="InciDclCont != null">
+			AND
+			(
+			<foreach collection="InciDclCont" item="item" separator="OR" >
+				UPPER(a.INCI_DCL_CONT) LIKE '%' ||UPPER( #{item} )|| '%'
+			</foreach>
+			)
+		</if>
+		<if test="InciInvsCont != null">
+			AND
+			(
+			<foreach collection="InciInvsCont" item="item" separator="OR" >
+				UPPER(a.INCI_INVS_CONT) LIKE '%' ||UPPER( #{item}) || '%'
+			</foreach>
+			)
+		</if>
+		<if test="InciBelowCont != null">
+			AND
+			(
+			<foreach collection="InciBelowCont" item="item" separator="OR" >
+				UPPER(a.INCI_BELOW_CONT) LIKE '%' ||UPPER( #{item}) || '%'
+			</foreach>
+			)
+		</if>
+		<if test="attIp != null and attIp != ''">
+			AND a.INCI_NO IN (
+			SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR LIKE '%' || #{attIp} || '%'
+			)
+		</if>
+		<if test="dmgIp != null and dmgIp != ''">
+			AND a.INCI_NO IN (
+			SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{dmgIp} || '%'
+			)
+		</if>
+
+		<if test="srchAcpnMthd != null and srchAcpnMthd != ''">
+				AND a.ACPN_MTHD IN (
+					<foreach collection="srchAcpnMthdList" item="item" separator=",">
+						#{item}
+					</foreach>
+				)
+			</if>
+		ORDER BY a.INCI_ACPN_DT ASC
+		) TT
+		WHERE 1=1
+		<if test="totalTitle != null and totalTitle != ''">
+			AND (
+			UPPER(INCI_NO) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(INCI_TTL) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(dmgInstName) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(dclInstName) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(INCI_DCL_CONT) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(INCI_INVS_CONT) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			UPPER(INCI_BELOW_CONT) LIKE '%' || UPPER(#{totalTitle}) || '%' OR
+			(
+			INCI_NO IN (
+			SELECT INCI_NO FROM TBZDCLIP WHERE IP_ADDR LIKE '%' || #{totalTitle} || '%'
+			)
+			) OR
+			(
+			INCI_NO IN (
+			SELECT INCI_NO FROM TBZATTIP WHERE IP_ADDR  LIKE '%' || #{totalTitle} || '%'
+			)
+			)
+			)
+		</if>
+		<if test="dmgInstName != null and dmgInstName != ''">
+			AND dmgInstName LIKE '%' || #{dmgInstName} || '%'
+		</if>
+		<if test="dclInstName != null and dclInstName != ''">
+			AND dclInstName LIKE '%' || #{dclInstName} || '%'
+		</if>
+		ORDER BY inciAcpnDt DESC
+	</select>
+
+	<!-- 사고신고 등록 -->
+	 <insert id="addAccidentApply">
+			<selectKey keyProperty="inciNo" resultType="string" order="BEFORE">
+				WITH SUB as (
+				    SELECT (POS_CD||TO_CHAR(sysdate,'yy-mmdd')) inciNo
+				    FROM TSMINST
+				    WHERE inst_cd = #{instCd } <!-- 1600000 -->
+				)
+				SELECT
+					REPLACE(B.inciNo||A.inciNumber , ' ')	AS inciNo
+				FROM DUAL,
+				(
+				SELECT
+					TO_CHAR(NVL(SUBSTR(MAX(inci_no), 13, 3), 0)+1, '000') AS inciNumber
+				FROM
+					TBZLEDGE
+				WHERE inci_no LIKE '%' ||	(SELECT inciNo from SUB)   ||  '%'
+				)A,
+				(SELECT inciNo from SUB) B
+			</selectKey>
+				INSERT INTO	TBZLEDGE
+						(
+							INCI_NO,
+							ACCD_TYP_CD,
+							ACPN_MTHD,
+							ATT_CRGR,
+							ATT_DEPT,
+							ATT_DTLS_VIA,
+							ATT_EMAIL,
+							ATT_INST_NM,
+							ATT_NATN_CD,
+							ATT_SVR_NM,
+							<!-- ATT_TEL_NO, -->
+							ATT_TYP_CD,
+							ATT_VIA,
+		 					ATT_REMARKS,
+
+							CRGR,
+							DCL_CRGR,
+							DCL_CRGR_ID,
+							DCL_DEPT,
+							DCL_EMAIL,
+							DCL_INST_CD,
+							DCL_MAIL,
+							DCL_TEL_NO,
+
+							DMG_CPGR,
+							DMG_CRGR,
+							DMG_DEPT,
+							DMG_EMAIL,
+							DMG_INST_CD,
+							DMG_NATN_CD,
+							DMG_SVR_USR_NM,
+							DMG_TEL_NO,
+							DNGR_GR,
+							HISTO_MODIFIED_YN,
+
+							INCI_ACPN_CD,
+							INCI_ACPN_DT,
+							INCI_BELOW_CONT,
+							INCI_BGN_DT,
+							INCI_DCL_CONT,
+							INCI_DT,
+							INCI_END_CONT,
+							INCI_END_DT,
+							INCI_INVS_CONT,
+							INCI_NO_MULTI,
+							INCI_PRCS_STAT,
+							INCI_PRTY,
+							INCI_TRNS_CFDT,
+							INCI_TRNS_RCPT_INST_CD,
+							INCI_TRNS_REQ_INST_CD,
+							INCI_TRNS_RQDT,
+							INCI_TRNS_RSLT,
+							INCI_TRNS_YN,
+							INCI_TTL,
+		 					INCI_DTT_NM,
+							INCI_TYP_CD,
+							INCI_UPD_DT,
+							INNCI_NO_BEFORE,
+							IPS_IP,
+                            <if test="gukYn != null and gukYn != ''">
+                                 <if test='gukYn == "Y"'>
+                                     NCSC_NO,
+                                 </if>
+                            </if>
+							NET_DIV,
+							OS_NM,
+							PACKET_KEY,
+							RECO_INCI_CD,
+							RISK_LEVEL,
+							RISK_VALUE,
+							TMS_IP,
+							TRANS_INCI_PRCS_STAT,
+							TRT_MTHD_CD,
+		 					WEEK_YN,
+		 					REMARKS,
+		 					DMG_HP_NO,
+		 					DCL_HP_NO
+						)
+				VALUES	(
+							#{inciNo		},
+							#{accdTypCd		},
+							#{acpnMthd		},
+							#{attCrgr		},
+							#{attDept		},
+							#{attDtlsVia	},
+							#{attEmail	    },
+							#{attInstNm	    },
+							#{attNatnCd	    },
+							#{attSvrNm	    },
+                            <!-- attTelNo, -->
+							#{attTypCd	    },
+							#{attVia		},
+		 					#{attRemarks	},
+							#{crgr   		},
+							#{dclCrgr		},
+							#{dclCrgrId     },
+							#{dclDept		},
+							#{dclEmail      },
+							#{dclInstCd     },
+							#{dclMail       },
+							#{dclTelNo      },
+							#{dmgCpgr       },
+							#{dmgCrgr	    },
+							#{dmgDept	    },
+							#{dmgEmail	    },
+							#{dmgInstCd     },
+							#{dmgNatnCd     },
+							#{dmgSvrUsrNm   },
+							#{dmgTelNo    },
+							#{dngr_gr	    },
+							#{histoModifiedYn },
+
+							#{inciAcpnCd    },
+                            TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+							#{inciBelowCont },
+							#{inciBgnDt     },
+							#{inciDclCont   },
+							#{inciDt	    },
+							#{inciEndCont   },
+							#{inciEndDt     },
+							#{inciInvsCont  },
+		 					#{inciNo		}, <!-- inci_No_Multi 값 = inciNo -->
+							#{inciPrcsStat  },
+							#{inciPrty	    },
+							#{inciTrnsCfdt  },
+							#{inciTrnsRcptInstCd },
+							#{inciTrnsReqInstCd  },
+							#{inciTrnsRqdt  },
+							#{inciTrnsRslt  },
+							'N',						<!-- 이관상태 기본값은 N -->
+							#{inciTtl	    },
+		 					#{inciDttNm	    },
+							#{inciTypCd	    },
+							#{inciUpdDt     },
+							#{innciNoBefore },
+		 					#{ipsIp         },
+                            <if test="gukYn != null and gukYn != ''">  <!-- 국정원발송 Y면 inciNo 세팅 -->
+                                <if test='gukYn == "Y"'>
+                                     #{inciNo},
+                                 </if>
+                            </if>
+							#{netDiv        },
+							#{osNm		    },
+							#{packetKey     },
+							#{recoInciCd	},
+							#{riskLevel	    },
+							#{riskValue	    },
+							#{tmsIp         },
+							#{transInciPrcsStat  },
+							#{trtMthdCd		},
+							(
+							 select
+							 	case
+							 		when to_char(sysdate, 'D') in (1,7)
+							 		then 1
+							 		when TO_CHAR(sysdate, 'YYYYMMDD' )
+							 			in (select com_code2
+							 				from comm_code
+							 				where com_code1='4005'
+							 				and code_lvl=2
+							 				and use_yn ='Y')
+							 		then 1
+							 		else 0
+							 	END AS holidayYn
+							 from dual
+							),
+		 					#{remarks},
+		 					#{acpnMthdSub},
+		 					#{accdTypCdSub}
+						)
+	</insert>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentDeptDto" id="getDeptResultMap">
+		<result property="instCd"			column="inst_cd"		/>
+		<result property="instNm"			column="inst_nm"		/>
+		<result property="pntInstCd"		column="pnt_inst_cd"	/>
+		<result property="instLevel"		column="inst_level"		/>
+		<result property="instOrder"		column="inst_order"		/>
+		<result property="typeBig"			column="type_big"		/>
+		<result property="typeMid"			column="type_mid"		/>
+		<result property="typeSml"			column="type_sml"		/>
+		<result property="useYn"			column="use_yn"			/>
+		<result property="pmsAssUnitYn"		column="pms_ass_unit_yn"/>
+		<result property="depth"			column="depth"			/>
+		<result property="localCd"			column="local_cd"		/>
+		<result property="regDt"			column="reg_dt"			/>
+		<result property="pntInstCdNm"		column="pnt_inst_cd_nm"	/>
+		<result property="localCdNm"		column="local_cd_nm"	/>
+		<result property="typeMidNm"		column="type_mid_nm"	/>
+		<result property="typeSmlNm"		column="type_sml_nm"	/>
+	</resultMap>
+<!--    xml 리턴하고  interface 리턴 값이 다름 이거랑 유사한 코드 InstitutionCodeMapper.xml -->
+	<select id="getAccidenDeptList" resultMap="getDeptResultMap">
+ SELECT inst_cd,
+       inst_nm,
+       pnt_inst_cd,
+       inst_level,
+       inst_order,
+       type_big,
+       type_mid,
+       type_sml,
+       use_yn,
+       pms_ass_unit_yn,
+       depth,
+       local_cd,
+       reg_dt,
+       pnt_inst_cd_nm,
+       local_cd_nm,
+       type_mid_nm,
+       type_sml_nm
+  FROM (
+        SELECT
+				CASE WHEN a.inst_cd = 5690000 THEN 6365000
+					  ELSE a.inst_cd
+				END AS sort,
+				a.inst_cd,
+               a.inst_nm,
+               a.pnt_inst_cd,
+               a.inst_level,
+               a.inst_order,
+               a.type_big,
+               a.type_mid,
+               a.type_sml,
+               a.use_yn,
+               a.pms_ass_unit_yn,
+               a.depth,
+               a.local_cd,
+               a.reg_dt ,
+               (
+                SELECT inst_nm
+                  FROM TSMINST
+                 WHERE inst_cd = a.pnt_inst_cd
+               ) AS pnt_inst_cd_nm,
+               (
+                SELECT local_nm
+                  FROM TSMLOCAL
+                 WHERE local_cd = a.local_cd
+               ) AS local_cd_nm,
+               (
+                SELECT code_name
+                  FROM COMM_CODE
+                 WHERE com_code1 = '2009'
+                   AND use_yn = 'Y'
+                   AND com_code2 = a.type_mid
+                   AND com_code3 IS NULL
+               ) AS type_mid_nm,
+               (
+                SELECT inst_nm
+                  FROM COMM_CODE
+                 WHERE com_code1 = '2009'
+                   AND use_yn = 'Y'
+                   AND com_code2 = a.type_mid
+                   AND com_code3 = type_sml
+               ) AS type_sml_nm
+          FROM (
+                SELECT inst_cd,
+                       inst_nm,
+                       pnt_inst_cd,
+                       inst_level,
+                       inst_order,
+                       type_big,
+                       type_mid,
+                       type_sml,
+                       use_yn,
+                       pms_ass_unit_yn,
+                       depth,
+                       local_cd,
+                       reg_dt
+                  FROM TSMINST
+                 WHERE use_yn = 'Y'
+				  <choose>
+					  <when test='type == "area"'>
+						  AND 1=1
+					  </when>
+                      <when test='type == "dcl"'>
+                          AND 1=1
+                      </when>
+					  <when test='type == "dmg"'>
+						  <if test="InstLevel==2">
+						  	AND INST_CD = #{instCd}
+						  </if>
+						  <if test="InstLevel==1">
+							  CONNECT BY PRIOR inst_cd = pnt_inst_cd
+							  START WITH inst_cd = #{instCd}
+						  </if>
+					  </when>
+					  <when test='type == "share"'>
+						  <if test="InstLevel==2">
+							  AND INST_CD = #{instCd}
+						  </if>
+						  <if test="InstLevel==1">
+							  CONNECT BY PRIOR inst_cd = pnt_inst_cd
+							  START WITH inst_cd = #{instCd}
+						  </if>
+					  </when>
+					  <otherwise>
+						  AND INST_LEVEl IN (0, 1)
+					  </otherwise>
+
+				  </choose>
+                 ORDER BY inst_cd ASC
+               ) a
+         WHERE 1=1
+
+       ) tmp
+ WHERE 1=1
+ ORDER BY sort ASC
+	</select>
+
+
+	<!-- 신고접수 수정 -->
+	 <update id="editAccidentApply">
+		UPDATE TBZLEDGE SET
+			 INCI_TTL 		= #{inciTtl},		<!-- 제목 -->
+			 DMG_CRGR 		= #{dmgCrgr},		<!-- 사고시스템 담당자 -->
+			 DMG_DEPT 		= #{dmgDept}, 		<!-- 사고시스템 부서명 -->
+			 ACCD_TYP_CD  	= #{accdTypCd},		<!-- 사고시스템 사고유형 -->
+			 DMG_SVR_USR_NM = #{dmgSvrUsrNm},	<!-- 사고시스템 호스트용도 -->
+			 OS_NM 			= #{osNm},			<!-- 사고시스템 운영체제 -->
+			 DMG_TEL_NO 	= #{dmgTelNo},		<!-- 사고시스템 전번 -->
+			 DMG_EMAIL 		= #{dmgEmail},		<!-- 사고시스템 메일 -->
+		 	 DMG_NATN_CD	= #{dmgNatnCd},		<!-- 피해국가 -->
+             inci_Dtt_Nm  = #{inciDttNm},
+		 	 DMG_INST_CD = #{dmgInstCd}, 		<!-- 피해기관 -->
+
+			 ATT_SVR_NM 	= #{attSvrNm},		<!-- 공격시스템 호스트 -->
+			 ATT_CRGR 		= #{attCrgr},		<!-- 공격시스템 담당자 -->
+			 ATT_DEPT 		= #{attDept},		<!-- 공격시스템 부서명 -->
+			 ATT_TYP_CD 	= #{attTypCd},		<!-- 공격시스템 공격유형 -->
+			 ATT_VIA 		= #{attVia},		<!-- 공격시스템 공격루트 -->
+			 ATT_DTLS_VIA 	= #{attDtlsVia},	<!-- 공격시스템 세부루트 -->
+			 ATT_EMAIL 		= #{attEmail},		<!-- 공격시스템 메일 -->
+		 	 ATT_INST_NM 	= #{attInstNm},		<!-- 공격기관 -->
+		 	 ATT_NATN_CD 	= #{attNatnCd},		<!-- 공격국가 -->
+		 	 ATT_Remarks	= #{attRemarks},
+
+		 	 INCI_END_CONT  = #{inciEndCont},	<!-- 사고종결내용 -->
+		 	 INCI_DCL_CONT  = #{inciDclCont},	<!-- 사고신고내용 -->
+		 	 INCI_INVS_CONT = #{inciInvsCont},	<!-- 조사내용 -->
+		 	 INCI_BELOW_CONT = #{inciBelowCont},	<!-- 시도의견 -->
+
+		 	 DCL_HP_NO = #{accdTypCdSub} <!-- 사고유형 코드 한글값(웹취약점+기존) -->
+
+		WHERE
+			INCI_NO = #{inciNo}
+	</update>
+
+	<!-- 신고접수 삭제 -->
+	<delete id="deleteAccidentApply">
+		DELETE FROM TBZLEDGE
+		WHERE INCI_NO = #{inciNo}
+	</delete>
+
+	<resultMap type="com.klid.webapp.common.file.dto.AttachfileDto" id="resultAttachfile">
+		<result property="fileNo" 			column="FILE_NO"/>
+		<result property="fileName" 		column="FILE_NAME"/>
+		<result property="originalFileName" column="ORIGINAL_FILE_NAME"/>
+	</resultMap>
+
+	<select id="selectAttachFileList" resultMap="resultAttachfile">
+		SELECT
+			ATT_SEQ			AS FILE_NO,
+			INCI_NO,
+			ATH_PATH,
+			ATH_FILE_NM		AS FILE_NAME,
+			ATH_CNT_TYP,
+			REAL_NAME		AS ORIGINAL_FILE_NAME
+		FROM TBZATTAC
+		WHERE 1=1
+		AND
+		(
+			INCI_NO = #{inciNo}
+		<if test="inciNoMulti != null">
+			OR INCI_NO = #{inciNoMulti }
+		</if>
+		)
+	</select>
+
+	<select id="getAccidentLDetail" resultMap="getApplyResultMap">
+		SELECT
+			tbz.ACCD_TYP_CD,
+			tbz.ACPN_MTHD,
+			tbz.ATT_CRGR,
+			tbz.ATT_DEPT,
+			tbz.ATT_DTLS_VIA,
+			tbz.ATT_EMAIL,
+			tbz.ATT_INST_NM,
+			tbz.ATT_NATN_CD,
+			tbz.ATT_SVR_NM,
+			tbz.ATT_TEL_NO,
+			tbz.ATT_TYP_CD,
+			tbz.ATT_VIA,
+			tbz.ATT_REMARKS,
+
+			tbz.CRGR,
+			tbz.DCL_CRGR,
+			tbz.DCL_CRGR_ID,
+			tbz.DCL_DEPT,
+			tbz.DCL_DETP,
+			tbz.DCL_EMAIL,
+			tbz.DCL_HP_NO,
+			tbz.DCL_INST_CD,
+			tbz.DCL_MAIL,
+			tbz.DCL_TEL_NO,
+
+			tbz.DMG_CPGR,
+			tbz.DMG_CRGR,
+			tbz.DMG_DEPT,
+			tbz.DMG_EMAIL,
+			tbz.DMG_HP_NO,
+			tbz.DMG_INST_CD,
+			tbz.DMG_NATN_CD,
+			tbz.DMG_SVR_NM,
+			tbz.DMG_SVR_USR_NM,
+			tbz.DMG_TEL_NO,
+			tbz.DNGR_GR,
+			tbz.HISTO_MODIFIED_YN,
+
+			tbz.INCI_ACPN_CD,
+			tbz.INCI_ACPN_DT,
+			tbz.INCI_BELOW_CONT,
+			tbz.INCI_BGN_DT,
+			tbz.INCI_DCL_CONT,
+			tbz.INCI_DT,
+			tbz.INCI_END_CONT,
+			tbz.INCI_END_DT,
+			tbz.INCI_INVS_CONT,
+			tbz.INCI_NO,
+			tbz.INCI_NO_MULTI,
+			tbz.INCI_PRCS_STAT,
+			tbz.INCI_PRTY,
+			tbz.INCI_TRNS_CFDT,
+			tbz.INCI_TRNS_RCPT_INST_CD,
+			tbz.INCI_TRNS_RCPT_SIDO_INST_CD,
+			tbz.INCI_TRNS_REQ_INST_CD,
+			tbz.INCI_TRNS_RQDT,
+			tbz.INCI_TRNS_RSLT,
+			tbz.INCI_TRNS_YN,
+			tbz.INCI_TTL,
+			tbz.INCI_DTT_NM,
+			tbz.INCI_TYP_CD,
+			tbz.INCI_UPD_DT,
+			tbz.INNCI_NO_BEFORE,
+			tbz.IPS_IP,
+			tbz.NCSC_NO,
+			tbz.NET_DIV,
+			tbz.OS_NM,
+			tbz.PACKET_KEY,
+			tbz.RECO_INCI_CD,
+			tbz.RISK_LEVEL,
+			tbz.RISK_VALUE,
+			tbz.TMS_IP,
+			tbz.TRANS_INCI_PRCS_STAT,
+			tbz.TRT_MTHD_CD,
+			tbz.remarks			AS remarksCd,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3004 and '00' || c.com_code2 =
+			tbz.acpn_Mthd
+			) AS acpnMthdName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 2001 and c.com_code2 =
+			tbz.risk_Level
+			) AS riskLevelName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 4001 and c.com_code2 =
+			tbz.reco_inci_cd
+			) AS recoInciName,
+			(
+			SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = tbz.dcl_Inst_Cd
+			) AS dclInstName,
+			(
+			SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = tbz.dmg_Inst_Cd
+			) AS dmgInstName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3002 AND c.com_code2 =
+			tbz.accd_typ_cd
+			) AS accdTypName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3001 AND c.com_code2 =
+			tbz.inci_prcs_stat
+			) AS inciPrcsStatName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3006 AND '00'||c.com_code2 =
+			tbz.inci_prty
+			) AS inciPrtyName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 4004 and c.com_code2 =
+			tbz.net_div
+			) AS netDivName,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3003 and c.com_code2 =
+			tbz.att_Typ_Cd
+          	) AS attTypName,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3009 and c.com_code2 =
+            tbz.att_Via
+            ) AS attViaName,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 4006 and TO_NUMBER(c.com_code2,'9') =
+            tbz.remarks
+            ) AS remarks,
+            (
+            SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = 3010 and c.com_code2 =
+            tbz.att_Dtls_Via
+            ) AS attDtlsViaName,
+
+			case
+				when
+					(
+					 select a.depth from TSMINST a where a.inst_cd = tbz.dcl_Inst_Cd
+					) = 0
+					or
+					(
+					 select a.depth from TSMINST a where a.inst_cd = tbz.dcl_Inst_Cd
+					) is null
+				then
+					'N'
+				else
+					'Y'
+			end
+			AS applyMultiYn,
+
+			case
+				when
+					(
+					 select a.depth from TSMINST a where a.inst_cd = tbz.inci_trns_rcpt_inst_cd
+					) = 0
+					or
+					(
+					 select a.depth from TSMINST a where a.inst_cd = tbz.inci_trns_rcpt_inst_cd
+					) is null
+				then
+					'N'
+				else
+					'Y'
+			end
+			AS transMultiYn,
+			(
+			 select nvl(a.depth,a.inst_level) from TSMINST a where a.inst_cd = tbz.dmg_Inst_Cd
+			)AS dmgInstDepth,
+
+			NVL((
+			select KR_NM AS nation_nm from TSMNATION where nation_cd = tbz.att_Natn_Cd
+			),'-') AS attNatnNm,
+			NVL((
+			select KR_NM AS nation_nm from TSMNATION where nation_cd = tbz.dmg_Natn_Cd
+			),'-') AS dmgNatnNm,
+			tbz.WEEK_YN,
+			tbz.INCI_TRNS_RCPT_SIDO_INST_CD,
+			tbz.TRANS_SIDO_PRCS_STAT,
+			(
+			SELECT LISTAGG(sub.ip_addr, ', ') WITHIN GROUP(ORDER BY sub.ip_seq) FROM TBZDCLIP sub WHERE sub.inci_no = tbz.inci_no
+			)		AS dmgIp,
+			(
+			SELECT LISTAGG(sub.ip_addr, ', ') WITHIN GROUP(ORDER BY sub.ip_seq) FROM TBZATTIP sub WHERE sub.inci_no = tbz.inci_no
+			)		AS attIp
+		FROM TBZLEDGE tbz
+		WHERE 1=1
+		AND tbz.INCI_NO = #{inciNo}
+	</select>
+
+	<update id="updateAccidentProcess">
+		UPDATE TBZLEDGE SET
+            inci_upd_dt = TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+            ,histo_modified_yn = 'Y'
+			<if test="crgr != null">
+				,crgr = #{crgr}
+			</if>
+			<if test="inciPrcsStat != null">
+            	,inci_prcs_stat = #{inciPrcsStat}
+			</if>
+			<if test="transInciPrcsStat != null">
+				,trans_inci_prcs_stat = #{transInciPrcsStat}
+			</if>
+			<if test="inciTrnsRcptInstCd != null">
+				,inci_trns_rcpt_inst_cd = #{inciTrnsRcptInstCd}
+			</if>
+			<if test="transSidoPrcsStat != null">
+				,trans_sido_prcs_stat = #{transSidoPrcsStat}
+			</if>
+			<if test="inciTrnsRcptSidoInstCd != null">
+				,inci_trns_rcpt_sido_inst_cd = #{inciTrnsRcptSidoInstCd}
+			</if>
+			<if test="inciEndCont != null">
+				,inci_End_Cont = #{inciEndCont}
+			</if>
+			<if test="trtMthdCd != null">
+				,trt_Mthd_Cd = #{trtMthdCd}
+			</if>
+			<if test="inciTrnsCfd != null">
+				,inci_trns_cfdt = TO_CHAR(sysdate,'yyyymmddhh24miss')
+			</if>
+			<if test="inciBelowCont != null">
+				,inci_Below_Cont = #{inciBelowCont}
+			</if>
+        WHERE inci_no = #{inciNo}
+	</update>
+
+	<insert id="addAccidentHistory">
+		<selectKey keyProperty="histNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(HSTY_NO), 0) + 1 FROM TBHHISTO
+		</selectKey>
+		  insert into TBHHISTO
+		  (
+		  	HSTY_NO,
+			GRP_NO,
+			GRP_RANK,
+			DEPTH,
+			TTL,
+			HSTY_CLF,
+			HSTY_CRT_DT,
+			INCI_NO,
+			CRTR_ID,
+			INST_CD,
+			TRANS_YN,
+			HSTY_CONT,
+			CRTR_NAME
+		   )
+		  values
+		  (
+			#{histNo},
+			#{grpNo},
+			#{grpRank},
+			#{depth},
+			#{ttl},
+			#{hstyClf},
+			TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+			#{inciNo},
+			#{crtrId},
+			#{instCd},
+			#{trnsYn},
+			#{hstyCont},
+			#{crtrName}
+		  )
+	</insert>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentHistoryDto" id="resultHistory">
+		<result property="histNo" 		column="HSTY_NO"	/>
+		<result property="grpNo" 		column="GRP_NO"		/>
+		<result property="grpRank" 		column="GRP_RANK"	/>
+		<result property="depth" 		column="DEPTH"		/>
+		<result property="ttl" 			column="TTL"		/>
+		<result property="hstyClf" 		column="HSTY_CLF"	/>
+		<result property="hstyCrtDt" 	column="HSTY_CRT_DT"/>
+		<result property="inciNo" 		column="INCI_NO"	/>
+		<result property="crtrId" 		column="CRTR_ID"	/>
+		<result property="instCd" 		column="INST_CD"	/>
+		<result property="trnsYn" 		column="TRANS_YN"	/>
+		<result property="hstyCont"		column="HSTY_CONT"	/>
+		<result property="userName"		column="USER_NAME"	/>
+		<result property="instNm"		column="instNm"	/>
+	</resultMap>
+	<select id="getAccidentHistoryList" resultMap="resultHistory">
+		SELECT
+			A.HSTY_NO,
+			A.GRP_NO,
+			A.GRP_RANK,
+			A.DEPTH,
+			A.TTL,
+			A.HSTY_CLF,
+			A.HSTY_CRT_DT,
+			A.INCI_NO,
+			A.CRTR_ID,
+			A.INST_CD,
+			A.TRANS_YN,
+			A.HSTY_CONT,
+			NVL(A.CRTR_NAME,
+				(SELECT B.USER_NAME
+				FROM COMM_USER B
+				WHERE A.CRTR_ID=B.USER_ID)
+			) AS USER_NAME,
+			(
+			SELECT d.inst_nm
+			FROM COMM_USER c
+			INNER JOIN tsminst d ON c.inst_cd = d.inst_cd
+			WHERE A.CRTR_ID=c.USER_ID)  AS instNm
+		FROM TBHHISTO A
+		WHERE 1=1
+		AND A.INCI_NO = #{inciNo}
+		<if test="histNo != null and histNo != ''">
+			AND	HSTY_NO = #{histNo }
+		</if>
+		ORDER BY A.HSTY_CRT_DT DESC
+	</select>
+
+	<select id="getLocalList" resultType="HashMap">
+		SELECT
+			INST_CD, INST_NM
+  		FROM TSMINST
+ 		WHERE inst_level = 2
+   		AND inst_cd NOT IN (1311000, 1400000, 1500000, 1600000)
+   		AND pnt_inst_cd = #{dmgInstCd }
+	</select>
+
+	<select id="getPntInst" resultType="HashMap">
+		SELECT
+            INST_CD, INST_NM
+          FROM TSMINST
+         WHERE inst_level = 1
+           AND inst_cd NOT IN (1311000, 1400000, 1500000, 1600000)
+           AND inst_cd = (SELECT
+            pnt_inst_cd
+          FROM TSMINST
+         WHERE
+           inst_cd = #{dmgInstCd})
+	</select>
+
+
+	<insert id="updateMultiAccidentProcess">
+		INSERT INTO TBZLEDGE (
+			inci_no,
+			inci_no_multi,
+			inci_acpn_cd,
+			inci_acpn_dt,
+			inci_dt,
+			inci_upd_dt,
+			inci_trns_rqdt,
+			inci_ttl,
+			inci_typ_cd,
+			inci_prcs_stat,
+			crgr,
+			inci_prty,
+			risk_level,
+			risk_value,
+			dngr_gr,
+			accd_typ_cd,
+			acpn_mthd,
+			inci_dcl_cont,
+			inci_invs_cont,
+			inci_trns_yn,
+			dcl_inst_cd,
+			dcl_crgr_id,
+			dcl_crgr,
+			dcl_dept,
+			dcl_tel_no,
+			dcl_hp_no,
+			dcl_email,
+			dmg_svr_nm,
+			dmg_inst_cd,
+			dmg_natn_cd,
+			dmg_svr_usr_nm,
+			os_nm,
+			dmg_crgr,
+			dmg_dept,
+			dmg_tel_no,
+			dmg_hp_no,
+			dmg_email,
+			att_svr_nm,
+			att_inst_nm,
+			att_natn_cd,
+			att_typ_cd,
+			att_via,
+			att_dtls_via,
+			att_crgr,
+			att_dept,
+			att_tel_no,
+			att_email,
+			reco_inci_cd,
+			net_div,
+			inci_trns_rcpt_inst_cd,
+			histo_modified_yn,
+			inci_below_cont ,
+			inci_trns_rcpt_sido_inst_cd,
+			trans_sido_prcs_stat,
+			inci_dtt_nm
+        )
+        SELECT
+			#{inciNoTran}  as inci_no,
+
+			#{inciNo} AS inci_no_multi,
+			inci_acpn_cd,
+			inci_acpn_dt,
+			inci_dt,
+			TO_CHAR(sysdate,'yyyymmddhh24miss') as inci_upd_dt,
+			TO_CHAR(sysdate,'yyyymmddhh24miss') as inci_trns_rqdt,
+			inci_ttl,
+			inci_typ_cd,
+			null as inci_prcs_stat, <!-- 다중이관시 개발원상태 -->
+			crgr,
+			inci_prty,
+			risk_level,
+			risk_value,
+			dngr_gr,
+			accd_typ_cd,
+			acpn_mthd,
+			inci_dcl_cont,
+			inci_invs_cont,
+			inci_trns_yn,
+			dcl_inst_cd,
+			dcl_crgr_id,
+			dcl_crgr,
+			dcl_dept,
+			dcl_tel_no,
+			dcl_hp_no,
+			dcl_email,
+			dmg_svr_nm,
+			#{inciTrnsRcptInstCd} as dmg_inst_cd,
+			dmg_natn_cd,
+			dmg_svr_usr_nm,
+			os_nm,
+			dmg_crgr,
+			dmg_dept,
+			dmg_tel_no,
+			dmg_hp_no,
+			dmg_email,
+			att_svr_nm,
+			att_inst_nm,
+			att_natn_cd,
+			att_typ_cd,
+			att_via,
+			att_dtls_via,
+			att_crgr,
+			att_dept,
+			att_tel_no,
+			att_email,
+			reco_inci_cd,
+			net_div,
+			#{inciTrnsRcptInstCd} as inci_trns_rcpt_inst_cd,
+			'Y' as histo_modified_yn,
+			inci_below_cont,
+			#{inciTrnsRcptInstCd} as inci_trns_rcpt_sido_inst_cd,
+			99,		<!-- 다중이관시 시군구의 상태 값 -->
+			inci_dtt_nm
+        FROM TBZLEDGE
+        WHERE inci_no = #{inciNo}
+		AND ROWNUM = 1
+	</insert>
+
+	<!-- 신고접수 주말 수정 -->
+	<update id="updateAccidentWeek">
+		UPDATE TBZLEDGE SET
+			WEEK_YN 		= #{weekYn}		<!-- 주중:0, 주말:1 -->
+		WHERE
+			substr(inci_acpn_dt,0,8) = #{comCode2}
+	</update>
+
+	<select id="selectAccdTypCd" resultMap="getApplyResultMap">
+		SELECT COM_CODE2
+		FROM COMM_CODE
+		WHERE COM_CODE1=3002
+		AND CODE_NAME
+		LIKE '%'||#{method}||'%'
+	</select>
+	<select id="selectDmgInstCd" resultMap="getApplyResultMap">
+		SELECT INST_CD, INST_NM AS dmgInstNm
+		FROM TSMINST
+		WHERE INST_LEVEL=1
+		AND LOCAL_CD=(
+			SELECT LOCAL_CD
+			FROM TSMLOCAL
+			WHERE LOCAL_NM
+			LIKE '%'||#{dmgInstNm}||'%')
+	</select>
+
+	<select id="selectAttNationCd" resultMap="getApplyResultMap">
+		SELECT NATION_CD, NATION_NM AS attNatnNm
+		FROM TSMNATION
+		WHERE NATION_CD = (
+			SELECT NATION_CD
+			FROM TSMNATIONIP
+			WHERE #{slongInfo} BETWEEN SIP AND EIP
+			)
+	</select>
+
+	<select id="selectDmgNationCd" resultMap="getApplyResultMap">
+		SELECT NATION_CD, NATION_NM AS dmgNatnNm
+		FROM TSMNATION
+		WHERE NATION_CD = (
+		SELECT NATION_CD
+		FROM TSMNATIONIP
+		WHERE #{dlongInfo} BETWEEN SIP AND EIP
+		)
+	</select>
+
+
+	<insert id="addDmgIp">
+		<selectKey keyProperty="ipSeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(IP_SEQ), 0) + 1 FROM TBZDCLIP
+		</selectKey>
+		INSERT INTO TBZDCLIP
+		(
+			IP_SEQ,
+			INCI_NO,
+			IP_ADDR
+		)
+		VALUES
+		(
+			#{ipSeq},
+			#{inciNo},
+			#{dmgIp}
+		)
+	</insert>
+
+	<delete id="deleteDmgIp">
+		DELETE FROM TBZDCLIP
+		WHERE INCI_NO = #{inciNo}
+	</delete>
+
+	<update id="updateDmgIp">
+		UPDATE TBZDCLIP SET
+			IP_ADDR = #{dmgIp}
+		WHERE INCI_NO = #{inciNo}
+	</update>
+
+	<insert id="addAttIp">
+		<selectKey keyProperty="ipSeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(IP_SEQ), 0) + 1 FROM TBZATTIP
+		</selectKey>
+		INSERT INTO TBZATTIP
+		(
+			IP_SEQ,
+			INCI_NO,
+			IP_ADDR
+		)
+		VALUES
+		(
+			#{ipSeq},
+			#{inciNo},
+			#{attIp}
+		)
+	</insert>
+
+	<delete id="deleteAttIp">
+		DELETE FROM TBZATTIP
+		WHERE INCI_NO = #{inciNo}
+	</delete>
+
+	<update id="updateAttIp">
+		UPDATE TBZATTIP SET
+			IP_ADDR = #{attIp}
+		WHERE INCI_NO = #{inciNo}
+	</update>
+
+	<insert id="addTbzHacking">
+		INSERT INTO TBZHACKING
+		(
+			INCI_NO,
+			UPDATE_DT,
+			REG_DT,
+			USER_ID,
+			ATTACK_TYPE_CD,
+			ATTACK_TYPE_NM,
+			DOMAIN_NM,
+			NET_DIV,
+			HACKING_CONT,
+			INCI_TARGET,
+			REMARK
+	 	)
+	 	VALUES
+	 	(
+	 		#{inciNo},
+	 		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+	 		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+	 		#{userId},
+	 		#{hackAttTypeCd},
+	 		#{hackAttTypeSelf},
+	 		#{hackDomainNm},
+	 		#{hackNetDiv},
+	 		#{hackCont},
+	 		#{inciTarget},
+	 		#{remark}
+	 	)
+	</insert>
+
+	<update id="updateTbzHacking">
+		UPDATE TBZHACKING SET
+			UPDATE_DT 		= TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+			ATTACK_TYPE_CD 	= #{hackAttTypeCd},
+			ATTACK_TYPE_NM 	= #{hackAttTypeSelf},
+			DOMAIN_NM	 	= #{hackDomainNm},
+			NET_DIV 		= #{hackNetDiv},
+			HACKING_CONT 	= #{hackCont},
+			INCI_TARGET 	= #{inciTarget}
+		WHERE INCI_NO = #{inciNo}
+	</update>
+
+	<insert id="addTbzHomepv">
+		INSERT INTO TBZHOMEPV
+		(
+			INCI_NO,
+			HOME_CH,
+			UPDATE_DT,
+			REG_DT,
+			USER_ID,
+			ATTACK_TYPE_CD,
+			VULNERABILITY_CONT
+
+	 	)
+	 	VALUES
+	 	(
+	 		#{inciNo},
+	 		2,
+	 		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+	 		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+	 		#{userId},
+	 		#{attackTypeCd},
+	 		#{homepvCont}
+	 	)
+	</insert>
+
+	<update id="updateTbzHomepv">
+		UPDATE TBZHOMEPV SET
+			ATTACK_TYPE_CD 	= #{attackTypeCd},
+			VULNERABILITY_CONT 	= #{homepvCont}
+		WHERE INCI_NO = #{inciNo}
+	</update>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getRemarks1ResultMap">
+		<result property="hackAttTypeCd"		column="hackAttTypeCd"/>
+		<result property="hackTypeNmSelf"		column="hackTypeNmSelf"/>
+		<result property="hackTypeNm"			column="hackTypeNm"/>
+		<result property="hackDomainNm"			column="hackDomainNm"/>
+		<result property="hackNetDiv"			column="hackNetDiv"/>
+		<result property="hackCont"				column="hackCont"/>
+		<result property="inciTarget"			column="inciTarget"/>
+	</resultMap>
+	<select id="getTbzHacking" resultMap="getRemarks1ResultMap">
+		SELECT
+			ATTACK_TYPE_CD		AS hackAttTypeCd,
+			ATTACK_TYPE_NM 		AS hackTypeNmSelf,
+			(
+			SELECT code_name FROM comm_code WHERE com_code1 = 4015 AND use_yn = 'Y'AND com_code2 = ATTACK_TYPE_CD
+            ) 					AS hackTypeNm,
+			DOMAIN_NM			AS hackDomainNm,
+			NET_DIV				AS hackNetDiv,
+			HACKING_CONT		AS hackCont,
+			INCI_TARGET			AS inciTarget
+		FROM TBZHACKING
+		WHERE INCI_NO = #{inciNo}
+	</select>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getRemarks2ResultMap">
+		<result property="attackTypeName"			column="attackTypeName"/>
+		<result property="homepvCont"				column="homepvCont"/>
+	</resultMap>
+	<select id="getTbzHomepv" resultMap="getRemarks2ResultMap">
+		SELECT
+			(
+			SELECT code_name FROM comm_code WHERE com_code1 = 4011 AND use_yn = 'Y'AND com_code2 = ATTACK_TYPE_CD
+            )					AS	attackTypeName,
+			VULNERABILITY_CONT	AS homepvCont
+		FROM TBZHOMEPV
+		WHERE INCI_NO = #{inciNo}
+	</select>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getIpResultMap">
+		<result property="dmgIp"				column="dmgIp"/>
+		<result property="attIp"				column="attIp"/>
+	</resultMap>
+	<select id="getDmgIpList" resultMap="getIpResultMap">
+		select
+			ip_addr		AS dmgIp
+		from TBZDCLIP
+		WHERE INCI_NO = #{inciNo}
+	</select>
+
+	<select id="getAttIpList" resultMap="getIpResultMap">
+		select
+		ip_addr		AS attIp
+		from TBZATTIP
+		WHERE INCI_NO = #{inciNo}
+	</select>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getMainResultMap">
+		<result property="apply"				column="APPLY"/>
+		<result property="ing"				column="ING"/>
+		<result property="end"				column="END"/>
+		<result property="cnt1"				column="CNT_1"/>
+		<result property="cnt2"				column="CNT_2"/>
+		<result property="cnt3"				column="CNT_3"/>
+		<result property="cnt"				column="CNT"/>
+		<result property="name"				column="NAME"/>
+	</resultMap>
+
+	<!-- 금일 접수, 진행, 종료 건수 -->
+	<select id="selectTodayStatus" resultMap="getMainResultMap">
+		SELECT
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					SUM(CASE
+							WHEN INCI_PRCS_STAT > 0 THEN 1 ELSE 0
+						END) AS APPLY,
+					(SUM(CASE
+							WHEN INCI_PRCS_STAT IN (1,2, 5, 7, 8, 9, 10, 11, 14, 16) THEN 1 ELSE 0 END))	AS ING,
+
+					SUM(CASE
+							WHEN INCI_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END) AS END
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					(SUM(CASE
+							WHEN TRANS_INCI_PRCS_STAT > 0 THEN 1 ELSE 0
+						END)
+					)AS APPLY,
+
+					(SUM(CASE
+						 	WHEN TRANS_INCI_PRCS_STAT IN (1,2,5,7,8,9,10,11,14,16) THEN 1 ELSE 0
+						END)
+					)AS ING,
+
+					(SUM(CASE
+							WHEN TRANS_INCI_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END)
+
+					)AS END
+				</when>
+				<otherwise>
+					SUM(CASE
+							WHEN TRANS_SIDO_PRCS_STAT > 0 THEN 1 ELSE 0
+						END) AS APPLY,
+					SUM(CASE
+							WHEN TRANS_SIDO_PRCS_STAT IN (1, 2,5,7,8,9,10,11,14,16) THEN 1 ELSE 0
+						END) AS ING,
+					SUM(CASE
+							WHEN TRANS_SIDO_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END) AS END
+				</otherwise>
+			</choose>
+		</if>
+		FROM TBZLEDGE a
+		WHERE 1=1
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+					AND (
+					INCI_TRNS_RCPT_INST_CD IN (
+					1100000,
+					#{sInstCd}
+					)
+					OR INCI_TRNS_RCPT_SIDO_INST_CD IN (
+					SELECT
+					inst_cd
+					FROM
+					tsminst
+					CONNECT BY
+					PRIOR inst_cd = pnt_inst_cd
+					START WITH
+					inst_cd = #{sInstCd}
+					)
+					OR DCL_INST_CD IN (#{sInstCd})
+					)
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					AND INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND EXISTS(
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND length(inci_no) <![CDATA[ < ]]>  16
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+		<if test="timeType != null and timeType != ''">
+
+		</if>
+		AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+		<!--
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		-->
+	</select>
+
+	<!-- 연도 종료 건수 -->
+	<select id="selectYearStatus" resultMap="getMainResultMap">
+		SELECT
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					SUM(CASE
+							WHEN INCI_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END) AS END
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					(SUM(CASE
+							WHEN TRANS_INCI_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END)
+					)AS END
+				</when>
+				<otherwise>
+					SUM(CASE
+							WHEN TRANS_SIDO_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+						END) AS END
+				</otherwise>
+			</choose>
+		</if>
+		FROM TBZLEDGE
+		WHERE 1=1
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+					AND (
+					INCI_TRNS_RCPT_INST_CD IN (
+					1100000,
+					#{sInstCd}
+					)
+					OR INCI_TRNS_RCPT_SIDO_INST_CD IN (
+					SELECT
+					inst_cd
+					FROM
+					tsminst
+					CONNECT BY
+					PRIOR inst_cd = pnt_inst_cd
+					START WITH
+					inst_cd = #{sInstCd}
+					)
+					OR DCL_INST_CD IN (#{sInstCd})
+					)
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					AND INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND EXISTS(
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND length(inci_no) <![CDATA[ < ]]>  16
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+		AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyy') ||'0101000000') and to_number(to_char(sysdate, 'yyyymmdd') ||'235959')
+	</select>
+
+	<!-- 기간별 미처리 건수 -->
+	<select id="selectPeriodStatus" resultMap="getMainResultMap">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+					WITH proid AS ( SELECT  to_char(sysdate - nvl(min(period_1),10),'yyyymmdd') AS period1,
+					to_char(sysdate - nvl(min(period_2),20),'yyyymmdd') AS period2,
+					to_char(sysdate - nvl(min(period_3),30),'yyyymmdd') AS period3
+					FROM period_now
+					WHERE inst_cd = #{sInstCd}),
+					proid_min AS (
+					SELECT min(proid) FROM (
+					SELECT period1 AS proid FROM proid
+					UNION ALL
+					SELECT period2 AS proid FROM proid
+					UNION ALL
+					SELECT period3 AS proid FROM proid
+					)
+					),
+					tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd} ),
+					pri AS (
+					SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+					TO_CHAR(TO_DATE(INCI_ACPN_DT, 'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') AS inci_acpn_dt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TRANS_INCI_PRCS_STAT NOT IN ('12', '13', '15', '17')
+					AND inci_acpn_dt BETWEEN (SELECT * FROM proid_min) || '000000' AND TO_CHAR(SYSDATE, 'yyyymmdd') || '235959'
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND (d.INCI_TRNS_RCPT_INST_CD = #{sInstCd} OR dmg_inst_cd = #{sInstCd})
+					AND d.INCI_TRNS_RCPT_SIDO_INST_CD NOT IN (SELECT * FROM tree
+					WHERE INST_cd <![CDATA[ <> ]]>  #{sInstCd})
+					UNION ALL
+					SELECT DCL_INST_CD AS dmg_inst_cd,
+					TO_CHAR(TO_DATE(INCI_ACPN_DT, 'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') AS inci_acpn_dt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TRANS_INCI_PRCS_STAT NOT IN ('12', '13', '15', '17')
+					AND inci_acpn_dt BETWEEN (SELECT * FROM proid_min) || '000000' AND TO_CHAR(SYSDATE, 'yyyymmdd') || '235959'
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN (#{sInstCd})
+					UNION ALL
+					SELECT INCI_TRNS_RCPT_SIDO_INST_CD AS dmg_inst_cd,
+					TO_CHAR(TO_DATE(INCI_ACPN_DT, 'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') AS inci_acpn_dt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TRANS_SIDO_PRCS_STAT NOT IN ('12', '13', '15', '17')
+					AND inci_acpn_dt BETWEEN (SELECT * FROM proid_min) || '000000' AND TO_CHAR(SYSDATE, 'yyyymmdd') || '235959'
+					AND (d.INCI_TRNS_RCPT_INST_CD IN (SELECT * FROM tree
+					WHERE INST_cd <![CDATA[ <> ]]>  #{sInstCd})
+					OR d.INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT * FROM tree
+					WHERE INST_CD <![CDATA[ <> ]]>  #{sInstCd}))
+					)
+					SELECT * FROM (
+					SELECT   nvl(SUM(CASE WHEN inci_acpn_dt > (SELECT period1 FROM proid WHERE rownum = 1)
+					THEN 1
+					ELSE 0 END), 0) AS CNT_1,
+					nvl(SUM(CASE WHEN inci_acpn_dt BETWEEN (SELECT period2 FROM proid WHERE rownum = 1) AND (SELECT period1 FROM proid WHERE rownum = 1)
+					THEN 1
+					ELSE 0 END), 0) AS CNT_2,
+					nvl(SUM(CASE WHEN inci_acpn_dt <![CDATA[ <= ]]>  (SELECT period3 FROM proid WHERE rownum = 1)
+					THEN 1
+					ELSE 0 END), 0) AS CNT_3
+					FROM pri t1, tree t2
+					WHERE t1.dmg_inst_cd = t2.inst_cd
+					)
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					select
+					nvl(SUM(case
+					when  inci_acpn_dt > period1 then 1 else 0
+					end),0) AS CNT_1,
+
+					nvl(SUM(case
+					when  inci_acpn_dt BETWEEN period2 and period1
+					then 1 else 0
+					end),0) as CNT_2,
+
+					nvl(SUM(case
+					when  inci_acpn_dt <![CDATA[ <= ]]> period3 then 1 else 0
+					end),0) as CNT_3
+					from(
+					SELECT
+					TO_CHAR(TO_DATE(INCI_ACPN_DT,  'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') as inci_acpn_dt
+					from tbzledge
+					where 1=1
+					AND inci_acpn_dt LIKE TO_CHAR(SYSDATE, 'yyyy') || '%'
+					AND TRANS_SIDO_PRCS_STAT NOT IN (12,13,15,17)
+					AND INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					) a, (select
+					to_char(sysdate-nvl(min(period_1),10),'yyyymmdd') as period1,
+					to_char(sysdate-nvl(min(period_2),20),'yyyymmdd') as period2,
+					to_char(sysdate-nvl(min(period_3),30),'yyyymmdd') as period3
+					from period_now where inst_cd =#{sInstCd} ) b
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					select
+					nvl(SUM(case
+					when  inci_acpn_dt > period1 then 1 else 0
+					end),0) AS CNT_1,
+
+					nvl(SUM(case
+					when  inci_acpn_dt BETWEEN period2 and period1
+					then 1 else 0
+					end),0) as CNT_2,
+
+					nvl(SUM(case
+					when  inci_acpn_dt <![CDATA[ <= ]]> period3 then 1 else 0
+					end),0) as CNT_3
+					from(
+					SELECT
+					TO_CHAR(TO_DATE(INCI_ACPN_DT,  'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') as inci_acpn_dt
+					from tbzledge
+					where 1=1
+					AND inci_acpn_dt LIKE TO_CHAR(SYSDATE, 'yyyy') || '%'
+					AND INCI_PRCS_STAT NOT IN (12,13,15,17)
+					AND EXISTS(
+					SELECT inst_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND length(inci_no) <![CDATA[ < ]]>  16
+					) a, (select
+					to_char(sysdate-nvl(min(period_1),10),'yyyymmdd') as period1,
+					to_char(sysdate-nvl(min(period_2),20),'yyyymmdd') as period2,
+					to_char(sysdate-nvl(min(period_3),30),'yyyymmdd') as period3
+					from period_now where inst_cd =#{sInstCd} ) b
+				</when>
+				<otherwise>
+					select
+					nvl(SUM(case
+					when  inci_acpn_dt > period1 then 1 else 0
+					end),0) AS CNT_1,
+
+					nvl(SUM(case
+					when  inci_acpn_dt BETWEEN period2 and period1
+					then 1 else 0
+					end),0) as CNT_2,
+
+					nvl(SUM(case
+					when  inci_acpn_dt <![CDATA[ <= ]]> period3 then 1 else 0
+					end),0) as CNT_3
+					from(
+					SELECT
+					TO_CHAR(TO_DATE(INCI_ACPN_DT,  'YYYYMMDDHH24:MI:SS'), 'yyyymmdd') as inci_acpn_dt
+					from tbzledge
+					where 1=1
+					AND inci_acpn_dt LIKE TO_CHAR(SYSDATE, 'yyyy') || '%'
+					AND INCI_PRCS_STAT NOT IN (12,13,15,17)
+					AND EXISTS(
+					SELECT inst_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND length(inci_no) <![CDATA[ < ]]>  16
+					) a, (select
+					to_char(sysdate-nvl(min(period_1),10),'yyyymmdd') as period1,
+					to_char(sysdate-nvl(min(period_2),20),'yyyymmdd') as period2,
+					to_char(sysdate-nvl(min(period_3),30),'yyyymmdd') as period3
+					from period_now where inst_cd =#{sInstCd} ) b
+				</otherwise>
+			</choose>
+		</if>
+
+	</select>
+
+	<!-- 기관별 TOP 5 -->
+	<select id="selectInstStatus" resultMap="getMainResultMap">
+		select
+		*
+		from
+		(
+		select
+		b.inst_nm   as NAME,
+		count(a.dmg_inst_cd) as CNT
+		from  TBZLEDGE a
+		inner join tsminst b on a.dmg_Inst_Cd = b.inst_cd
+		where 1=1
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					AND (a.INCI_TRNS_RCPT_INST_CD IN
+							(
+							SELECT inst_cd FROM tsminst
+							CONNECT BY PRIOR inst_cd = pnt_inst_cd
+							START WITH inst_cd = #{sInstCd}
+							)
+					 	OR  a.dmg_Inst_Cd IN
+							(
+							SELECT inst_cd FROM tsminst
+							CONNECT BY PRIOR inst_cd = pnt_inst_cd
+							START WITH inst_cd = #{sInstCd}
+							)
+					    )
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					AND a.TRANS_SIDO_PRCS_STAT != 0
+					AND a.INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND a.INCI_NO LIKE 'CT%'
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+
+		<if test="atype==1">
+			AND  a.INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==0">
+			AND  a.INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+
+		group by a.dmg_inst_cd, b.inst_nm
+		order by cnt desc
+		)
+		where ROWNUM <![CDATA[ <= ]]> 5
+	</select>
+
+	<!-- 유형별 TOP 5 -->
+	<select id="selectAccdTypeStatus" resultMap="getMainResultMap">
+		select * from
+		(
+		select
+		c.code_name AS NAME,
+		count(a.accd_Typ_Cd) as CNT
+		from TBZLEDGE a
+		inner join tsminst b on a.dmg_Inst_Cd = b.inst_cd
+		inner join comm_code c
+		on a.accd_Typ_Cd = c.com_code2
+		and c.com_code1 = 3002
+		and c.use_yn = 'Y'
+		and c.code_lvl = 2
+		where 1=1
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					AND (a.INCI_TRNS_RCPT_INST_CD IN
+					(
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR  a.dmg_Inst_Cd IN
+					(
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					)
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					AND a.TRANS_SIDO_PRCS_STAT != 0
+					AND a.INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND a.INCI_NO LIKE 'CT%'
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+			AND  a.INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'000000') and to_number(to_char(sysdate+1, 'yyyymmdd') ||'235959')
+		group by a.accd_Typ_Cd, c.code_name
+		order by cnt desc
+		)
+		where ROWNUM  <![CDATA[ <= ]]> 5
+	</select>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getApplyIpResultMap">
+		<result property="nationCd"		column="nation_cd"/>
+		<result property="name"			column="nation_nm"/>
+		<result property="instNm"			column="inst_nm"/>
+		<result property="instCd"			column="inst_cd"/>
+		<result property="krNm"			column="KR_NM"/>
+	</resultMap>
+	<select id="getIpByNationNm" resultMap="getApplyIpResultMap">
+		SELECT
+			a.nation_cd,
+			a.nation_nm,
+			a.KR_NM
+		From TSMNATION a INNER JOIN TSMNATIONIP b
+		ON a.nation_cd = b.nation_cd
+		WHERE
+			#{checkIp} BETWEEN b.sip AND b.eip
+		AND rownum = 1
+	</select>
+
+	<select id="getInstByIP" resultMap="getApplyIpResultMap">
+		select * from
+		(
+		SELECT a.inst_cd, a.inst_nm
+		From TSMINST a INNER JOIN TSMINSTIP b
+			ON a.inst_cd = b.inst_cd
+		WHERE 1=1
+		<if test="minstIpSeq != null">
+			AND b.seq NOT IN (#{minstIpSeq} )
+		</if>
+		  AND #{checkIp} BETWEEN b.sip AND b.eip
+		ORDER BY a.inst_cd DESC
+		)where rownum = 1
+	</select>
+
+	<select id="getNmByInstCd" resultMap="getApplyIpResultMap">
+		select inst_cd, inst_nm, local_nm from tsminst a
+			left outer join tsmlocal b
+			on a.local_cd=b.local_cd
+			where b.local_nm like '%'||#{localNm}||'%' and a.inst_nm like '%'||#{instNm}||'%'
+	</select>
+
+	<select id="getAccdTypByDttNm" resultMap="getApplyIpResultMap">
+		select com_code2, code_name from comm_code where com_code1=3002 and code_lvl=3 and code_name = #{dttNm}
+	</select>
+
+	<update id="updateSigunAccApply">
+		UPDATE TBZLEDGE SET
+			trans_sido_prcs_stat = 1
+		WHERE inci_no_multi = #{inciNo}
+		AND trans_sido_prcs_stat = 99
+	</update>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getEncrySyncResultMap">
+		<result property="inciNo"			column="inci_no"/>
+		<result property="dclEmail"			column="dcl_email"/>
+		<result property="dmgEmail"			column="dmg_email"/>
+	</resultMap>
+	<select id="getEncrySyncList" resultMap="getEncrySyncResultMap">
+		SELECT
+			inci_no,
+			dcl_email,
+			dmg_email
+		FROM TBZLEDGE
+		WHERE encry_yn IS NULL
+		AND rownum <![CDATA[ <= ]]> 1000
+		AND (dcl_email is not null OR dmg_email is not null)
+		ORDER BY inci_dt DESC
+	</select>
+
+	<resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="getNcscInfoResultMap">
+		<result property="crtrId"			column="CRTR_ID"/>
+		<result property="userName"			column="USER_NAME"/>
+		<result property="moblPhnNo"			column="MOBL_PHN_NO"/>
+		<result property="offcTelNo"			column="OFFC_TEL_NO"/>
+		<result property="offcFaxNo"			column="OFFC_FAX_NO"/>
+		<result property="emailAddr"			column="EMAIL_ADDR"/>
+		<result property="instNm"			column="INST_NM"/>
+		<result property="hstyCont" column="HSTY_CONT"/>
+		<result property="hstyCrtDt" column="HSTY_CRT_DT"/>
+	</resultMap>
+
+	<select id="getNcscInfo" resultMap="getNcscInfoResultMap">
+		SELECT CRTR_ID, HSTY_CONT, HSTY_CRT_DT, INST_NM FROM(SELECT CRTR_ID, HSTY_CONT, HSTY_CRT_DT, INST_NM
+                  FROM TBHHISTO A
+          INNER JOIN TSMINST D
+          ON A.INST_CD=D.INST_CD
+          WHERE INCI_NO= #{inciNo}
+            AND TTL LIKE '%종결 승인%'
+          ORDER BY INST_LEVEL ASC, HSTY_CRT_DT DESC) WHERE ROWNUM=1
+	</select>
+
+	<select id="getNcscUserInfo" resultMap="getNcscInfoResultMap">
+		SELECT USER_NAME, MOBL_PHN_NO, OFFC_TEL_NO, OFFC_FAX_NO, EMAIL_ADDR
+          	FROM COMM_USER
+          	 where USER_ID=#{crtrId}
+	</select>
+
+	<update id="updateEncrySync">
+		BEGIN
+		<foreach collection="arrList" item="item">
+			UPDATE TBZLEDGE SET
+				dcl_email = #{item.dclEmail},
+				dmg_email = #{item.dmgEmail},
+				encry_yn  = 'Y'
+			WHERE inci_no = #{item.inciNo}
+			AND encry_yn is null;
+		</foreach>
+		END;
+	</update>
+
+	<select id="getAccDuplList" resultMap="getApplyResultMap">
+		SELECT
+			TO_DATE(A.INCI_ACPN_DT,'YYYY-MM-DD HH24:MI:SS') AS INCI_ACPN_DT,
+			concat(concat(concat(A.INCI_TTL,  '['),NVL(A.INCI_DTT_NM,A.INCI_TTL)),']')	as inciTtlDtt,
+			(
+			SELECT code_name FROM COMM_CODE c WHERE c.use_yn = 'Y' AND c.code_lvl=2 and c.com_code1 = '3002' AND c.com_code2 =
+			A.accd_typ_cd
+			) AS accdTypName,
+			(
+			SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = A.dcl_Inst_Cd
+			) AS dclInstName,
+			(
+			SELECT t.inst_nm FROM TSMINST t WHERE t.use_yn = 'Y' AND t.inst_cd = A.dmg_Inst_Cd
+			) AS dmgInstName,
+			A.*
+		FROM TBZLEDGE A WHERE inci_no IN
+		(
+		SELECT inci_no
+		FROM
+		<choose>
+			<when test="ipCheckType == 'att'">
+				TBZATTIP
+			</when>
+			<otherwise>
+				TBZDCLIP
+			</otherwise>
+		</choose>
+		WHERE 1=1
+		<if test="srchType == 'OR'">
+			AND IP_ADDR IN
+			<foreach collection="ipList" item="item" open="(" close=")" separator="," >
+				#{item}
+			</foreach>
+		</if>
+		<if test="srchType == 'AND'">
+			AND
+			<foreach collection="ipList" item="item" separator="AND" >
+				IP_ADDR = #{item}
+			</foreach>
+		</if>
+		)
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!-- 시도 담당자는 개발원에서 해당 시로 이관한 사고 또는 본인이 등록한 사고만 조회 -->
+					AND length(a.inci_no) <![CDATA[ < ]]>  16
+					AND
+					(INCI_TRNS_RCPT_INST_CD IN (1100000, #{sInstCd})
+					OR (INCI_TRNS_RCPT_SIDO_INST_CD IN (SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd=pnt_inst_cd
+					START WITH inst_cd= #{sInstCd}
+					))
+					OR (DCL_INST_CD IN (#{sInstCd}) )
+					)
+					AND INCI_ACPN_DT between #{startDt} || '000000' and #{endDt} || '235959'
+					AND TRANS_SIDO_PRCS_STAT != 99
+					AND (TRANS_INCI_PRCS_STAT > 0 OR TRANS_SIDO_PRCS_STAT > 0)
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND EXISTS(
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = a.dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND inci_no LIKE 'CT%'
+					AND length(a.inci_no) <![CDATA[ < ]]>  16
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+		AND a.INCI_ACPN_DT BETWEEN #{startDt} || '000000' and #{endDt} || '235959'
+		ORDER BY a.INCI_ACPN_DT DESC, inci_no
+	</select>
+
+    <resultMap type="com.klid.webapp.main.acc.accidentApply.dto.AccidentApplyDto" id="inciMutiResultMap">
+        <result property="cnt"			column="cnt"/>
+        <result property="prcsStat"		column="prcsStat"/>
+    </resultMap>
+    <select id="getInciMutiEndYn" resultMap="inciMutiResultMap">
+        SELECT
+          count(1) AS cnt,
+          SUM( prcsStat ) AS prcsStat
+        FROM
+        (
+            SELECT
+                inci_no,
+                INCI_NO_MULTI,
+                INCI_ACPN_dt,
+                INCI_TRNS_YN,
+                TRANS_SIDO_PRCS_STAT,
+                CASE
+                WHEN TRANS_SIDO_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+                END AS prcsStat
+            FROM TBZLEDGE
+            WHERE 1=1
+            AND INCI_NO_MULTI = #{inciNo}
+            AND length(inci_no) > 16
+        )
+        GROUP BY INCI_NO_MULTI
+    </select>
+	<delete id="deleteMultiReject">
+		DELETE FROM TBZLEDGE
+		WHERE INCI_NO_MULTI = #{inciNoMulti}
+		AND length(inci_no) > 16
+		AND TRANS_SIDO_PRCS_STAT = 99
+	</delete>
+</mapper>

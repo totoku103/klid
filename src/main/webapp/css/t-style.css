@@ -1,0 +1,98 @@
+.t-header {
+    height: 60px;
+}
+
+.t-navigation {
+    height: 55px;
+}
+
+.t-container {
+    top: 10px;
+    height: calc(100% - (60px + 55px + 38px));
+    width: 100%;
+}
+
+.t-content-container {
+    height: calc(100% - 15px);
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px 10px 10px;
+}
+
+.t-search-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.t-search-row {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: center;
+    height: 35px;
+    background: #f3f3f3;
+    border-top: 1px solid #036ca5;;
+    border-right: 1px solid #989898;
+    border-left: 1px solid #989898;
+    border-bottom: 1px solid #989898;
+}
+
+.t-search-options-container {
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.t-search-button-container {
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.t-search-options-container > div:nth-child(n+2) {
+    padding-left: 10px;
+}
+
+.t-label-pre-icon {
+    padding-left: 15px;
+    background: url('../img/p_search.png') no-repeat 0 3px;
+}
+
+.t-icon-set {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.t-icon-set > label:first-child {
+    padding-right: 5px;
+}
+
+.t-icon-set .period {
+    padding-right: 5px;
+}
+
+.period #date1 {
+    margin-left: 5px;
+}
+
+.period #date-split-date {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.period #date2 {
+}
+
+table td {
+    word-break: keep-all;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+body {
+    scrollbar-gutter: stable;
+}

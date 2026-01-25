@@ -1,0 +1,424 @@
+body, html {
+    background: #FFF;
+    font-size: 13px;
+    font-family: Malgun Gothic,'맑은고딕',Verdana, Helvetica, Sans-Serif;
+    margin: 0;
+    padding: 0;
+    color: #444;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    box-sizing:border-box;
+}
+body.wait *, body.wait {cursor: progress !important;}
+
+/** scale begin */
+body {overflow: hidden}
+div#dashMain {
+    width: 1920px; height: 1080px;
+    transform-origin: top left;
+    -ms-transform-origin: top left;
+    object-fit: cover;
+}
+/** scale end */
+
+table { width: 100%; border: 1px; border-spacing: 0px;}
+select { border: 1px solid #ccc; padding: 2px; font-size: 12px; color: #444; font-family: "맑은 고딕", dotum, "Trebuchet MS", Verdana, Helvetica, Sans-Serif;}
+img { border: 0; vertical-align: middle;}
+ul, ol, li { list-style: none; padding: 0; margin: 0;}
+
+/*============
+공통 요소
+=============*/
+body {background: url('../img/webdash/BackKlid1Admin.jpg') no-repeat;}
+
+#noticeBar { width: 100%; height: 46px; background: url('../img/webdash/Notice.svg') no-repeat; padding:7px 15px; box-sizing: border-box;}
+#noticeBar input { width:1896px; height: 30px; color:#fff; font-size:18px; background: transparent; border:none; white-space: nowrap;}
+input::-webkit-input-placeholder { color: #ffffff; font-style: normal;}
+
+#CityAdminLogo {position:absolute; top:0; left:0; width:330px; height:80px;}
+.AllTitle { margin:0 auto; background: url('../img/webdash/AdminTitBg.png') no-repeat; width:1266px; height: 46px; line-height: 46px; text-align: center; font-size:34px; font-weight:bold; color:#4df4ff; letter-spacing: -0.5px;}
+
+#AdminFunction { position:absolute; top:10px; right:12px; color:#fff; line-height: 18px;}
+#AdminFunction .dateFunction {letter-spacing: 0.5px;}
+div[class^="btnFunction"] {margin-top: 3px; margin-left:35px;}
+div[class^="btnFunction"] > div {float:left; margin-right: 4px;}
+div[class^="btnFunction"] > div:last-child {margin-right: 0;}
+div[class^="btnFunction"] .refBar { background: #2b2b2b; width:96px; height:20px; padding:2px; box-sizing:border-box;}
+div[class^="btnFunction"] .ref_Fillbar { width:9px; height:16px; background:#00adee;}
+div[class^="btnFunction"] .f_Btn > div { float:left; width:20px; height:20px; background-color:#2c2c2c; margin-right: 1px; cursor:pointer;}
+div[class^="btnFunction"] .f_Btn > .max {background-image: url("../img/webdash/MaxIcon.svg"); background-repeat:no-repeat; background-position: center center;}
+div[class^="btnFunction"] .f_Btn > .volume {background-image: url("../img/webdash/VolumeIcon.svg"); background-repeat:no-repeat; background-position: center center;}
+div[class^="btnFunction"] .f_Btn > .setting {background-image: url("../img/webdash/SetIcon.svg"); background-repeat:no-repeat; background-position: center center;}
+div[class^="btnFunction"] .f_Btn > div:last-child {margin-right: 0;}
+
+
+/*========================================
+17개 시도용
+=========================================*/
+
+#wrap { clear:both; width:1920px; height: 1034px; padding: 34px 12px 12px 12px; box-sizing:border-box;}
+#wrap > div {float:left; margin-right:12px; height:988px;}
+#wrap > div:last-child {margin-right: 0;}
+
+#l_section {width:616px;}
+#m_section {width:640px; position:relative;}
+#r_section {width:616px;}
+
+#CyberBn, #AccBn {width:616px; height:460px;}
+#BoardBn {width:616px; height:528px; padding-top: 12px;}
+#DateStatusBn {width:618px; height:528px; padding-top: 12px;}
+
+.bnTit {
+    margin:auto;
+    width:553px; height:39px;
+    text-align: center;
+    font-size:28px;
+    color:#78d1ff; font-weight:bold;
+    background: url('../img/webdash/stitleBg.png') no-repeat center top;
+}
+
+/*==========
+정보공유현황
+============*/
+#BoardBn .boardList {width:616px; height:466px; margin-top: 10px;}
+#BoardBn .boardList > div {width:616px; height:230px; background:url("../img/webdash/BoardAllBG.svg") no-repeat; padding:0 25px; box-sizing:border-box;}
+#BoardBn .bs_tit {font-size:23px; font-weight:bold; color:#fff; line-height:52px; text-align: center;}
+
+#BoardBn .bs_List li { font-size:22px; line-height:29px; color:#fff;}
+#BoardBn .bs_List li span {width:80%; display:inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+#BoardBn .bs_List li strong {float:right; color:#c6c6c6; font-weight:normal;}
+
+/*공지사항*/
+.bNotice {margin-bottom:7px;}
+
+/*==========
+17개 시도 지도
+============*/
+#m_section > .CityPanel {position:absolute; top:0; left:0;  width:130px; height:80px; background: url("../img/webdash/SvgMap/KProPanel.svg") no-repeat;}
+#m_section > #CityMap { width:640px; height:884px; /*background: url("../img/webdash/SvgMap/Seoul.svg") no-repeat;*/}
+#m_section > .m_index {position:absolute; bottom:10px; right:10px; width:290px; height:94px; background: url("../img/webdash/middleindex.svg") no-repeat;}
+
+/*==========
+사이버 위기경보
+============*/
+#AccBn {background:url("../img/webdash/gridBottom.svg") no-repeat bottom center;}
+
+/*==========
+기관별 상세현황
+============*/
+#DateStatusBn {position:relative; background:url("../img/webdash/FacilityStatus.svg") no-repeat center 36px;}
+#DateStatusBn .DtStatusGrid {margin-top:38px; width:618px; height:440px; max-height: 440px;  overflow: auto; overflow-x: hidden;}
+#DateStatusBn .DtStatusGrid table {width:100%; table-layout: fixed; border-collapse: collapse; border-spacing:0; font-size:21px; color:#fff;}
+#DateStatusBn .DtStatusGrid table thead tr {height:62px; line-height: 62px;}
+#DateStatusBn .DtStatusGrid table thead tr th {height:62px;}
+#DateStatusBn .DtStatusGrid table td {height:62px; text-align: center;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+#DateStatusBn .DtStatusGrid table tr {display: inline-table; width: 100%; table-layout: fixed;}
+#DateStatusBn .DtStatusGrid table tbody tr {display: table-row;}
+
+#DateStatusBn td[class^="statusBar"] {padding: 0 12px 0 8px; line-height: 60px;}
+#DateStatusBn td[class^="statusBar"] .p_bar {float:left;}
+#DateStatusBn td[class^="statusBar"] .p_bar .nullBg {margin-top:9px; background-color:#1a353a; width:204px; height:40px; padding: 2px;}
+#DateStatusBn td[class^="statusBar"] .p_bar .fillBar {width:50%; height:40px; background:linear-gradient(#19d9dc,#008529);}
+#DateStatusBn td[class^="statusBar"] .p_txt { float:right; font-size:15px !important; }
+
+
+/*========================================
+운영자용 (관제실)
+=========================================*/
+#wrap > div[class^="adminSection"] { height:967px!important;}
+#KMgrAllSection {width:100%; height:100%; background:url("../img/webdash/KMgrMap.png") no-repeat;}
+
+.gridBox {box-sizing: border-box; border:1px solid #a9a9a9; border-radius:5px;}
+.gridTit {
+    margin:auto;
+    width:380px;
+    height:40px;
+    line-height: 40px;
+    text-align: center;
+    font-size:23px;
+    color:#fff; font-weight:bold;
+    background: url('../img/webdash/gridTit.svg') no-repeat center top;
+}
+
+/*==========
+위협 이벤트 및 고위협 공격시도
+============*/
+#ThrBn {height:395px; margin-bottom:26px; position: relative; }
+#ThrBn  .ThrPanel {width:616px; height:110px; padding: 8px 12px 22px 12px; box-sizing: border-box;}
+.ThrPanel > div {float:left; margin-right: 15px;}
+.ThrPanel > div:last-child {float:left; margin-right: 0;}
+
+#admctrl_evtCnt .ThrEvt001 {
+    width: 185px;
+    height: 80px;
+    background: url("../img/webdash/KMgrEvt01.svg") no-repeat;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 105px;
+    font-size: 35px;
+    color:#f3ea00;
+    font-weight: 500;
+}
+
+#admctrl_evtCnt .ThrEvt002 {
+    width: 163px;
+    height: 80px;
+    background: url("../img/webdash/KMgrEvt02.svg") no-repeat;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 105px;
+    font-size: 35px;
+    color:#ff4200;
+    font-weight: 500;
+}
+
+.ThrGrid {clear:both;}
+.ThrGrid .ThrGridPanel { position:absolute; bottom:0; left:0;  width:616px; height:337px;background: url("../img/webdash/ThrGrid.svg") no-repeat;}
+
+#ThrBn .ThrTable {margin-top:50px;}
+#ThrBn .ThrTable tr {height:57px; line-height:57px; font-size:22px; color:#fff; text-align: center;}
+#ThrBn .ThrTable td {height:57px; line-height:57px; font-size:22px; color:#fff; text-align: center;}
+#ThrBn .ThrTable td.ThrNum {padding:0 10px; text-align: right;}
+
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(2) td:nth-child(2),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(2) td:nth-child(3),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(2) td:nth-child(4) {padding:0 10px; text-align: right;}
+
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(3) td:nth-child(2),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(3) td:nth-child(3),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(3) td:nth-child(4) {padding:0 10px; text-align: right;}
+
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(4) td:nth-child(2),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(4) td:nth-child(3),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(4) td:nth-child(4) {padding:0 10px; text-align: right;}
+
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(5) td:nth-child(2),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(5) td:nth-child(3),
+#ThrBn .ThrTable > table:nth-child(2) tr:nth-child(5) td:nth-child(4) {padding:0 10px; text-align: right;}
+
+/*==========
+17개 기관별 탐지현황
+============*/
+#FacilityBn {height:210px; background:url("../img/webdash/gridBottom.svg") no-repeat bottom center;}
+
+/*==========
+중앙 지도 및 패널
+============*/
+.KMgrPanel {position:absolute;  left:150px; top:185px; width:100px; height:80px; background:url("../img/webdash/KMgrPanel.svg") no-repeat; z-index: 99999999999;}
+
+/* 17개 시도별 On 백그라운드 */
+#KMgrMap .SeoulPnl { position:absolute; left:124px; top:177px; width:76px; height:71px; background: url("../img/webdash/OnMap/On1_Seoul.svg") no-repeat;}
+#KMgrMap .BusanPnl { position:absolute; left:485px; top:680px; width:96px; height:91px; background: url("../img/webdash/OnMap/On2_Busan.svg") no-repeat;}
+/*#KMgrMap .DaeguPnl { position:absolute; left:403px; top:532px; width:82px; height:107px; background: url("../img/webdash/OnMap/On3_Daegu.svg") no-repeat;}*/
+#KMgrMap .DaeguPnl { position:absolute; left:402px; top:481px; width:113px; height:177px; background: url("../img/webdash/OnMap/On3_Daegu.svg") no-repeat;}
+#KMgrMap .IncheonPnl { position:absolute; left:18px; top:150px; width:116px; height:115px; background: url("../img/webdash/OnMap/On4_Incheon.svg") no-repeat;}
+#KMgrMap .GwangjuPnl { position:absolute; left:99px; top:700px; width:70px; height:59px; background: url("../img/webdash/OnMap/On5_Gwangju.svg") no-repeat;}
+#KMgrMap .DaejeonPnl { position:absolute; left:207px; top:436px; width:68px; height:90px; background: url("../img/webdash/OnMap/On6_Daejeon.svg") no-repeat; background-size:60px 90px;}
+#KMgrMap .UlsanPnl { position:absolute; left:516px; top:599px; width:91px; height:103px; background: url("../img/webdash/OnMap/On7_Ulsan.svg") no-repeat;}
+#KMgrMap .GyeonggiPnl { position:absolute; left:74px; top:55px; width:248px; height:328px; background: url("../img/webdash/OnMap/On8_Gyeonggi.svg") no-repeat; background-size:248px 312px;}
+#KMgrMap .GangwonPnl { position:absolute; left:179px; top:-9px; width:414px; height:364px; background: url("../img/webdash/OnMap/On9_Gangwon.svg") no-repeat; background-size: 414px 354px;}
+#KMgrMap .ChungbukPnl { position:absolute; left:212px; top:278px; width:261px; height:292px; background: url("../img/webdash/OnMap/On10_Chungbuk.svg") no-repeat; background-size:247px 276px;}
+#KMgrMap .ChungnamPnl { position:absolute; left:4px; top:310px; width:285px; height:255px; background: url("../img/webdash/OnMap/On11_Chungnam.svg") no-repeat; background-size:278px 254px;}
+#KMgrMap .JeonbukPnl { position:absolute; left:61px; top:513px; width:275px; height:206px; background: url("../img/webdash/OnMap/On12_Jeonbuk.svg") no-repeat; background-size:268px 195px;}
+#KMgrMap .JeonnamPnl { position:absolute; left:24px; top:654px; width:286px; height:279px; background: url("../img/webdash/OnMap/On13_Jeonnam.svg") no-repeat;}
+#KMgrMap .GyeongbukPnl { position:absolute; left:304px; top:297px; width:327px; height:361px; background: url("../img/webdash/OnMap/On14_Gyeongbuk.svg") no-repeat; background-size:327px 355px;}
+#KMgrMap .GyeongnamPnl { position:absolute; left:264px; top:556px; width:304px; height:269px; background: url("../img/webdash/OnMap/On15_Gyeongnam.svg") no-repeat;}
+#KMgrMap .JejuPnl { position:absolute; left:112px; top:890px; width:120px; height:77px; background: url("../img/webdash/OnMap/On16_Jeju.svg") no-repeat;}
+#KMgrMap .SejongPnl { position:absolute; left:186px; top:403px; width:46px; height:72px; background: url("../img/webdash/OnMap/On17_Sejong.svg") no-repeat;}
+
+/*==========
+주요 홈페이지 위변조 현황
+============*/
+#AgntBn {height:236px; margin-bottom: 16px; background:url("../img/webdash/gridBottom.svg") no-repeat bottom center;}
+.AgntGrid {width:614px; height:194px; padding:8px 18px 9px 18px; box-sizing: border-box;}
+
+#AgntBn div[class^="AgntBox"] {width:135px; height:177px; float:left; margin-right:12px; }
+#AgntBn div[class^="AgntBox"]:last-child {margin-right: 0;}
+
+#HomeAgn {background: url("../img/webdash/PanelSvg/HomePanel.svg") no-repeat;}
+#NorAgn {background: url("../img/webdash/PanelSvg/NormalPanel.svg") no-repeat;}
+#VariAgn {background: url("../img/webdash/PanelSvg/VariPanel.svg") no-repeat;}
+#BlockAgn {background: url("../img/webdash/PanelSvg/BlockPanel.svg") no-repeat;}
+
+/*==========
+시스템 장애현황
+============*/
+#SysBn {height:715px;  background:url("../img/webdash/gridBottom.svg") no-repeat bottom center;}
+#SysGrid {width:614px; height:672px; padding: 9px 28px; box-sizing:border-box;}
+#SysGrid > .SysPnl {width:128px; height:123px; background:url("../img/webdash/PanelSvg/SysBlkPnl.svg") no-repeat;}
+
+
+
+
+/*========================================
+대외용 (관제실)
+=========================================*/
+#KMgrKlid3Bg {width:100%; height:100%; background:url("../img/webdash/BackKlid3Admin.jpg") no-repeat;}
+
+/*==========
+정보공유현황
+============*/
+#BoardBn .OutsidebrdList {width:616px; height:356px; margin-top: 19px;}
+#BoardBn .OutsidebrdList > div {width:616px; height:170px; background:url("../img/webdash/KMgrBoardBG.svg") no-repeat; padding:0 25px; box-sizing:border-box;}
+#BoardBn .bs_tit {font-size:23px; font-weight:bold; color:#fff; line-height:52px; text-align: center;}
+
+#BoardBn .bs_List li { font-size:22px; line-height:29px; color:#fff;}
+#BoardBn .bs_List li span {width:80%; display:inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+#BoardBn .bs_List li strong {float:right; color:#c6c6c6; font-weight:normal;}
+
+/****************상단*******************/
+/*==========
+공격 Top5
+============*/
+#wrldSection {position:relative; width:1268px; height:462px!important; margin-right: 0!important;}
+#wrldSection .AttackTop5 {position:absolute; left:680px; top:222px;width:375px; height:207px; background:url("../img/webdash/KExtTopGrid.svg") no-repeat; background-size: 375px 207px;}
+#wrldSection #WorldMap { width:1268px; height:462px; background:url("../img/webdash/WorldMapOutside.png") no-repeat center center;}
+/*#wrldSection .AttackTop5 {position:absolute; left:1330px; top:303px; width:470px; height:272px; background:url("../img/webdash/KExtTopGrid.svg") no-repeat; background-size: 375px 207px;}*/
+
+/****************하단*******************/
+#EvtAccSection {width:1268px; height:514px!important; margin-right: 0!important;}
+#EvtAccSection > div {float:left; margin-right: 24px; height:493px;}
+#EvtAccSection > div:last-child {margin-right: 0;}
+
+/*==========
+위협이벤트 및 그리드
+============*/
+#EvtAccSection > #TypeBn {width:616px; padding-left: 12px; position:relative;}
+#EvtAccSection > #TypeBn .ThrPanel {width:548px; height:80px; padding:0; margin: auto;}
+#EvtAccSection > #TypeBn .TypeGrid {position:absolute; top:54px; left:12px; width:616px; height:460px; background:url("../img/webdash/TypeGrid.svg") no-repeat 0 -2px;}
+#TypeBn .ThrPanel { width:616px; height:80px; padding: 0 8px 30px 8px;}
+#TypeBn .TypeGrid {position:absolute; top:54px; left:12px; width:616px; height:462px; background:url("../img/webdash/TypeGrid.svg") no-repeat;}
+
+#EvtAccSection .ThrEvt001 {
+    width: 160px;
+    height: 80px;
+    background: url("../img/webdash/KMgrEvt001.svg") no-repeat;
+    background-size:160px;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 105px;
+    font-size: 32px;
+    color:#f3ea00;
+    font-weight: 500;
+}
+
+#EvtAccSection .ThrEvt002 {
+    width: 145px;
+    height: 80px;
+    background: url("../img/webdash/KMgrEvt002.svg") no-repeat;
+    background-size:145px;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 105px;
+    font-size: 32px;
+    color:#ff4200;
+    font-weight: 500;
+}
+
+/*==========
+침해사고현황
+============*/
+#EvtAccSection > div#AccBn {float:right; padding-top:21px;}
+
+
+
+
+/*========================================
+브리핑 대외용
+=========================================*/
+/****************상단*******************/
+#BrfExtWrlSection {float:none!important; margin-right: 0!important;}
+#BrfWorldMap {width:1896px; height:460px; position:absolute; top:84px; left:12px; background:url("../img/webdash/WorldMapBrief.png") no-repeat 0 15px;} /*지도*/
+#BrfExtWrlSection .BrfAttackTop5 {position:absolute; left:1015px; top:225px; width:470px; height:272px; background:url("../img/webdash/KExtTopGrid.svg") no-repeat;}
+
+/****************하단*******************/
+div[id^="ExtBottom"]{float:none!important; margin-right: 0!important;}
+#ExtBottomSection > div {float:left; width:948px; height:516px;}
+div[id^="ExtBottom"] #TypeBn .ThrPanel {width:828px; height:132px; margin: auto;}
+
+div[id^="ExtBottom"] .ThrEvt001 {
+    width: 245px;
+    height: 120px;
+    background: url("../img/webdash/KMgrEvt001.svg") no-repeat;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 157px;
+    font-size: 55px;
+    color:#f3ea00;
+    font-weight: 500;
+}
+
+div[id^="ExtBottom"] .ThrEvt002 {
+    width: 215px;
+    height: 120px;
+    background: url("../img/webdash/KMgrEvt002.svg") no-repeat;
+    float: right;
+    margin-top: 5px;
+    margin-left: 4px;
+    text-align: center;
+    line-height: 157px;
+    font-size: 55px;
+    color: #ff4200;
+    font-weight: 500;
+}
+
+div[id^="ExtBottom"] #TypeBn .TypeGrid {position:absolute; top:663px; left:30px; width:912px; height:405px; background:url("../img/webdash/BExtTypeGrid.svg") no-repeat;}
+div[id^="ExtBottom"] > #AccBn {background-size:885px;}
+
+
+
+
+/*========================================
+브리핑 운영자용
+=========================================*/
+#BrfMgrSection {width:100%; height:100%; background:url("../img/webdash/BMgrMap.png") no-repeat;} /*지도 배경*/
+#brfMgrMap {width:1290px; height:896px!important; position:relative; margin-right: 30px!important;}
+#brfMgrMap .m_index {position:absolute; bottom:0; right:0; width:389px; height:125px; background: url("../img/webdash/middleindex.svg") no-repeat; background-size:389px;}
+#brfMgrMap .brfMapPanel {width:305px; height:49px; background:url("../img/webdash/KMgrMapPanel.svg") no-repeat;}
+.GuideLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1290px;
+    height: 896px;
+    background: url("../img/webdash/KMgrGLine.png") no-repeat;
+}
+
+/* 브리핑 운영자용 17개 시도별 On 백그라운드 */
+#brfMgrOn .SeoulPnl { position:absolute; left:475px; top:135px; width:76px; height:71px; background: url("../img/webdash/OnMap/On1_Seoul.svg") no-repeat; background-size:66px;}
+#brfMgrOn .BusanPnl { position:absolute; left:800px; top:630px; width:96px; height:91px; background: url("../img/webdash/OnMap/On2_Busan.svg") no-repeat;}
+#brfMgrOn .DaeguPnl { position:absolute; left:750px; top:457px; width:113px; height:177px; transform: scale(1.3); background: url("../img/webdash/OnMap/On3_Daegu.svg") no-repeat; background-size:78px;}
+/*#brfMgrOn .DaeguPnl { position:absolute; left:420px; top:481px; width:113px; height:177px; background: url("../img/webdash/OnMap/On3_Daegu.svg") no-repeat; background-size:78px;}*/
+#brfMgrOn .IncheonPnl { position:absolute; left:382px; top:112px; width:116px; height:115px; background: url("../img/webdash/OnMap/On4_Incheon.svg") no-repeat; background-size:95px;}
+#brfMgrOn .GwangjuPnl { position:absolute; left:450px; top:655px; width:70px; height:59px; background: url("../img/webdash/OnMap/On5_Gwangju.svg") no-repeat; background-size:65px;}
+#brfMgrOn .DaejeonPnl { position:absolute; left:550px; top:390px; width:68px; height:90px; background: url("../img/webdash/OnMap/On6_Daejeon.svg") no-repeat; background-size:55px;}
+#brfMgrOn .UlsanPnl { position:absolute; left:840px; top:557px; width:91px; height:103px; background: url("../img/webdash/OnMap/On7_Ulsan.svg") no-repeat; background-size:80px;}
+#brfMgrOn .GyeonggiPnl { position:absolute; left:428px; top:12px; width:248px; height:328px; background: url("../img/webdash/OnMap/On8_Gyeonggi.svg") no-repeat; background-size:228px;}
+#brfMgrOn .GangwonPnl { position:absolute; left:527px; top:-53px; width:414px; height:364px; background: url("../img/webdash/OnMap/On9_Gangwon.svg") no-repeat; background-size: 378px;}
+#brfMgrOn .ChungbukPnl { position:absolute; left:554px; top:233px; width:261px; height:292px; background: url("../img/webdash/OnMap/On10_Chungbuk.svg") no-repeat; background-size:238px;}
+#brfMgrOn .ChungnamPnl { position:absolute; left:364px; top:278px; width:285px; height:255px; background: url("../img/webdash/OnMap/On11_Chungnam.svg") no-repeat; background-size:260px;}
+#brfMgrOn .JeonbukPnl { position:absolute; left:415px; top:470px; width:275px; height:206px; background: url("../img/webdash/OnMap/On12_Jeonbuk.svg") no-repeat; background-size:248px;}
+#brfMgrOn .JeonnamPnl { position:absolute; left:382px; top:612px; width:286px; height:279px; background: url("../img/webdash/OnMap/On13_Jeonnam.svg") no-repeat; background-size:265px;}
+#brfMgrOn .GyeongbukPnl { position:absolute; left:637px; top:255px; width:327px; height:361px; background: url("../img/webdash/OnMap/On14_Gyeongbuk.svg") no-repeat; background-size:308px;}
+#brfMgrOn .GyeongnamPnl { position:absolute; left:606px; top:522px; width:304px; height:269px; background: url("../img/webdash/OnMap/On15_Gyeongnam.svg") no-repeat; background-size:275px;}
+#brfMgrOn .JejuPnl { position:absolute; left:162px; top:798px; width:167px; height:88px; background: url("../img/webdash/OnMap/On16_Jeju02.svg") no-repeat;}
+#brfMgrOn .SejongPnl { position:absolute; left:538px; top:360px; width:46px; height:72px; background: url("../img/webdash/OnMap/On17_Sejong.svg") no-repeat; background-size:35px;}
+
+
+/*==========
+경보 현황
+============*/
+#AlertStatus {width:560px; height:896px!important;}
+#AlertStatus > #Alert {width:560px; height:426px; box-sizing:border-box; border:2px solid #a9a9a9; border-radius: 5px; background:rgba(0,0,0,0.2);}
+.gridTop { margin: auto; width:560px; height:44px; background:url("../img/webdash/gridTop.svg") no-repeat; background-size:560px;}

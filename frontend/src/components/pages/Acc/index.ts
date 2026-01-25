@@ -1,0 +1,1 @@
+export { AccidentApplyListPage } from './AccidentApplyListPage'

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="214px"
+	 height="170px" viewBox="0 0 214 170" enable-background="new 0 0 214 170" xml:space="preserve">
+<g id="dis">
+</g>
+<g id="MHpgIndexBG_1_">
+	<rect x="4" y="37" opacity="0.25" fill="#FFFFFF" width="206" height="34"/>
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="2" y1="85" x2="212" y2="85">
+			<stop  offset="0" style="stop-color:#707070"/>
+			<stop  offset="0.2796" style="stop-color:#D0D0D0"/>
+			<stop  offset="0.6075" style="stop-color:#A5A5A5"/>
+			<stop  offset="1" style="stop-color:#707070"/>
+		</linearGradient>
+		<path fill="url(#SVGID_1_)" d="M210,4v162H4V4H210 M212,2H2v166h210V2L212,2z"/>
+	</g>
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="4" y1="20.5" x2="210" y2="20.5">
+		<stop  offset="0" style="stop-color:#072F4D"/>
+		<stop  offset="0.5" style="stop-color:#07407A"/>
+		<stop  offset="1" style="stop-color:#072F4D"/>
+	</linearGradient>
+	<rect x="4" y="4" fill="url(#SVGID_2_)" width="206" height="33"/>
+	<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="4" y1="37" x2="210" y2="37">
+		<stop  offset="0" style="stop-color:#606060"/>
+		<stop  offset="0.2796" style="stop-color:#B9B9B9"/>
+		<stop  offset="0.6075" style="stop-color:#909090"/>
+		<stop  offset="1" style="stop-color:#606060"/>
+	</linearGradient>
+	<rect x="4" y="36" fill="url(#SVGID_3_)" width="206" height="2"/>
+	<rect x="106.5" y="38" fill="#FFFFFF" width="1" height="127.917"/>
+	<rect x="4" y="118" fill="#FFFFFF" width="206" height="1"/>
+	<g>
+		<path fill="#141414" d="M212,2v166H2V2H212 M212,0H2C0.896,0,0,0.896,0,2v166c0,1.104,0.896,2,2,2h210c1.104,0,2-0.896,2-2V2
+			C214,0.896,213.104,0,212,0L212,0z"/>
+	</g>
+</g>
+<g id="Blue">
+	<g>
+		<path fill="#4795EA" d="M46.169,80.434h-25.32c-1.55,0-2.813,1.268-2.813,2.813v16.883c0,1.547,1.263,2.813,2.813,2.813h9.846
+			l-2.813,4.219v1.408h11.254v-1.408l-2.813-4.219h9.847c1.547,0,2.813-1.266,2.813-2.813V83.246
+			C48.983,81.701,47.716,80.434,46.169,80.434z M33.509,101.41c-0.439,0-0.796-0.354-0.796-0.789c0-0.441,0.356-0.797,0.796-0.797
+			c0.438,0,0.793,0.355,0.793,0.797C34.302,101.057,33.948,101.41,33.509,101.41z M46.169,98.688h-25.32V83.246h25.32V98.688z"/>
+		<path fill="#4795EA" d="M38.162,92.744l1.924-1.924l-1.924-1.924v-2.729h-2.729l-1.924-1.922l-1.925,1.922h-2.728v2.729
+			l-1.924,1.924l1.924,1.924v2.729h2.728l1.925,1.924l1.924-1.924h2.729V92.744z M33.509,94.309v-6.977
+			c1.924,0,3.486,1.564,3.486,3.488S35.433,94.309,33.509,94.309z"/>
+	</g>
+</g>
+<g id="Red">
+	<g>
+		<path fill="#FF3329" d="M46.169,128.433h-25.32c-1.55,0-2.813,1.268-2.813,2.813v16.882c0,1.547,1.263,2.813,2.813,2.813h9.846
+			l-2.813,4.219v1.408h11.254v-1.408l-2.813-4.219h9.847c1.547,0,2.813-1.266,2.813-2.813v-16.882
+			C48.983,129.7,47.716,128.433,46.169,128.433z M33.509,149.409c-0.439,0-0.796-0.354-0.796-0.789c0-0.44,0.356-0.796,0.796-0.796
+			c0.438,0,0.793,0.355,0.793,0.796C34.302,149.056,33.948,149.409,33.509,149.409z M46.169,146.688h-25.32v-15.441h25.32V146.688z"
+			/>
+		<path fill="#FF3329" d="M38.162,140.743l1.924-1.923l-1.924-1.925v-2.728h-2.729l-1.924-1.923l-1.925,1.923h-2.728v2.728
+			l-1.924,1.925l1.924,1.923v2.729h2.728l1.925,1.923l1.924-1.923h2.729V140.743z M33.509,142.308v-6.976
+			c1.924,0,3.486,1.563,3.486,3.488C36.996,140.743,35.433,142.308,33.509,142.308z"/>
+	</g>
+</g>
+<g id="Green">
+	<g>
+		<path fill="#80EB45" d="M150.648,80.426h-25.334c-1.551,0-2.814,1.269-2.814,2.815v16.892c0,1.548,1.264,2.814,2.814,2.814h9.852
+			l-2.816,4.221v1.409h11.262v-1.409l-2.814-4.221h9.852c1.549,0,2.816-1.267,2.816-2.814V83.241
+			C153.465,81.694,152.197,80.426,150.648,80.426z M137.982,101.415c-0.439,0-0.797-0.354-0.797-0.79
+			c0-0.44,0.357-0.796,0.797-0.796c0.438,0,0.793,0.355,0.793,0.796C138.775,101.061,138.42,101.415,137.982,101.415z
+			 M150.648,98.691h-25.334v-15.45h25.334V98.691z"/>
+		<g>
+			<circle fill="#80EB45" cx="129.689" cy="93.712" r="2.137"/>
+			<circle fill="#80EB45" cx="134.878" cy="88.217" r="1.526"/>
+			<circle fill="#80EB45" cx="140.178" cy="93.712" r="1.832"/>
+			<circle fill="#80EB45" cx="146.387" cy="88.217" r="1.984"/>
+			<g>
+				<polygon fill="#80EB45" points="140.164,94.347 134.939,88.88 130.02,94.028 129.357,93.396 134.939,87.554 140.217,93.076 
+					146.082,87.874 146.689,88.56 				"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Yellow">
+	<g>
+		<path fill="#FFFF22" d="M150.648,128.424h-25.334c-1.551,0-2.814,1.27-2.814,2.816v16.891c0,1.549,1.264,2.814,2.814,2.814h9.852
+			l-2.816,4.221v1.41h11.262v-1.41l-2.814-4.221h9.852c1.549,0,2.816-1.266,2.816-2.814V131.24
+			C153.465,129.693,152.197,128.424,150.648,128.424z M137.982,149.414c-0.439,0-0.797-0.355-0.797-0.791
+			c0-0.439,0.357-0.795,0.797-0.795c0.438,0,0.793,0.355,0.793,0.795C138.775,149.059,138.42,149.414,137.982,149.414z
+			 M150.648,146.689h-25.334V131.24h25.334V146.689z"/>
+		<g>
+			<circle fill="#FFFF22" cx="129.689" cy="141.711" r="2.137"/>
+			<circle fill="#FFFF22" cx="134.878" cy="136.215" r="1.526"/>
+			<circle fill="#FFFF22" cx="140.178" cy="141.711" r="1.832"/>
+			<circle fill="#FFFF22" cx="146.387" cy="136.215" r="1.984"/>
+			<g>
+				<polygon fill="#FFFF22" points="140.164,142.346 134.939,136.879 130.02,142.027 129.357,141.395 134.939,135.553 
+					140.217,141.074 146.082,135.873 146.689,136.559 				"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="MHpgIndexTxt">
+	<text transform="matrix(1 0 0 1 86.334 27.3335)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="20">범례</text>
+	<text transform="matrix(1 0 0 1 24.3452 61.0005)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">위 변조</text>
+	<circle fill="#FFFFFF" cx="45.313" cy="54" r="1.5"/>
+	<text transform="matrix(1 0 0 1 59.334 100.959)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">정상</text>
+	<text transform="matrix(1 0 0 1 59.334 149.959)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">변조</text>
+	<text transform="matrix(1 0 0 1 164.668 100.959)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">정상</text>
+	<text transform="matrix(1 0 0 1 164.668 149.959)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">장애</text>
+	<text transform="matrix(1 0 0 1 122.1758 61.0005)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="18">모니터링</text>
+</g>
+</svg>

@@ -1,0 +1,7 @@
+spring:
+  config:
+    import: classpath:config/jdbc/application-jdbc.yml
+  datasource:
+    url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.111)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.111)(PORT=1521))(FAILOVER=ON)(LOAD_BALANCE=OFF))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=ctrsdb)))
+    username: ENC(s7wiaiceOFklLRjDrSYr2Q==)
+    password: ENC(NFSXmIpAJuOmwSKvG9YZwg==)

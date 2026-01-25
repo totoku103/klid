@@ -1,0 +1,20 @@
+.idea
+.idea/**
+
+.DS_Store
+
+/.vscode
+/.vscode/**
+
+target
+target/**
+
+# Claude settings
+.claude/
+
+# IntelliJ IDEA
+*.iml
+
+# Logs
+log/
+logs/

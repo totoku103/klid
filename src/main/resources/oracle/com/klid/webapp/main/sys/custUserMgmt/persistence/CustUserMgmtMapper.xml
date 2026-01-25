@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sys.custUserMgmt.persistence.CustUserMgmtMapper">
+
+	<resultMap type="com.klid.webapp.main.sys.custUserMgmt.dto.CustUserMgmtDto" id="resultSmsUserList">
+		<result property="seq" 			column="SEQ"/>
+		<result property="userId" 			column="USER_ID"/>
+		<result property="userName" 		column="USER_NAME"/>
+		<result property="moblPhnNo"		column="MOBL_PHN_NO"/>
+		<result property="instNm"		column="INST_NM"/>
+		<result property="localNm"		column="LOCAL_NM"/>
+		<result property="localCd"		column="LOCAL_CD"/>
+		<result property="instCd"		column="INST_CD"/>
+		<result property="authSub"		column="AUTH_SUB"/>
+	</resultMap>
+
+	<select id="getSmsUserList" resultMap="resultSmsUserList">
+		SELECT
+		A.SEQ,
+		A.USER_ID,
+		A.USER_NAME,
+		A.MOBL_PHN_NO,
+		B.inst_nm,
+		C.LOCAL_NM,
+		DECODE(C.LOCAL_CD, 170, 75, C.LOCAL_CD) as LOCAL_CD,
+		B.inst_cd,
+		A.AUTH_SUB
+		FROM
+		COMM_USER A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD
+		INNER JOIN TSMLOCAL C ON B.LOCAL_CD = C.LOCAL_CD
+		WHERE
+		1 = 1
+		AND A.INST_CD IN (
+		SELECT
+		INST_CD
+		FROM
+		TSMINST
+		CONNECT BY
+		PRIOR INST_CD = PNT_INST_CD
+		START WITH INST_CD =#{instCd}
+		)
+		AND A.USE_YN ='Y'
+		AND A.SMS_YN ='Y'
+		order by local_cd asc, inst_cd asc, user_name asc
+	</select>
+
+	<select id="getSmsOfUserList" resultMap="resultSmsUserList">
+		SELECT
+		TO_CHAR(SEQ_NO) AS SEQ,
+		USER_ID,
+		CUST_NM AS USER_NAME,
+		CUST_CELL_NO AS MOBL_PHN_NO
+		FROM
+		CUST_USER_MGMT
+		WHERE
+		USER_ID =#{userId}
+		AND SMS_GROUP_SEQ IN(
+            SELECT
+              sms_group_seq
+            FROM sms_group
+            WHERE 1=1
+            START WITH sms_group_seq = #{smsGroupSeq}
+            CONNECT BY PRIOR sms_group_seq = sms_parent_group_seq
+        )
+		ORDER BY USER_NAME ASC
+	</select>
+
+	<resultMap type="com.klid.webapp.main.sys.custUserMgmt.dto.CustUserMgmtDto" id="resultUserInfo">
+		<result property="userId" 			column="USER_ID"/>
+		<result property="offcTelno"		column="OFFC_TEL_NO"/>
+	</resultMap>
+
+	<select id="selectUserPhone" resultMap="resultUserInfo">
+    SELECT
+    	USER_ID,
+        NVL(OFFC_TEL_NO,'02-')AS OFFC_TEL_NO
+	FROM COMM_USER
+    WHERE LOWER(USER_ID) = LOWER(#{userId})
+  </select>
+
+	<resultMap type="java.util.HashMap" id="resultSmsTree">
+		<result property="grpNo"            	column="GRP_NO"/>
+		<result property="grpParent" 			column="GRP_PARENT"/>
+		<result property="grpName"         		column="GRP_NAME"/>
+		<result property="groupDepth"         	column="group_depth"/>
+	</resultMap>
+	<select id="selectSmsGroup" resultMap="resultSmsTree">
+        select
+			sms_group_seq AS GRP_NO,
+			<!-- sms_group_name AS GRP_NAME, -->
+			sms_parent_group_seq AS GRP_PARENT,
+			group_depth,
+			LPAD(sms_group_name, group_depth * 4, ' ')  AS GRP_NAME
+		from sms_group
+		WHERE 1=1
+		start with sms_group_seq = 1
+		connect by prior sms_group_seq = sms_parent_group_seq
+		ORDER BY group_depth, grp_name
+    </select>
+
+	<insert id="insertSmsGroup">
+		<selectKey keyProperty="smsGroupSeq" resultType="long" order="BEFORE">
+			SELECT NVL(MAX(sms_group_seq), 0) + 1 FROM sms_group
+		</selectKey>
+		INSERT INTO sms_group (
+			sms_group_seq,
+			sms_parent_group_seq,
+			sms_group_name,
+			group_depth
+		)
+		VALUES (
+			#{smsGroupSeq},
+			#{smsParentGroupSeq},
+			#{smsGroupName},
+			#{groupDepth}
+		)
+	</insert>
+
+	<update	id="updateSmsGroup">
+		UPDATE sms_group SET
+			sms_group_name = #{smsGroupName}
+		WHERE sms_group_seq = #{smsGroupSeq}
+	</update>
+
+	<delete id="deleteSmsGroup" >
+		DELETE FROM sms_group
+		WHERE sms_group_seq = #{smsGroupSeq}
+	</delete>
+
+	<update	id="updateSmsTopGroup">
+		UPDATE CUST_USER_MGMT SET
+			sms_group_seq = 1
+		WHERE sms_group_seq IN
+		(
+			SELECT sms_group_seq
+			FROM sms_group
+				START WITH sms_group_seq = #{smsGroupSeq}
+			CONNECT BY PRIOR sms_group_seq = sms_parent_group_seq
+		)
+	</update>
+</mapper>

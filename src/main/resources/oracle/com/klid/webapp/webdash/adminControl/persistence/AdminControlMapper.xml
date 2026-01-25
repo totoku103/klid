@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.webdash.adminControl.persistence.AdminControlMapper">
+
+	<resultMap type="java.util.HashMap" id="resultInciTypeCnt">
+		<result property="typeCd"                column="typeCd"/>
+		<result property="typeCnt"               column="typeCnt"/>
+	</resultMap>
+
+	<!-- 침해사고현황 -->
+	<select id="selectIncidentStatus" resultType="com.klid.webapp.webdash.adminControl.dto.IncidentDto">
+		<!-- SELECT nvl((select count(*) from tbzledge where inci_prcs_stat in (select com_code2 from comm_code where com_code1 = 3001 and com_code2 = '1') and inci_acpn_dt BETWEEN to_number(to_char(sysdate, 'yyyymmdd') || '060000') and to_number(to_char(sysdate+1, 'yyyymmdd') || '055959')), 0) AS receiptCnt
+             , nvl((select count(*) from tbzledge where inci_prcs_stat in (select com_code2 from comm_code where com_code1 = 3001 and com_code2 not in ('0','1','12', '13', '15', '17')) and inci_acpn_dt BETWEEN to_number(to_char(sysdate, 'yyyymmdd') || '060000') and to_number(to_char(sysdate+1, 'yyyymmdd') || '055959')), 0) AS processCnt
+             , nvl((select count(*) from tbzledge where inci_prcs_stat in (select com_code2 from comm_code where com_code1 = 3001 and com_code2 in ('12', '13', '15', '17')) and inci_acpn_dt BETWEEN to_number(to_char(sysdate, 'yyyymmdd') || '060000') and to_number(to_char(sysdate+1, 'yyyymmdd') || '055959')), 0) AS completeCnt
+		FROM DUAL
+		-->
+		select
+			nvl((sub.ING + sub.END),0) AS receiptCnt,
+			nvl(sub.ING,0) AS processCnt,
+			nvl(sub.End,0) AS completeCnt
+		from
+		(
+		SELECT
+			SUM(CASE
+			WHEN INCI_PRCS_STAT > 0 THEN 1 ELSE 0
+			END) AS APPLY,
+			SUM(CASE
+			WHEN INCI_PRCS_STAT IN (1, 2, 5, 7, 8, 9, 10, 11, 14, 16) THEN 1 ELSE 0 END)	AS ING,
+			SUM(CASE
+			WHEN INCI_PRCS_STAT IN (12,13,15,17) THEN 1 ELSE 0
+			END) AS END
+		FROM TBZLEDGE a
+		WHERE 1=1
+		AND a.INCI_NO LIKE 'CT%'
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		AND EXISTS(
+		SELECT
+		sub_cd
+		FROM
+		tsminst_leaf tsminst
+		WHERE
+		tsminst.sub_cd = a.dmg_inst_cd
+		AND inst_cd = 1100000
+		AND sub_cd NOT IN (
+		SELECT
+		com_code2
+		FROM
+		COMM_CODE
+		WHERE
+		com_code1 = '4002'
+		AND code_lvl = '2'
+		)
+		AND sub_cd != 1200000
+		)
+		AND INCI_PRCS_STAT != 0
+		AND inci_no LIKE 'CT%'
+		AND DCL_INST_CD IN( 1100000, 1400000 , 1500000)
+		AND inci_ttl NOT LIKE '%훈련%'
+		AND inci_ttl NOT LIKE '%확인%'
+		)sub
+	</select>
+	
+	<!-- 위협이벤트 건수 -->
+	<select id="selectInciCnt" resultType="string">
+		SELECT SUM_JSON AS VALUE, #{atype} as PP, LOCAL_NM, ORG_NM
+		FROM 	HM_DASH_LC
+		<if test="atype==1">
+			WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+			AND TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+		</if>
+		<if test="atype==0">
+			WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE-1, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+			AND TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_2'">
+			AND 	LOCAL_NM = '유형총합' AND 	ORG_NM = '유형총합'
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_3'">
+			AND 	LOCAL_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd} ) AND 	ORG_NM = '유형총합'
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_4'">
+			AND 	ORG_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd})
+		</if>
+	</select>
+	
+	<!-- 고위협 공격시도 건수 -->
+	<select id="selectTbzledgeCnt" resultType="com.klid.webapp.webdash.adminControl.dto.TbzledgeCntDto">
+		SELECT
+		'개발원' AS TYPE,
+		nvl(count(inci_acpn_dt), 0) total_cnt,
+		nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) COMPLETE_CNT,
+		nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) PROCESS_CNT
+		FROM TBZLEDGE a
+		WHERE 1=1
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		AND EXISTS(
+		SELECT sub_cd
+		FROM tsminst_leaf tsminst
+		WHERE tsminst.sub_cd= a.dmg_inst_cd
+		AND inst_cd = 1100000
+		AND sub_cd NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND sub_cd <![CDATA[ <> ]]> 1200000)
+		AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+		AND inci_no LIKE 'CT%'
+		AND DCL_INST_CD = 1100000
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+		UNION ALL
+		SELECT
+		'국정원' AS TYPE,
+		nvl(count(inci_acpn_dt), 0) total_cnt,
+		nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) COMPLETE_CNT,
+		nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) PROCESS_CNT
+		FROM TBZLEDGE a
+		WHERE 1=1
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		AND EXISTS(
+		SELECT sub_cd
+		FROM tsminst_leaf tsminst
+		WHERE tsminst.sub_cd= a.dmg_inst_cd
+		AND inst_cd = 1100000
+		AND sub_cd NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND sub_cd <![CDATA[ <> ]]> 1200000)
+		AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+		AND inci_no LIKE 'CT%'
+		AND DCL_INST_CD = 1400000
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+		UNION ALL
+		SELECT
+		'관리원' AS TYPE,
+		nvl(count(inci_acpn_dt), 0) total_cnt,
+		nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) COMPLETE_CNT,
+		nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) PROCESS_CNT
+		FROM TBZLEDGE a
+		WHERE 1=1
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000')
+			and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		AND EXISTS(
+		SELECT sub_cd
+		FROM tsminst_leaf tsminst
+		WHERE tsminst.sub_cd= a.dmg_inst_cd
+		AND inst_cd = 1100000
+		AND sub_cd NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND sub_cd  <![CDATA[ <> ]]> 1200000)
+		AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+		AND inci_no LIKE 'CT%'
+		AND DCL_INST_CD = 1500000
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+	</select>
+	
+	<!-- 17개 기관별 탐지현황 -->
+	<select id="selectLocalInciCnt" resultType="string">
+		SELECT SUM_JSON AS VALUE, #{atype} as PP, LOCAL_NM, ORG_NM
+		FROM 	HM_DASH_LC
+		<if test="atype==1">
+			WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+							AND TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+		</if>
+		<if test="atype==0">
+			WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE-1, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+			AND TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_2'">
+			AND 	LOCAL_NM = '지역총합' AND 	ORG_NM = '지역총합'
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_3'">
+			AND 	LOCAL_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd} ) AND 	ORG_NM = '지역총합'
+		</if>
+		<if test="sAuthMain=='AUTH_MAIN_4'">
+			AND 	ORG_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd})
+		</if>
+	</select>
+	
+	<!-- 시도별 위변조/헬스체크 상태 -->
+	<select id="selectLocalStatus" resultType="com.klid.webapp.webdash.adminControl.dto.LocalStatusDto">
+		SELECT * FROM
+		(SELECT
+	A.LOCAL_CD AS localCd,
+	A.LOCAL_NM AS localNm,
+	DECODE( B.LOCAL_CD, NULL, 0, 1 ) AS forgeryEvt,
+	DECODE( C.LOCAL_CD, NULL, 0, 1 ) AS hcEvt
+FROM
+	TSMLOCAL A,
+	(
+		SELECT
+			DISTINCT B.LOCAL_CD
+		FROM
+			FORGERY_URL A,
+			TSMINST B
+		WHERE A.INST_CD = B.INST_CD
+			AND LAST_RES IN (
+				5,
+				4
+			)
+			AND A.DEPTH=3
+			AND B.INST_CD != '1200000'
+	) B,
+	(
+		SELECT
+			DISTINCT B.LOCAL_CD
+		FROM
+			HM_HC_URL A,
+			TSMINST B
+		WHERE
+			A.INST_CD = B.INST_CD
+			AND LAST_RES != 200
+			AND B.INST_CD != '1200000'
+			AND A.CHECK_YN=1
+			AND A.USE_YN=1
+	) C
+WHERE
+	A.LOCAL_CD NOT IN (
+		1,
+		- 1
+	)
+	AND A.LOCAL_CD = B.LOCAL_CD(+)
+	AND A.LOCAL_CD = C.LOCAL_CD(+)
+	UNION ALL
+	SELECT
+	1 AS localCd,
+	'개발원' AS localNm,
+	DECODE( B.LOCAL_CD, NULL, 0, 1 ) AS forgeryEvt,
+	DECODE( C.LOCAL_CD, NULL, 0, 1 ) AS hcEvt
+FROM
+	TSMLOCAL A,
+	(
+		SELECT
+			DISTINCT B.LOCAL_CD
+		FROM
+			FORGERY_URL A,
+			TSMINST B
+		WHERE A.INST_CD = B.INST_CD
+			AND LAST_RES IN (
+				5,
+				4
+			)
+			AND B.INST_CD = '1200000'
+	) B,
+	(
+		SELECT
+			DISTINCT B.LOCAL_CD
+		FROM
+			HM_HC_URL A,
+			TSMINST B
+		WHERE
+			A.INST_CD = B.INST_CD
+			AND LAST_RES != 200
+			AND B.INST_CD = '1200000'
+			AND A.CHECK_YN=1
+			AND A.USE_YN=1
+	) C
+WHERE
+	A.LOCAL_CD = 10
+	AND A.LOCAL_CD = B.LOCAL_CD(+)
+	AND A.LOCAL_CD = C.LOCAL_CD(+)
+	)
+	ORDER BY LOCALCD
+	</select>
+	
+	<!-- 주요 홈페이지 위변조 현황 -->
+	<select id="selectUrlStatus" resultType="com.klid.webapp.webdash.adminControl.dto.UrlStatusDto">
+		SELECT (SELECT COUNT(*) from FORGERY_URL WHERE DEPTH = 3) AS depthCnt -- 3DepthCnt
+			 , (SELECT COUNT(*) FROM
+                        FORGERY_URL A, HM_HC_URL B
+                        WHERE A.DEPTH = 3
+                         AND  B.LAST_RES = 200
+                         AND  A.URL = B.URL
+                         AND  B.USE_YN=1
+                         AND B.CHECK_YN=1
+                        ) AS normalCnt --정상 URL
+			 , (select COUNT(*) FROM FORGERY_URL WHERE LAST_RES IN (4,5) AND DEPTH = 3) AS forgeryCnt -- 위변조 URL
+			 , (SELECT COUNT(*) FROM
+                        FORGERY_URL A, HM_HC_URL B
+                        WHERE A.DEPTH = 3
+                        AND  B.LAST_RES != 200
+                        AND  A.URL = B.URL
+                        AND B.USE_YN=1
+                        AND B.CHECK_YN=1) AS errorCnt --장애 URL
+		FROM DUAL
+	</select>
+	
+	<!-- 시스템 장애현황 -->
+    <!-- PING_FAIL_NAME , PING_FAIL_60MIN 뷰테이블 (@ESM 시노님 처리)  -->
+	<select id="selectSysErrorStatus" resultType="com.klid.webapp.webdash.adminControl.dto.SysErrorDto">
+		SELECT DISTINCT
+             	A.NAME AS name ,
+           	    A.ID AS id,
+       		    COUNT(B.ORIGIN_NAME) AS originNameCnt, #{hostNm} AS PP
+		<if test="hostNm != null and hostNm != ''">
+			<choose>
+			<when test="hostNm == 'local'">
+				FROM   PING_FAIL_NAME A
+				LEFT OUTER JOIN PING_FAIL_60MIN B
+			</when>
+			<otherwise>
+				FROM   PING_FAIL_NAME@ESM A
+				LEFT OUTER JOIN PING_FAIL_60MIN@ESM B
+			</otherwise>
+			</choose>
+		</if>
+		ON A.NAME = B.ORIGIN_NAME
+		GROUP BY A.NAME ,A.ID
+		ORDER BY A.ID
+	</select>
+
+	<select id="selectInciTypeCnt" resultMap="resultInciTypeCnt">
+		SELECT
+		accd_Typ_Cd	AS typeCd,
+		COUNT(1) typeCnt
+		FROM TBZLEDGE a
+		WHERE 1=1
+		AND accd_Typ_Cd IN ('10','20','30','40','70')
+		AND accd_Typ_Cd IS NOT NULL
+		<if test="atype==0">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate-1, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate, 'yyyymmdd') ||'055959')
+		</if>
+		<if test="atype==1">
+			AND  INCI_ACPN_DT BETWEEN to_number(to_char(sysdate, 'yyyymmdd') ||'060000') and to_number(to_char(sysdate+1, 'yyyymmdd') ||'055959')
+		</if>
+		AND a.INCI_NO LIKE 'CT%'
+		group by accd_Typ_Cd
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+# Third Party Dev Settings
+spring:
+  config:
+    import:
+      - application-third-party.yml
+
+app:
+  ctrs:
+    url:
+      host: https://112.219.114.162:7799
+
+  vms:
+    url:
+      host: https://www.klid.vms.com:7443
+
+  ctss:
+    url:
+      host: https://www.klid.vms.com:7443

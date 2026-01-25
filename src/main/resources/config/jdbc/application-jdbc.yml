@@ -1,0 +1,4 @@
+# JDBC Configuration (Common)
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver

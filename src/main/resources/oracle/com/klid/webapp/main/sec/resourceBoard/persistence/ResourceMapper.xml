@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sec.resourceBoard.persistence.ResourceBoardMapper">
+	
+<resultMap type="com.klid.webapp.main.sec.resourceBoard.dto.ResourceBoardDto" id="getBoardResultMap">
+		<result property="bultnNo"				column="BULTN_NO"/>
+		<result property="bultnType"			column="BULTN_TYPE"/>
+		<result property="bultnTitle"			column="BULTN_TITLE"/>
+		<result property="bultnCont"			column="BULTN_CONT"/>
+		<result property="readCnt"				column="READ_CNT"/>
+		<result property="rcmdCnt"				column="RCMD_CNT"/>
+		<result property="regDate"				column="REG_DATE"/>
+		<result property="userId"				column="USER_ID"/>
+		<result property="organCode"			column="ORGAN_CODE"/>
+		<result property="pntOrganCode"			column="PNT_ORGAN_CODE"/>
+		<result property="startDt"				column="START_DT"/>
+		<result property="endDt"				column="END_DT"/>
+		<result property="groupNo"				column="GROUP_NO"/>
+		<result property="levelNo"				column="LEVEL_NO"/>
+		<result property="orderNo"				column="ORDER_NO"/>
+		<result property="cateNo"				column="CATE_NO"/>
+		<result property="openScope"			column="OPEN_SCOPE"/>
+		<result property="existFile"			column="EXIST_FILE"/>
+		<result property="totalReplyCnt"		column="TOTAL_REPLY_CNT"/>
+		<result property="totalRcmdCnt"			column="TOTAL_RCMD_CNT"/>
+		<result property="isSecret"				column="IS_SECRET"/>
+		<result property="useYn"				column="USE_YN"/>
+		<result property="pntUserId"			column="PNT_USER_ID"/>
+		<result property="htmlYn"				column="HTML_YN"/>
+		<result property="groupItemNo"			column="GROUP_ITEM_NO"/>
+		<result property="control"				column="CONTROL"/>
+		<result property="userName"				column="USER_NAME"/>
+		<result property="fileCount"			column="FILECOUNT"/>
+        <result property="groupType"			column="groupType"/>
+		<result property="instNm"				column="INST_NM"/>
+	</resultMap>
+		
+<!--  게시판 타입으로 리스트 받아오기-->
+<select id="getBoardList" resultMap="getBoardResultMap">
+    SELECT        
+		A.BULTN_NO			,
+		A.BULTN_TYPE		,
+		A.BULTN_TITLE	    ,
+	 	A.BULTN_CONT,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') 	AS REG_DATE, -->
+		A.READ_CNT	    	,
+		A.RCMD_CNT	    	,
+		A.USER_ID	        ,
+		A.ORGAN_CODE	    ,
+		A.PNT_ORGAN_CODE	,
+		A.START_DT	    	,
+		A.END_DT	        ,
+		A.GROUP_NO	    	,
+		A.LEVEL_NO	    	,
+		A.ORDER_NO	    	,
+		A.CATE_NO	        ,
+		A.OPEN_SCOPE	    ,
+		A.EXIST_FILE	    ,
+		A.TOTAL_REPLY_CNT	,
+		A.TOTAL_RCMD_CNT	,
+		A.IS_SECRET	    	,
+		A.USE_YN	        ,
+		A.PNT_USER_ID	    ,
+		A.HTML_YN	        ,
+		A.GROUP_ITEM_NO		,
+		A.CONTROL			,
+		(
+            SELECT	COUNT(*) 
+            FROM	BULTN_FILE B 
+            WHERE	A.BULTN_NO =B.BULTN_NO
+        ) AS FILECOUNT,
+        NVL(A.USER_NAME,
+			(SELECT
+				B.USER_NAME
+			FROM COMM_USER B
+			WHERE B.USER_ID = A.USER_ID)
+		)AS	USER_NAME ,
+        (
+        SELECT
+          CATE_NAME
+        FROM BULTN_CATE c2
+        WHERE A.CATE_NO = c2.CATE_NO
+        AND c2.cate_group = 'secu_data'
+        )AS groupType,
+		B.INST_NM
+    FROM 
+    	BULTN A
+	INNER JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+    WHERE 
+           1=1
+    AND A.USE_YN = 'Y'
+	AND A.BULTN_TYPE = 'secu_data'
+	<if test="sAuthMain != null and sAuthMain != ''">
+		<choose>
+			<when test="sAuthMain == 'AUTH_MAIN_3'">
+				<choose>
+					<when test="sPntInstCd == '1200000'">
+						AND ( A.ORGAN_CODE =  (select pnt_inst_cd from tsminst where inst_cd = #{sInstCd} ) OR A.ORGAN_CODE = #{sInstCd} OR A.ORGAN_CODE = 1100000)
+					</when>
+					<otherwise>
+						AND ( A.ORGAN_CODE =  (select pnt_inst_cd from tsminst where inst_cd = #{sInstCd} ) OR A.ORGAN_CODE = #{sInstCd})
+					</otherwise>
+				</choose>
+			</when>
+			<when test="sAuthMain == 'AUTH_MAIN_4'">
+				AND ( A.ORGAN_CODE =  (select pnt_inst_cd from tsminst where inst_cd = #{sInstCd} ) OR A.ORGAN_CODE = #{sInstCd} OR A.ORGAN_CODE = 1100000)
+			</when>
+			<otherwise>
+				AND A.ORGAN_CODE = #{sInstCd}
+			</otherwise>
+		</choose>
+	</if>
+	<if test="groupType != null and groupType != ''">
+		AND A.CATE_NO = #{groupType}
+	</if>
+	<if test="title != null and title != ''">
+		AND UPPER(A.BULTN_TITLE) LIKE '%' ||UPPER( #{title}) || '%'
+	</if>
+	<if test="bultnCont != null and bultnCont != ''">
+		AND UPPER(A.BULTN_CONT) LIKE '%' || UPPER(#{bultnCont}) || '%'
+	</if>
+	<if test="instNm != null and instNm != ''">
+		AND B.INST_NM LIKE '%' || UPPER(#{instNm}) || '%'
+	</if>
+    ORDER BY A.REG_DATE DESC
+</select>
+
+<!-- 게시판 조회수 증가 -->
+<update id="hitsUpBoard" >
+	UPDATE BULTN 
+	SET 
+			READ_CNT = NVL(READ_CNT, 0) + 1 
+	WHERE 
+			BULTN_NO = #{boardNo}
+</update>
+
+<!-- 게시판 번호로 컨텐츠 보기-->
+<select id="getBoardContents" resultMap="getBoardResultMap" >
+	SELECT
+		A.BULTN_NO		,
+		A.BULTN_TYPE	,
+		A.BULTN_TITLE	,
+		A.BULTN_CONT,
+		A.READ_CNT	    ,
+		A.RCMD_CNT	    ,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') AS REG_DATE , -->
+		A.USER_ID	    ,
+		A.ORGAN_CODE	,
+		A.PNT_ORGAN_CODE,
+		A.START_DT	    ,
+		A.END_DT	    ,
+		A.GROUP_NO	    ,
+		A.LEVEL_NO	    ,
+		A.ORDER_NO	    ,
+		A.CATE_NO	    ,
+		A.OPEN_SCOPE	,
+		A.EXIST_FILE	,
+		A.TOTAL_REPLY_CNT,
+		A.TOTAL_RCMD_CNT,
+		A.IS_SECRET	    ,
+		A.USE_YN	    ,
+		A.PNT_USER_ID	,
+		A.HTML_YN	    ,
+		A.GROUP_ITEM_NO	,
+		A.CONTROL		,
+		NVL(A.USER_NAME,
+			(SELECT
+				B.USER_NAME
+			FROM COMM_USER B
+			WHERE B.USER_ID = A.USER_ID)
+		)AS	USER_NAME   ,
+        (
+        SELECT
+        CATE_NAME
+        FROM BULTN_CATE c2
+        WHERE A.CATE_NO = c2.CATE_NO
+        AND c2.cate_group = 'secu_data'
+        )AS groupType
+			
+    FROM 
+    	BULTN A
+    WHERE 
+           1=1
+	AND BULTN_NO = #{boardNo}
+	AND A.USE_YN = 'Y'
+</select>
+
+<resultMap type="com.klid.webapp.common.file.dto.AttachfileDto" id="resultAttachfile">
+	<result property="fileNo" 			column="FILE_NO"/>
+	<result property="fileName" 		column="FILE_NAME"/>
+	<result property="originalFileName" column="ORIGINAL_FILE_NAME"/>
+</resultMap>
+		
+<!-- 게시판 번호로 첨부파일 보기-->
+<select id="selectAttachFileList" resultMap="resultAttachfile">
+	SELECT
+		FILE_NO,
+		FILE_NAME,
+		ORIGIN_NAME		AS ORIGINAL_FILE_NAME		
+	FROM BULTN_FILE			
+	WHERE BULTN_NO = ${boardNo}
+</select>
+
+<!-- 게시판 글쓰고 작성한 글 번호 받아오기 -->
+ <insert id="addBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_NO), 0) + 1 FROM BULTN
+		</selectKey>
+			INSERT INTO 
+			BULTN		(
+							BULTN_NO	,
+							BULTN_TYPE	,
+							BULTN_TITLE	,
+							BULTN_CONT,
+							READ_CNT	,
+							RCMD_CNT	,
+							REG_DATE	,
+							USER_ID	,
+							GROUP_NO	,
+							LEVEL_NO	,
+							ORDER_NO	,
+							USE_YN	,
+							CATE_NO,
+	 						ORGAN_CODE,
+	 						USER_NAME
+						)        
+			VALUES		(
+								#{boardNo},
+								'secu_data',
+								#{boardTitle},
+								#{boardContent},
+								0,
+								0,
+								TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+								#{userId},
+								0,
+								1,
+								0,
+								'Y',
+	 							#{cateNo},
+	 							#{organCode},
+	 							#{userName}
+						)							
+</insert>
+
+<!-- 게시판 글 수정하기 -->
+ <update id="editBoard">
+	UPDATE BULTN 
+	SET 
+		BULTN_TITLE = #{boardTitle}, 
+		BULTN_CONT  = #{boardContent} ,
+		CATE_NO		= #{cateNo}
+	WHERE 
+		BULTN_NO = #{boardNo}
+</update>
+ 
+<!-- 게시판 글 삭제하기 -->
+<delete id="delBoard">
+	UPDATE BULTN SET
+		USE_YN = 'N'
+	WHERE BULTN_NO = #{boardNo}
+</delete>   
+
+	<!--행안부-->
+	<select id="getMoisBoardList" resultMap="getBoardResultMap">
+		SELECT
+			A.BULTN_NO			,
+			A.BULTN_TYPE		,
+			A.BULTN_TITLE	    ,
+			A.BULTN_CONT,
+			A.REG_DATE,
+			A.READ_CNT	    	,
+			A.RCMD_CNT	    	,
+			A.USER_ID	        ,
+			A.ORGAN_CODE	    ,
+			A.PNT_ORGAN_CODE	,
+			A.START_DT	    	,
+			A.END_DT	        ,
+			A.GROUP_NO	    	,
+			A.LEVEL_NO	    	,
+			A.ORDER_NO	    	,
+			A.CATE_NO	        ,
+			A.OPEN_SCOPE	    ,
+			A.EXIST_FILE	    ,
+			A.TOTAL_REPLY_CNT	,
+			A.TOTAL_RCMD_CNT	,
+			A.IS_SECRET	    	,
+			A.USE_YN	        ,
+			A.PNT_USER_ID	    ,
+			A.HTML_YN	        ,
+			A.GROUP_ITEM_NO		,
+			A.CONTROL			,
+			(
+				SELECT	COUNT(*)
+				FROM	BULTN_FILE B
+				WHERE	A.BULTN_NO =B.BULTN_NO
+			) AS FILECOUNT,
+			NVL(A.USER_NAME,
+				(SELECT
+					B.USER_NAME
+				FROM COMM_USER B
+				WHERE B.USER_ID = A.USER_ID)
+			)AS	USER_NAME ,
+			B.INST_NM
+		FROM
+			BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+			   1=1
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'mois'
+		<if test="title != null and title != ''">
+			AND UPPER(A.BULTN_TITLE) LIKE '%' ||UPPER( #{title}) || '%'
+		</if>
+		<if test="bultnCont != null and bultnCont != ''">
+			AND UPPER(A.BULTN_CONT) LIKE '%' || UPPER(#{bultnCont}) || '%'
+		</if>
+		<if test="instNm != null and instNm != ''">
+			AND B.INST_NM LIKE '%' || UPPER(#{instNm}) || '%'
+		</if>
+		ORDER BY A.REG_DATE DESC
+	</select>
+
+
+	<select id="getMoisBoardContents" resultMap="getBoardResultMap" >
+		SELECT
+			A.BULTN_NO		,
+			A.BULTN_TYPE	,
+			A.BULTN_TITLE	,
+			A.BULTN_CONT,
+			A.READ_CNT	    ,
+			A.RCMD_CNT	    ,
+			A.REG_DATE,
+			A.USER_ID	    ,
+			A.ORGAN_CODE	,
+			A.PNT_ORGAN_CODE,
+			A.START_DT	    ,
+			A.END_DT	    ,
+			A.GROUP_NO	    ,
+			A.LEVEL_NO	    ,
+			A.ORDER_NO	    ,
+			A.CATE_NO	    ,
+			A.OPEN_SCOPE	,
+			A.EXIST_FILE	,
+			A.TOTAL_REPLY_CNT,
+			A.TOTAL_RCMD_CNT,
+			A.IS_SECRET	    ,
+			A.USE_YN	    ,
+			A.PNT_USER_ID	,
+			A.HTML_YN	    ,
+			A.GROUP_ITEM_NO	,
+			A.CONTROL		,
+			NVL(A.USER_NAME,
+				(SELECT
+					B.USER_NAME
+				FROM COMM_USER B
+				WHERE B.USER_ID = A.USER_ID)
+			)AS	USER_NAME   ,
+			(
+			SELECT
+			CATE_NAME
+			FROM BULTN_CATE c2
+			WHERE A.CATE_NO = c2.CATE_NO
+			AND c2.cate_group = 'secu_data'
+			)AS groupType
+
+		FROM
+			BULTN A
+		WHERE
+			   1=1
+		AND BULTN_NO = #{boardNo}
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'mois'
+	</select>
+
+	<insert id="addMoisBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_NO), 0) + 1 FROM BULTN
+		</selectKey>
+			INSERT INTO
+			BULTN		(
+							BULTN_NO	,
+							BULTN_TYPE	,
+							BULTN_TITLE	,
+							BULTN_CONT,
+							READ_CNT	,
+							RCMD_CNT	,
+							REG_DATE	,
+							USER_ID	,
+							GROUP_NO	,
+							LEVEL_NO	,
+							ORDER_NO	,
+							USE_YN	,
+							CATE_NO,
+	 						ORGAN_CODE,
+	 						USER_NAME
+						)
+			VALUES		(
+								#{boardNo},
+								'mois',
+								#{boardTitle},
+								#{boardContent},
+								0,
+								0,
+								TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+								#{userId},
+								0,
+								1,
+								0,
+								'Y',
+	 							1,
+	 							#{instCd},
+	 							#{userName}
+						)
+	</insert>
+
+	 <update id="editMoisBoard">
+		UPDATE BULTN
+		SET
+			BULTN_TITLE = #{boardTitle},
+			BULTN_CONT  = #{boardContent}
+		WHERE
+			BULTN_NO = #{boardNo}
+	</update>
+
+	<delete id="delMoisBoard">
+		UPDATE BULTN SET
+			USE_YN = 'N'
+		WHERE BULTN_NO = #{boardNo}
+	</delete>
+
+
+	<!--침해사고-->
+	<select id="getAccBoardList" resultMap="getBoardResultMap">
+		SELECT
+			A.BULTN_NO			,
+			A.BULTN_TYPE		,
+			A.BULTN_TITLE	    ,
+			A.BULTN_CONT,
+			A.REG_DATE,
+			A.READ_CNT	    	,
+			A.RCMD_CNT	    	,
+			A.USER_ID	        ,
+			A.ORGAN_CODE	    ,
+			A.PNT_ORGAN_CODE	,
+			A.START_DT	    	,
+			A.END_DT	        ,
+			A.GROUP_NO	    	,
+			A.LEVEL_NO	    	,
+			A.ORDER_NO	    	,
+			A.CATE_NO	        ,
+			A.OPEN_SCOPE	    ,
+			A.EXIST_FILE	    ,
+			A.TOTAL_REPLY_CNT	,
+			A.TOTAL_RCMD_CNT	,
+			A.IS_SECRET	    	,
+			A.USE_YN	        ,
+			A.PNT_USER_ID	    ,
+			A.HTML_YN	        ,
+			A.GROUP_ITEM_NO		,
+			A.CONTROL			,
+			(
+				SELECT	COUNT(*)
+				FROM	BULTN_FILE B
+				WHERE	A.BULTN_NO =B.BULTN_NO
+			) AS FILECOUNT,
+			NVL(A.USER_NAME,
+				(SELECT
+					B.USER_NAME
+				FROM COMM_USER B
+				WHERE B.USER_ID = A.USER_ID)
+			)AS	USER_NAME ,
+			B.INST_NM
+		FROM
+			BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+			   1=1
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'acc'
+		<if test="title != null and title != ''">
+			AND UPPER(A.BULTN_TITLE) LIKE '%' ||UPPER( #{title}) || '%'
+		</if>
+		<if test="bultnCont != null and bultnCont != ''">
+			AND UPPER(A.BULTN_CONT) LIKE '%' || UPPER(#{bultnCont}) || '%'
+		</if>
+		<if test="instNm != null and instNm != ''">
+			AND B.INST_NM LIKE '%' || UPPER(#{instNm}) || '%'
+		</if>
+		ORDER BY A.REG_DATE DESC
+	</select>
+
+
+	<select id="getAccBoardContents" resultMap="getBoardResultMap" >
+		SELECT
+			A.BULTN_NO		,
+			A.BULTN_TYPE	,
+			A.BULTN_TITLE	,
+			A.BULTN_CONT,
+			A.READ_CNT	    ,
+			A.RCMD_CNT	    ,
+			A.REG_DATE,
+			A.USER_ID	    ,
+			A.ORGAN_CODE	,
+			A.PNT_ORGAN_CODE,
+			A.START_DT	    ,
+			A.END_DT	    ,
+			A.GROUP_NO	    ,
+			A.LEVEL_NO	    ,
+			A.ORDER_NO	    ,
+			A.CATE_NO	    ,
+			A.OPEN_SCOPE	,
+			A.EXIST_FILE	,
+			A.TOTAL_REPLY_CNT,
+			A.TOTAL_RCMD_CNT,
+			A.IS_SECRET	    ,
+			A.USE_YN	    ,
+			A.PNT_USER_ID	,
+			A.HTML_YN	    ,
+			A.GROUP_ITEM_NO	,
+			A.CONTROL		,
+			NVL(A.USER_NAME,
+				(SELECT
+					B.USER_NAME
+				FROM COMM_USER B
+				WHERE B.USER_ID = A.USER_ID)
+			)AS	USER_NAME   ,
+			(
+			SELECT
+			CATE_NAME
+			FROM BULTN_CATE c2
+			WHERE A.CATE_NO = c2.CATE_NO
+			AND c2.cate_group = 'secu_data'
+			)AS groupType
+
+		FROM
+			BULTN A
+		WHERE
+			   1=1
+		AND BULTN_NO = #{boardNo}
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'acc'
+	</select>
+
+	<insert id="addAccBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_NO), 0) + 1 FROM BULTN
+		</selectKey>
+			INSERT INTO
+			BULTN		(
+							BULTN_NO	,
+							BULTN_TYPE	,
+							BULTN_TITLE	,
+							BULTN_CONT,
+							READ_CNT	,
+							RCMD_CNT	,
+							REG_DATE	,
+							USER_ID	,
+							GROUP_NO	,
+							LEVEL_NO	,
+							ORDER_NO	,
+							USE_YN	,
+							CATE_NO,
+	 						ORGAN_CODE,
+	 						USER_NAME
+						)
+			VALUES		(
+								#{boardNo},
+								'acc',
+								#{boardTitle},
+								#{boardContent},
+								0,
+								0,
+								TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+								#{userId},
+								0,
+								1,
+								0,
+								'Y',
+	 							1,
+	 							#{instCd},
+	 							#{userName}
+						)
+	</insert>
+
+	 <update id="editAccBoard">
+		UPDATE BULTN
+		SET
+			BULTN_TITLE = #{boardTitle},
+			BULTN_CONT  = #{boardContent}
+		WHERE
+			BULTN_NO = #{boardNo}
+	</update>
+
+	<delete id="delAccBoard">
+		UPDATE BULTN SET
+			USE_YN = 'N'
+		WHERE BULTN_NO = #{boardNo}
+	</delete>
+
+</mapper>

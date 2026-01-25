@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="616px"
+	 height="462px" viewBox="0 0 616 462" enable-background="new 0 0 616 462" xml:space="preserve">
+<g id="KExtTypeGridBG">
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="307.9995" y1="62.3389" x2="307.9995" y2="462.0005">
+			<stop  offset="0" style="stop-color:#000000;stop-opacity:0.1"/>
+			<stop  offset="1" style="stop-color:#000000;stop-opacity:0.3"/>
+		</linearGradient>
+		<path fill="url(#SVGID_1_)" d="M616,458.618c0,1.868-1.516,3.382-3.387,3.382H3.387C1.516,462,0,460.486,0,458.618V65.722
+			c0-1.868,1.516-3.383,3.387-3.383h609.227c1.871,0,3.387,1.515,3.387,3.383V458.618z"/>
+		<g>
+			<path fill="#808080" d="M612.613,63c1.316,0,2.387,1.07,2.387,2.386v393.229c0,1.315-1.07,2.386-2.387,2.386H3.387
+				C2.071,461,1,459.93,1,458.614V65.386C1,64.07,2.071,63,3.387,63H612.613 M612.613,62H3.387C1.516,62,0,63.516,0,65.386v393.229
+				C0,460.484,1.516,462,3.387,462h609.227c1.871,0,3.387-1.516,3.387-3.386V65.386C616,63.516,614.484,62,612.613,62L612.613,62z"
+				/>
+		</g>
+	</g>
+	<g opacity="0.8">
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="308.0005" y1="92.3945" x2="308.0005" y2="59">
+			<stop  offset="0.9086" style="stop-color:#2B3990;stop-opacity:0"/>
+			<stop  offset="1" style="stop-color:#262262"/>
+		</linearGradient>
+		<path fill="url(#SVGID_2_)" d="M616,90.605c0,0.988-0.887,1.789-1.981,1.789H1.983C0.888,92.395,0,91.594,0,90.605V60.789
+			C0,59.799,0.888,59,1.983,59h612.036c1.095,0,1.981,0.799,1.981,1.789V90.605z"/>
+		<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="307.9829" y1="60" x2="307.9829" y2="0">
+			<stop  offset="0" style="stop-color:#25347A;stop-opacity:0.992"/>
+			<stop  offset="0.086" style="stop-color:#5CC7FF"/>
+			<stop  offset="0.2673" style="stop-color:#48BCF3;stop-opacity:0.8017"/>
+			<stop  offset="0.4944" style="stop-color:#35B2E9;stop-opacity:0.5531"/>
+			<stop  offset="0.7331" style="stop-color:#2BACE3;stop-opacity:0.292"/>
+			<stop  offset="1" style="stop-color:#27AAE1;stop-opacity:0"/>
+		</linearGradient>
+		<polygon opacity="0.7" fill="url(#SVGID_3_)" points="586.901,0 29.39,0 0.732,60 615.232,60 		"/>
+		<g>
+			<linearGradient id="SVGID_4_" gradientUnits="userSpaceOnUse" x1="308.0005" y1="92.3945" x2="308.0005" y2="59">
+				<stop  offset="0.4731" style="stop-color:#13817D;stop-opacity:0"/>
+				<stop  offset="1" style="stop-color:#00AEEF"/>
+			</linearGradient>
+			<path fill="url(#SVGID_4_)" d="M613,62v27.395H3V62H613 M614.018,59H1.983C0.888,59,0,59.799,0,60.789v29.817
+				c0,0.988,0.888,1.789,1.983,1.789h612.035c1.096,0,1.982-0.801,1.982-1.789V60.789C616,59.799,615.113,59,614.018,59L614.018,59z
+				"/>
+		</g>
+		<linearGradient id="SVGID_5_" gradientUnits="userSpaceOnUse" x1="47.8032" y1="60.5" x2="569.6475" y2="60.5">
+			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0"/>
+			<stop  offset="0.5323" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+		</linearGradient>
+		
+			<line fill="none" stroke="url(#SVGID_5_)" stroke-width="3" stroke-miterlimit="10" x1="47.803" y1="60.5" x2="569.647" y2="60.5"/>
+	</g>
+</g>
+<g id="KExtBottom">
+	<g>
+		<linearGradient id="SVGID_6_" gradientUnits="userSpaceOnUse" x1="308.7251" y1="430.5625" x2="308.7251" y2="454.9746">
+			<stop  offset="0" style="stop-color:#3B3B3B;stop-opacity:0.35"/>
+			<stop  offset="1" style="stop-color:#808181"/>
+		</linearGradient>
+		<polygon fill="url(#SVGID_6_)" points="599.226,454.975 18.225,454.975 39.927,430.563 577.524,430.563 		"/>
+		<linearGradient id="SVGID_7_" gradientUnits="userSpaceOnUse" x1="308.7251" y1="461.8438" x2="308.7251" y2="454.9746">
+			<stop  offset="0" style="stop-color:#808080"/>
+			<stop  offset="1" style="stop-color:#3B3B3B"/>
+		</linearGradient>
+		<rect x="18.225" y="454.975" fill="url(#SVGID_7_)" width="581.001" height="6.869"/>
+		<linearGradient id="SVGID_8_" gradientUnits="userSpaceOnUse" x1="18.2246" y1="455.834" x2="599.2256" y2="455.834">
+			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0"/>
+			<stop  offset="0.5" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+		</linearGradient>
+		<rect x="18.225" y="454.975" fill="url(#SVGID_8_)" width="581.001" height="1.718"/>
+		<g opacity="0.2">
+			<rect x="18.225" y="460.986" fill="#FFFFFF" width="581.001" height="0.857"/>
+			<rect x="18.225" y="459.23" fill="#FFFFFF" width="581.001" height="0.861"/>
+			<rect x="18.225" y="457.517" fill="#FFFFFF" width="581.001" height="0.857"/>
+			<rect x="18.225" y="455.798" fill="#FFFFFF" width="581.001" height="0.856"/>
+		</g>
+		<polygon opacity="0.05" fill="#FFFFFF" points="39.892,430.563 18.225,454.975 376.944,454.975 288.062,430.563 		"/>
+	</g>
+</g>
+<g id="KExtStit">
+	<g>
+		<g>
+			<linearGradient id="SVGID_9_" gradientUnits="userSpaceOnUse" x1="308.7251" y1="102.2925" x2="308.7251" y2="62.2925">
+				<stop  offset="0" style="stop-color:#22639D"/>
+				<stop  offset="1" style="stop-color:#1D6D96"/>
+			</linearGradient>
+			<path fill="url(#SVGID_9_)" d="M124.726,62.292c1.042,0.01,9.189,0.308,14.645,7.268c5.532,7.055,10.735,32.732,31.127,32.732
+				h276.456c20.395,0,25.596-25.677,31.125-32.732c5.457-6.959,13.602-7.257,14.646-7.268H124.726z"/>
+		</g>
+		<defs>
+			<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="124.726" y="62.292" width="367.999" height="40">
+				
+					<feColorMatrix  type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0" color-interpolation-filters="sRGB" result="source"/>
+			</filter>
+		</defs>
+		<mask maskUnits="userSpaceOnUse" x="124.726" y="62.292" width="367.999" height="40" id="SVGID_10_">
+			<g filter="url(#Adobe_OpacityMaskFilter)">
+				
+					<image overflow="visible" width="1550" height="184" xlink:href="F09EC86B.jpg"  transform="matrix(0.24 0 0 0.24 122.7256 60.2925)">
+				</image>
+			</g>
+		</mask>
+		<g opacity="0.75" mask="url(#SVGID_10_)">
+			<path fill="#3D99D2" d="M124.726,62.292c1.042,0.01,9.189,0.308,14.645,7.268c5.532,7.055,10.735,32.732,31.127,32.732h276.456
+				c20.395,0,25.596-25.677,31.125-32.732c5.457-6.959,13.602-7.257,14.646-7.268H124.726z"/>
+		</g>
+	</g>
+	<text transform="matrix(1 0 0 1 247.1826 91.3311)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="23">유형별 추이</text>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+# System Configuration (Stage Profile)
+app:
+  system:
+    homepath: C:\\klid\\webapp
+    file:
+      upload-path: C:\\ctrslogs\\upload_dir\\file\\
+      report-template: C:\\reportTemplate\\
+      upload-help-path: C:\\ctrslogs\\upload_dir\\help\\
+    log:
+      name: klid-web
+      path: ./log
+      level: DEBUG

@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.home.healthCheck.persistence.HealthCheckUrlMapper">
+
+	<resultMap type="com.klid.webapp.main.home.healthCheck.dto.HealthCheckUrlDto" id="getHealthCheckUrlResultMap">
+		<result property="seqNo"			column="SEQ_NO"/>
+		<result property="url"				column="URL"/>
+		<result property="instCd"			column="INST_CD"/>
+		<result property="instNm"			column="INST_NM"/>
+		<result property="updtime"			column="UPDTIME"/>
+		<result property="useYn"			column="USE_YN"/>
+		<result property="lastRes"			column="LAST_RES"/>
+		<result property="moisYn"			column="MOIS_YN"/>
+		<result property="instCenterNm"		column="instCenterNm"/>
+		<result property="checkYn"			column="CHECK_YN"/>
+        <result property="checkSidoYn"			column="CHECk_SIDO_YN"/>
+		<result property="parentName"		column="parentName"/>
+	</resultMap>
+
+	<select id="selectHealthCheckUrl" resultMap="getHealthCheckUrlResultMap">
+		SELECT
+			A.SEQ_NO,
+			A.URL,
+			A.INST_CD,
+			A.INST_NM	AS instCenterNm,
+			TO_CHAR(A.UPDTIME, 'YYYY-MM-DD HH24:MI') UPDTIME,
+			A.USE_YN,
+			A.LAST_RES,
+			A.MOIS_YN,
+			B.INST_NM,
+						(
+			select code_name from comm_code where use_yn = 'Y' and com_code1 = '4017' and com_code2 = A.LAST_RES
+			)  			AS RES_NM,
+			A.CHECk_YN,
+			A.CHECk_SIDO_YN,
+			(
+			case
+				WHEN b.INST_LEVEL = 2 THEN (select inst_nm from TSMINST c where b.PNT_INST_CD = c.INST_CD)
+				ELSE b.INST_NM
+			end) 	AS  parentName
+		FROM
+			HM_HC_URL A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD
+		WHERE 1=1
+		<if test="srchInstCd != null and srchInstCd != ''">
+			AND B.INST_CD IN
+			(
+			SELECT inst_cd FROM tsminst
+			CONNECT BY PRIOR inst_cd = pnt_inst_cd
+			START WITH inst_cd = #{srchInstCd}
+			)
+		</if>
+		<if test="srchInstNm != null and srchInstNm != ''">
+			AND A.INST_NM LIKE '%' || #{srchInstNm} || '%'
+		</if>
+		<if test="srchDomain != null and srchDomain != ''">
+			AND A.URL LIKE '%' || #{srchDomain} || '%'
+		</if>
+
+		<if test="srchLastRes != null and srchLastRes != ''">
+			<choose>
+				<when test="srchLastRes == '200'">
+					AND A.LAST_RES = 200
+				</when>
+				<otherwise>
+					AND (A.LAST_RES != 200 OR A.LAST_RES is null)
+				</otherwise>
+			</choose>
+		</if>
+		<if test="srchMoisYn != null and srchMoisYn != ''">
+			AND A.MOIS_YN = #{srchMoisYn}
+		</if>
+		<if test="srchUseYn != null and srchUseYn != ''">
+			AND A.USE_YN = #{srchUseYn}
+		</if>
+		<if test="srchCheckYn != null and srchCheckYn != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND A.CHECk_YN = #{srchCheckYn}
+				</when>
+				<otherwise>
+					AND A.CHECK_SIDO_YN = #{srchCheckYn}
+				</otherwise>
+			</choose>
+		</if>
+		ORDER BY A.UPDTIME DESC
+	</select>
+
+	<insert id="addHealthCheckUrl">
+		<selectKey keyProperty="seqNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(SEQ_NO), 0) + 1 FROM HM_HC_URL
+		</selectKey>
+		INSERT INTO HM_HC_URL
+		(
+			SEQ_NO,
+			URL,
+			INST_CD,
+			INST_NM,
+			UPDTIME,
+			USE_YN,
+			LAST_RES,
+			MOIS_YN,
+			CHECK_YN
+		)
+		VALUES
+		(
+			#{seqNo},
+			#{url},
+			#{instCd},
+			#{instCenterNm},
+			sysdate,
+			#{useYn},
+			#{lastRes},
+			#{moisYn},
+			#{checkYn}
+		)
+	</insert>
+	
+	<select id="selectDetailHealthCheckUrl" resultMap="getHealthCheckUrlResultMap">
+		SELECT
+			A.SEQ_NO,
+			A.URL,
+			A.INST_CD,
+			A.INST_NM	AS instCenterNm,
+			A.UPDTIME,
+			A.USE_YN,
+			A.LAST_RES,
+			A.MOIS_YN,
+			B.INST_NM,
+			A.CHECk_YN,
+			A.CHECk_SIDO_YN
+		FROM
+			HM_HC_URL A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD
+		WHERE 1=1
+		AND A.SEQ_NO = #{seqNo}
+	</select>
+
+	<update id="editHealthCheckUrl">
+		UPDATE HM_HC_URL SET
+			URL = #{url},
+			INST_CD = #{instCd},
+			INST_NM = #{instCenterNm},
+			USE_YN 	= #{useYn},
+			LAST_RES = #{lastRes},
+			MOIS_YN	= #{moisYn},
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					CHECK_YN = #{checkYn}
+				</when>
+				<otherwise>
+					CHECK_SIDO_YN = #{checkYn}
+				</otherwise>
+			</choose>
+		WHERE
+			SEQ_NO = #{seqNo}
+	</update>
+
+	<delete id="delHealthCheckUrl">
+		BEGIN
+		<foreach collection="list" item="item">
+		DELETE  FROM HM_HC_URL
+		WHERE SEQ_NO = #{item};
+		</foreach>
+		END;
+	</delete>
+
+	<update id="editWatchOn">
+		BEGIN
+		<foreach collection="list" item="item">
+			UPDATE HM_HC_URL
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					SET CHECK_YN=1
+				</when>
+				<otherwise>
+					SET CHECK_SIDO_YN=1
+				</otherwise>
+			</choose>
+			WHERE SEQ_NO = #{item};
+		</foreach>
+		END;
+	</update>
+
+	<update id="editWatchOff">
+		BEGIN
+		<foreach collection="list" item="item">
+			UPDATE HM_HC_URL
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					SET CHECK_YN=0
+				</when>
+				<otherwise>
+					SET CHECK_SIDO_YN=0
+				</otherwise>
+			</choose>
+			WHERE SEQ_NO = #{item};
+		</foreach>
+		END;
+	</update>
+
+    <resultMap type="com.klid.webapp.main.home.healthCheck.dto.HealthCheckUrlDto" id="getHealthCheckHistResultMap">
+        <result property="url"				column="URL"/>
+        <result property="instCd"			column="INST_CD"/>
+        <result property="instNm"			column="INST_NM"/>
+        <result property="updtime"			column="UPDTIME"/>
+        <result property="useYn"			column="USE_YN"/>
+        <result property="lastRes"			column="LAST_RES"/>
+        <result property="moisYn"			column="MOIS_YN"/>
+        <result property="instCenterNm"		column="instCenterNm"/>
+
+        <result property="resCd"			column="RES_CD"/>
+        <result property="errTime"			column="ERR_TIME"/>
+		<result property="resNm"			column="RES_NM"/>
+		<result property="parentName"		column="parentName"/>
+    </resultMap>
+    <select id="selectHealthCheckHist" resultMap="getHealthCheckHistResultMap">
+         SELECT
+            A.RES_CD,
+            A.ERR_TIME,
+            B.URL,
+            B.INST_CD,
+            B.INST_NM	AS instCenterNm,
+			(
+			case
+				WHEN c.INST_LEVEL = 1 THEN ( SELECT inst_nm FROM TSMINST WHERE c.INST_CD = INST_CD )
+				WHEN c.INST_LEVEL = 2 THEN (select inst_nm from TSMINST where c.PNT_INST_CD = INST_CD)
+				ELSE b.INST_NM
+			end) 	AS  parentName,
+            B.UPDTIME,
+            B.USE_YN,
+            B.LAST_RES,
+            B.MOIS_YN,
+            C.INST_NM,
+			(
+			select code_name from comm_code where use_yn = 'Y' and com_code1 = '4017' and com_code2 = A.RES_CD
+			)  			AS RES_NM
+        FROM
+          HM_HC_HIST A
+        INNER JOIN HM_HC_URL B ON A.PARENT_SEQ_NO = B.SEQ_NO
+        INNER JOIN TSMINST C ON B.INST_CD = C.INST_CD
+        WHERE 1=1
+		<if test="srchInstCd != null and srchInstCd != ''">
+			AND B.INST_CD IN
+			(
+			SELECT inst_cd FROM tsminst
+			CONNECT BY PRIOR inst_cd = pnt_inst_cd
+			START WITH inst_cd = #{srchInstCd}
+			)
+		</if>
+        <if test="srchUrl != null and srchUrl != ''">
+            AND B.URL LIKE '%' || #{srchUrl} || '%'
+        </if>
+        <if test="srchResCd != null and srchResCd != ''">
+            AND A.RES_CD = #{srchResCd}
+        </if>
+        <if test="period != null and period != ''">
+            AND A.ERR_TIME BETWEEN TO_DATE('${date1}000000',  'YYYYMMDDHH24:MI:SS') AND TO_DATE('${date2}235959',  'YYYYMMDDHH24:MI:SS')
+        </if>
+        ORDER BY A.ERR_TIME DESC
+    </select>
+
+
+	<select id="selectHealthCheckStat" resultType="java.util.HashMap">
+		WITH err AS
+		(
+		SELECT PARENT_SEQ_NO,
+		TO_CHAR(TO_DATE(ERR_TIME, 'yyyymmddhh24mi'), 'hh24') || '00' AS dt
+		FROM HEALT_EVT
+		)
+		SELECT SEQ_NO, URL, INST_NM, INST_CD,
+		SUM(nowState) 	AS DTNOW,
+		SUM(DT0000) AS DT0000,
+		SUM(DT0100) AS DT0100,
+		SUM(DT0200) AS DT0200,
+		SUM(DT0300) AS DT0300,
+		SUM(DT0400) AS DT0400,
+		SUM(DT0500) AS DT0500,
+		SUM(DT0600) AS DT0600,
+		SUM(DT0700) AS DT0700,
+		SUM(DT0800) AS DT0800,
+		SUM(DT0900) AS DT0900,
+		SUM(DT1000) AS DT1000,
+		SUM(DT1100) AS DT1100,
+		SUM(DT1200) AS DT1200,
+		SUM(DT1300) AS DT1300,
+		SUM(DT1400) AS DT1400,
+		SUM(DT1500) AS DT1500,
+		SUM(DT1600) AS DT1600,
+		SUM(DT1700) AS DT1700,
+		SUM(DT1800) AS DT1800,
+		SUM(DT1900) AS DT1900,
+		SUM(DT2000) AS DT2000,
+		SUM(DT2100) AS DT2100,
+		SUM(DT2200) AS DT2200,
+		SUM(DT2300) AS DT2300
+		FROM (
+		SELECT SEQ_NO, URL, B.INST_NM, B.INST_CD,
+		DECODE( nvl(last_res,200) , 200, 0, 1 ) AS nowState,
+		DECODE(dt, '0000', 1, 0) AS DT0000,
+		DECODE(dt, '0100', 1, 0) AS DT0100,
+		DECODE(dt, '0200', 1, 0) AS DT0200,
+		DECODE(dt, '0300', 1, 0) AS DT0300,
+		DECODE(dt, '0400', 1, 0) AS DT0400,
+		DECODE(dt, '0500', 1, 0) AS DT0500,
+		DECODE(dt, '0600', 1, 0) AS DT0600,
+		DECODE(dt, '0700', 1, 0) AS DT0700,
+		DECODE(dt, '0800', 1, 0) AS DT0800,
+		DECODE(dt, '0900', 1, 0) AS DT0900,
+		DECODE(dt, '1000', 1, 0) AS DT1000,
+		DECODE(dt, '1100', 1, 0) AS DT1100,
+		DECODE(dt, '1200', 1, 0) AS DT1200,
+		DECODE(dt, '1300', 1, 0) AS DT1300,
+		DECODE(dt, '1400', 1, 0) AS DT1400,
+		DECODE(dt, '1500', 1, 0) AS DT1500,
+		DECODE(dt, '1600', 1, 0) AS DT1600,
+		DECODE(dt, '1700', 1, 0) AS DT1700,
+		DECODE(dt, '1800', 1, 0) AS DT1800,
+		DECODE(dt, '1900', 1, 0) AS DT1900,
+		DECODE(dt, '2000', 1, 0) AS DT2000,
+		DECODE(dt, '2100', 1, 0) AS DT2100,
+		DECODE(dt, '2200', 1, 0) AS DT2200,
+		DECODE(dt, '2300', 1, 0) AS DT2300
+		FROM  HM_HC_URL B, ERR C, TSMINST D
+		WHERE B.SEQ_NO = C.PARENT_SEQ_NO(+)
+		AND B.INST_CD = D.INST_CD
+		AND D.INST_CD IN (SELECT inst_cd FROM tsminst CONNECT BY PRIOR inst_cd = pnt_inst_cd START WITH inst_cd = #{instCd})
+		<choose>
+			<when test="sAuthMain == 'AUTH_MAIN_2'">
+				AND B.CHECK_YN=1
+			</when>
+			<when test="sAuthMain == 'AUTH_MAIN_3'">
+				AND B.CHECK_SIDO_YN=1
+			</when>
+			<when test="sAuthMain == 'AUTH_MAIN_4'">
+				AND B.CHECK_SIDO_YN=1
+			</when>
+			<otherwise>
+				AND 1=1
+			</otherwise>
+		</choose>
+		)
+		 GROUP BY SEQ_NO, URL, INST_NM, INST_CD
+		ORDER BY DTNOW DESC, SEQ_NO
+	</select>
+
+	<select id="selectRelateInstCd" resultType="int">
+		SELECT inst_cd
+		FROM tsminst a
+		CONNECT BY PRIOR inst_cd = pnt_inst_cd
+		START WITH inst_cd =  (select inst_cd from comm_user where user_id=#{userId})
+	</select>
+
+	<insert id="addHealthCheckMultiUrl">
+		BEGIN
+		<foreach collection="list" item="item">
+			INSERT INTO HM_HC_URL
+			(
+			SEQ_NO,
+			URL,
+			INST_CD,
+			INST_NM,
+			UPDTIME,
+			USE_YN,
+			LAST_RES,
+			MOIS_YN,
+			CHECK_YN
+			)
+			VALUES
+			(
+			#{item.seqNo},
+			#{item.url},
+			#{item.instCd},
+			#{item.instCenterNm},
+			sysdate,
+			#{item.useYn},
+			#{item.lastRes},
+			#{item.moisYn},
+			#{item.checkYn}
+			);
+		</foreach>
+		END;
+	</insert>
+
+	<select id="selectLastSeq" resultType="int">
+		SELECT	NVL(MAX(SEQ_NO), 0) + 1 FROM HM_HC_URL
+	</select>
+
+	<select id="selectUrls" resultMap="getHealthCheckHistResultMap">
+		select inst_cd, url from hm_hc_url
+		where inst_cd in (
+			<foreach collection="dtos" item="instCd" separator=",">
+				#{instCd}
+			</foreach>
+		)
+	</select>
+
+</mapper>

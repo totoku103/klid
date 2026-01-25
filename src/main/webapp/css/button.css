@@ -1,0 +1,541 @@
+/* 작성일: 2016-03-30 
+   작성자: 강연아
+   수정일: 2016
+ */
+
+
+/*전체조회*/
+.p_btnAll{width: 82px; height:23px; background: url(../img/Btn/btnAll.png) no-repeat 0px 0px; }
+.p_btnAll:hover,.p_btnAll:active{width: 82px; height:23px; background: url(../img/Btn/btnAll.png) no-repeat 0px -23px; }
+
+/*컬럼변경*/
+.p_btnColEdit{width: 82px; height:23px; background: url(../img/Btn/btnColEdit.png) no-repeat 0px 0px; }
+.p_btnColEdit:hover,.p_btn:active{width: 82px; height:23px; background: url(../img/Btn/btnColEdit.png) no-repeat 0px -23px; }
+
+/*보이기*/
+.p_btnShow{width: 73px; height:23px; background: url(../img/Btn/btnShow.png) no-repeat 0px 0px; }
+.p_btnShow:hover,.p_btn:active{width: 73px; height:23px; background: url(../img/Btn/btnShow.png) no-repeat 0px -23px; }
+
+/*숨기기*/
+.p_btnHide{width: 73px; height:23px; background: url(../img/Btn/btnHide.png) no-repeat 0px 0px; }
+.p_btnHide:hover,.p_btn:active{width: 73px; height:23px; background: url(../img/Btn/btnHide.png) no-repeat 0px -23px; }
+
+/*조회*/
+.p_btn{width: 72px; height:23px; background: url(../img/Btn/btnSearch.png) no-repeat 0px 0px; }
+.p_btn:hover,.p_btn:active{width: 72px; height:23px; background: url(../img/Btn/btnSearch.png) no-repeat 0px -23px; }
+
+/*닫기*/
+.p_btnClose{width: 72px; height:23px; background: url(../img/Btn/btnClosed.png) no-repeat 0px 0px; }
+.p_btnClose:hover,.p_btnClose:active{width: 72px; height:23px; background: url(../img/Btn/btnClosed.png) no-repeat 0px -23px; }
+
+/*추가*/
+.p_btnPlus{width: 72px; height:23px; background: url(../img/Btn/btnPlus.png) no-repeat 0px 0px; }
+.p_btnPlus:hover,.p_btnPlus:active{width: 72px; height:23px; background: url(../img/Btn/btnPlus.png) no-repeat 0px -23px; }
+
+/*추가2*/
+.p_btnPlus2{width: 53px; height:23px; background: url(../img/Btn/btnPlus2.png) no-repeat 0px 0px; }
+.p_btnPlus2:hover,.p_btnPlus2:active{width: 53px; height:23px; background: url(../img/Btn/btnPlus2.png) no-repeat 0px -23px; }
+
+/*추가(문구제거)*/
+.p_btnPlus3{width: 25px; height:23px; background: url(../img/Btn/btnPlus3.png) no-repeat 0px 0px; }
+.p_btnPlus3:hover,.p_btnPlus3:active{width: 25px; height:23px; background: url(../img/Btn/btnPlus3.png) no-repeat 0px -23px; }
+
+/*다중추가*/
+.p_btnMPlus{width: 82px; height:23px; background: url(../img/Btn/btnMPlus.png) no-repeat 0px 0px; }
+.p_btnMPlus:hover,.p_btnMPlus:active{width: 82px; height:23px; background: url(../img/Btn/btnMPlus.png) no-repeat 0px -23px; }
+
+/*계속추가*/
+.p_btnAdd{width: 82px; height:23px; background: url(../img/Btn/btnAdd.png) no-repeat 0px 0px; }
+.p_btnAdd:hover,.p_btnAdd:active{width: 82px; height:23px; background: url(../img/Btn/btnAdd.png) no-repeat 0px -23px; }
+
+/*자동추가*/
+.p_btnAutoAdd{width: 82px; height:23px; background: url(../img/Btn/btnAutoAdd.png) no-repeat 0px 0px; }
+.p_btnAutoAdd:hover,.p_btnAutoAdd:active{width: 82px; height:23px; background: url(../img/Btn/btnAutoAdd.png) no-repeat 0px -23px; }
+
+/*수정*/
+.p_btnAdj{width: 72px; height:23px; background: url(../img/Btn/btnAdj.png) no-repeat 0px 0px; }
+.p_btnAdj:hover,.p_btnAdj:active{width: 72px; height:23px; background: url(../img/Btn/btnAdj.png) no-repeat 0px -23px; }
+
+/*수정2*/
+.p_btnAdj2{width: 53px; height:23px; background: url(../img/Btn/btnAdj2.png) no-repeat 0px 0px; }
+.p_btnAdj2:hover,.p_btnAdj2:active{width: 53px; height:23px; background: url(../img/Btn/btnAdj2.png) no-repeat 0px -23px; }
+
+/*삭제*/
+.p_btnDel{width: 72px; height:23px; background: url(../img/Btn/btnDel.png) no-repeat 0px 0px; }
+.p_btnDel:hover,.p_btnDel:active{width: 72px; height:23px; background: url(../img/Btn/btnDel.png) no-repeat 0px -23px; }
+
+/*삭제2*/
+.p_btnDel2{width: 53px; height:23px; background: url(../img/Btn/btnDel2.png) no-repeat 0px 0px; }
+.p_btnDel2:hover,.p_btnDel2:active{width: 53px; height:23px; background: url(../img/Btn/btnDel2.png) no-repeat 0px -23px; }
+
+/*삭제(문구제거)*/
+.p_btnMinus{width: 25px; height:23px; background: url(../img/Btn/btnMinus.png) no-repeat 0px 0px; }
+.p_btnMinus:hover,.p_btnMinus:active{width: 25px; height:23px; background: url(../img/Btn/btnMinus.png) no-repeat 0px -23px; }
+
+/*저장*/
+.p_btnSave{width: 72px; height:23px; background: url(../img/Btn/btnSave.png) no-repeat 0px 0px; }
+.p_btnSave:hover,.p_btnSave:active{width: 72px; height:23px; background: url(../img/Btn/btnSave.png) no-repeat 0px -23px; }
+
+/*저장2*/
+.p_btnSave2{width: 53px; height:23px; background: url(../img/Btn/btnSave2.png) no-repeat 0px 0px; }
+.p_btnSave2:hover,.p_btnSave2:active{width: 53px; height:23px; background: url(../img/Btn/btnSave2.png) no-repeat 0px -23px; }
+
+/*설정*/
+.p_btnSet{width: 72px; height:23px; background: url(../img/Btn/btnSetup.png) no-repeat 0px 0px; }
+.p_btnSet:hover,.p_btnSet:active{width: 72px; height:23px; background: url(../img/Btn/btnSetup.png) no-repeat 0px -23px; }
+
+/*등록*/
+.p_btnReg{width: 72px; height:23px; background: url(../img/Btn/btnReg.png) no-repeat 0px 0px; }
+.p_btnReg:hover,.p_btnReg:active{width: 72px; height:23px; background: url(../img/Btn/btnReg.png) no-repeat 0px -23px; }
+
+/*작업등록*/
+.p_btnWorkreg{width: 82px; height:23px; background: url(../img/Btn/btnWorkreg.png) no-repeat 0px 0px; }
+.p_btnWorkreg:hover,.p_btnWorkreg:active{width: 82px; height:23px; background: url(../img/Btn/btnWorkreg.png) no-repeat 0px -23px; }
+
+
+/*작업수정*/
+.p_btnWorkadj{width: 82px; height:23px; background: url(../img/Btn/btnWorkadj.png) no-repeat 0px 0px; }
+.p_btnWorkadj:hover,.p_btnWorkadj:active{width: 82px; height:23px; background: url(../img/Btn/btnWorkadj.png) no-repeat 0px -23px; }
+
+/*작업승인*/
+.p_btnWorkapp{width: 82px; height:23px; background: url(../img/Btn/btnWorkapp.png) no-repeat 0px 0px; }
+.p_btnWorkapp:hover,.p_btnWorkapp:active{width: 82px; height:23px; background: url(../img/Btn/btnWorkapp.png) no-repeat 0px -23px; }
+
+/*처리완료*/
+.p_btnAppr{width: 82px; height:23px; background: url(../img/Btn/btnAppr.png) no-repeat 0px 0px; }
+.p_btnAppr:hover,.p_btnAppr:active{width: 82px; height:23px; background: url(../img/Btn/btnAppr.png) no-repeat 0px -23px; }
+
+/*새로고침*/
+.p_btnRef{width: 82px; height:23px; background: url(../img/Btn/btnRefresh.png) no-repeat 0px 0px; }
+.p_btnRef:hover,.p_btnRef:active{width: 82px; height:23px; background: url(../img/Btn/btnRefresh.png) no-repeat 0px -23px; }
+
+/*슬롯추가*/
+.p_btnSlotplus{width: 82px; height:23px; background: url(../img/Btn/btnSlotplus.png) no-repeat 0px 0px; }
+.p_btnSlotPlus:hover,.p_btnSlotPlus:active{width: 82px; height:23px; background: url(../img/Btn/btnSlotplus.png) no-repeat 0px -23px; }
+
+/*슬롯삭제*/
+.p_btnSlotdel{width: 82px; height:23px; background: url(../img/Btn/btnSlotdel.png) no-repeat 0px 0px; }
+.p_btnSlotdel:hover,.p_btnslotdel:active{width: 82px; height:23px; background: url(../img/Btn/btnSlotdel.png) no-repeat 0px -23px; }
+
+/*비밀번호변경*/
+.p_btnPw{width: 111px; height:23px; background: url(../img/Btn/btnPw.png) no-repeat 0px 0px; }
+.p_btnPw:hover,.p_btnPw:active{width: 111px; height:23px; background: url(../img/Btn/btnPw.png) no-repeat 0px -23px; }
+
+/*사용자등급변경*/
+.p_btnAuth{width: 123px; height:23px; background: url(../img/Btn/btnAuth.png) no-repeat 0px 0px; }
+.p_btnAuth:hover,.p_btnAuth:active{width: 123px; height:23px; background: url(../img/Btn/btnAuth.png) no-repeat 0px -23px; }
+
+/*달력보기*/
+.p_btnCal{width: 82px; height:23px; background: url(../img/Btn/btnCal.png) no-repeat 0px 0px; }
+.p_btnCal:hover,.p_btnCal:active{width: 82px; height:23px; background: url(../img/Btn/btnCal.png) no-repeat 0px -23px; }
+
+/*이벤트설정*/
+.p_btnEvt{width: 102px; height:23px; background: url(../img/Btn/btnEvt.png) no-repeat 0px 0px; }
+.p_btnEvt:hover,.p_btnEvt:active{width: 102px; height:23px; background: url(../img/Btn/btnEvt.png) no-repeat 0px -23px; }
+
+/*커뮤니티*/
+.p_btnCom{width: 82px; height:23px; background: url(../img/Btn/btnCom.png) no-repeat 0px 0px; }
+.p_btnCom:hover,.p_btnCom:active{width: 82px; height:23px; background: url(../img/Btn/btnCom.png) no-repeat 0px -23px; }
+
+/*엔진구동*/
+.p_btnEng{width: 82px; height:23px; background: url(../img/Btn/btnEng.png) no-repeat 0px 0px; }
+.p_btnEng:hover,.p_btnEng:active{width: 82px; height:23px; background: url(../img/Btn/btnEng.png) no-repeat 0px -23px; }
+
+/*장비등록*/
+.p_btnDev{width: 82px; height:23px; background: url(../img/Btn/btnDev.png) no-repeat 0px 0px; }
+.p_btnDev:hover,.p_btnDev:active{width: 82px; height:23px; background: url(../img/Btn/btnDev.png) no-repeat 0px -23px; }
+
+/*장비OID설정*/
+.p_btnOID{width: 111px; height:23px; background: url(../img/Btn/btnOID.png) no-repeat 0px 0px; }
+.p_btnOID:hover,.p_btnOID:active{width: 111px; height:23px; background: url(../img/Btn/btnOID.png) no-repeat 0px -23px; }
+
+/*Row추가*/
+.p_btnRow{width: 82px; height:23px; background: url(../img/Btn/btnRow.png) no-repeat 0px 0px; }
+.p_btnRow:hover,.p_btnRow:active{width: 82px; height:23px; background: url(../img/Btn/btnRow.png) no-repeat 0px -23px; }
+
+/*up*/
+.p_btnUp{width: 25px; height:23px; background: url(../img/Btn/btnUp.png) no-repeat 0px 0px; }
+.p_btnUp:hover,.p_btnUp:active{width: 25px; height:23px; background: url(../img/Btn/btnUp.png) no-repeat 0px -23px; }
+
+/*down*/
+.p_btnDown{width: 25px; height:23px; background: url(../img/Btn/btnDown.png) no-repeat 0px 0px; }
+.p_btnDown:hover,.p_btnDown:active{width: 25px; height:23px; background: url(../img/Btn/btnDown.png) no-repeat 0px -23px; }
+
+/*글쓰기*/
+.p_btnWirte{width: 72px; height:23px; background: url(../img/Btn/btnWrite.png) no-repeat 0px 0px; }
+.p_btnWrite:hover,.p_btnWrite:active{width: 72px; height:23px; background: url(../img/Btn/btnWrite.png) no-repeat 0px -23px; }
+
+/*댓글달기*/
+.p_btnComment{width: 82px; height:23px; background: url(../img/Btn/btnComment.png) no-repeat 0px 0px; }
+.p_btnComment:hover,.p_btnComment:active{width: 82px; height:23px; background: url(../img/Btn/btnComment.png) no-repeat 0px -23px; }
+
+/*문자비교*/
+.p_btnMes{width: 82px; height:23px; background: url(../img/Btn/btnMes.png) no-repeat 0px 0px; }
+.p_btnMes:hover,.p_btnMes:active{width: 82px; height:23px; background: url(../img/Btn/btnMes.png) no-repeat 0px -23px; }
+
+/*시작*/
+.p_btnStart{width: 72px; height:23px; background: url(../img/Btn/btnStart.png) no-repeat 0px 0px; }
+.p_btnStart:hover,.p_btnStart:active{width: 72px; height:23px; background: url(../img/Btn/btnStart.png) no-repeat 0px -23px; }
+
+/*중지*/
+.p_btnPause{width: 72px; height:23px; background: url(../img/Btn/btnPause.png) no-repeat 0px 0px; }
+.p_btnPause:hover,.p_btnPause:active{width: 72px; height:23px; background: url(../img/Btn/btnPause.png) no-repeat 0px -23px; }
+
+/*해제*/
+.p_btnClear{width: 72px; height:23px; background: url(../img/Btn/btnClear.png) no-repeat 0px 0px; }
+.p_btnClear:hover,.p_btnClear:active{width: 72px; height:23px; background: url(../img/Btn/btnClear.png) no-repeat 0px -23px; }
+
+/*변경*/
+.p_btnChange{width: 72px; height:23px; background: url(../img/Btn/btnChange.png) no-repeat 0px 0px; }
+.p_btnChange:hover,.p_btnChange:active{width: 72px; height:23px; background: url(../img/Btn/btnChange.png) no-repeat 0px -23px; }
+
+/*차트리스트보기 */
+.p_btnCList{width: 102px; height:23px; background: url(../img/Btn/btnCList.png) no-repeat 0px 0px; }
+.p_btnCList:hover,.p_btnCList:active{width: 102px; height:23px; background: url(../img/Btn/btnCList.png) no-repeat 0px -23px; }
+
+/*차트다운로드 */
+.p_btnCDown{width: 82px; height:23px; background: url(../img/Btn/btnCDown.png) no-repeat 0px 0px; }
+.p_btnCDown:hover,.p_btnCDown:active{width: 82px; height:23px; background: url(../img/Btn/btnCDown.png) no-repeat 0px -23px; }
+
+/*차트(상단)다운로드 */
+.p_btnCTopDown{width: 112px; height:23px; background: url(../img/Btn/btnCTopDown.png) no-repeat 0px 0px; }
+.p_btnCTopDown:hover,.p_btnCTopDown:active{width: 112px; height:23px; background: url(../img/Btn/btnCTopDown.png) no-repeat 0px -23px; }
+
+/*차트(하단)다운로드 */
+.p_btnCBotDown{width: 112px; height:23px; background: url(../img/Btn/btnCBotDown.png) no-repeat 0px 0px; }
+.p_btnCBotDown:hover,.p_btnCBotDown:active{width: 112px; height:23px; background: url(../img/Btn/btnCBotDown.png) no-repeat 0px -23px; }
+
+/*대역폭설정 */
+.p_btnLineWidthSet{width: 102px; height:23px; background: url(../img/Btn/btnLineWidthSet.png) no-repeat 0px 0px; }
+.p_btnLineWidthSet:hover,.p_btnLineWidthSet:active{width: 102px; height:23px; background: url(../img/Btn/btnLineWidthSet.png) no-repeat 0px -23px; }
+
+/*보고서 */
+.p_btnReport{width: 72px; height:23px; background: url(../img/Btn/btnReport.png) no-repeat 0px 0px; }
+.p_btnReport:hover,.p_btnReport:active{width: 72px; height:23px; background: url(../img/Btn/btnReport.png) no-repeat 0px -23px; }
+
+/*자동보고서 */
+.p_btnAutoReport{width: 102px; height:23px; background: url(../img/Btn/btnAutoReport.png) no-repeat 0px 0px; }
+.p_btnAutoReport:hover,.p_btnAutoReport:active{width: 102px; height:23px; background: url(../img/Btn/btnAutoReport.png) no-repeat 0px -23px; }
+
+/*엑셀*/
+.p_btnExcel{width: 72px; height:23px; background: url(../img/Btn/btnExcel.png) no-repeat 0px 0px; }
+.p_btnExcel:hover,.p_btnExcel:active{width: 72px; height:23px; background: url(../img/Btn/btnExcel.png) no-repeat 0px -23px; }
+
+/*엑셀업로드 */
+.p_btnExcelUpload{width: 102px; height:23px; background: url(../img/Btn/btnExcelUpload.png) no-repeat 0px 0px; }
+.p_btnExcelUpload:hover,.p_btnExcelUpload:active{width: 102px; height:23px; background: url(../img/Btn/btnExcelUpload.png) no-repeat 0px -23px; }
+
+/*자산변경 */
+.p_btnAssetChg{width: 82px; height:23px; background: url(../img/Btn/btnAssetChg.png) no-repeat 0px 0px; }
+.p_btnAssetChg:hover,.p_btnAssetChg:active{width: 82px; height:23px; background: url(../img/Btn/btnAssetChg.png) no-repeat 0px -23px; }
+
+/*그룹추가 */
+.p_btnGrpAdd{width: 71px; height:23px; background: url(../img/Btn/btnGrpAdd.png) no-repeat 0px 0px; }
+.p_btnGrpAdd:hover,.p_btnGrpAdd:active{width: 71px; height:23px; background: url(../img/Btn/btnGrpAdd.png) no-repeat 0px -23px; }
+
+/*그룹수정 */
+.p_btnGrpEdit{width: 71px; height:23px; background: url(../img/Btn/btnGrpEdit.png) no-repeat 0px 0px; }
+.p_btnGrpEdit:hover,.p_btnGrpEdit:active{width: 71px; height:23px; background: url(../img/Btn/btnGrpEdit.png) no-repeat 0px -23px; }
+
+/*그룹삭제 */
+.p_btnGrpDel{width: 71px; height:23px; background: url(../img/Btn/btnGrpDel.png) no-repeat 0px 0px; }
+.p_btnGrpDel:hover,.p_btnGrpDel:active{width: 71px; height:23px; background: url(../img/Btn/btnGrpDel.png) no-repeat 0px -23px; }
+
+/*신규 */
+.p_btnNew{width: 72px; height:23px; background: url(../img/Btn/btnNew.png) no-repeat 0px 0px; }
+.p_btnNew:hover,.p_btnNew:active{width: 72px; height:23px; background: url(../img/Btn/btnNew.png) no-repeat 0px -23px; }
+
+/*미등록장비 */
+.p_btnNoneDev{width: 102px; height:23px; background: url(../img/Btn/btnNoneDev.png) no-repeat 0px 0px; }
+.p_btnNoneDev:hover,.p_btnNoneDev:active{width: 102px; height:23px; background: url(../img/Btn/btnNoneDev.png) no-repeat 0px -23px; }
+
+/*컬럼관리 */
+.p_btnColConf{width: 82px; height:23px; background: url(../img/Btn/btnColumn.png) no-repeat 0px 0px; }
+.p_btnColConf:hover,.p_btnColConf:active{width: 82px; height:23px; background: url(../img/Btn/btnColumn.png) no-repeat 0px -23px; }
+
+/*수행단계*/
+.p_btnJobStep{width: 82px; height:23px; background: url(../img/Btn/btnJobStep.png) no-repeat 0px 0px; }
+.p_btnJobStep:hover,.p_btnJobStep:active{width: 82px; height:23px; background: url(../img/Btn/btnJobStep.png) no-repeat 0px -23px; }
+
+/*SYSLOG 전체삭제*/
+.p_btnSyslogAllDel{width: 126px; height:23px; background: url(../img/Btn/btnSyslogAllDel.png) no-repeat 0px 0px; }
+.p_btnSyslogAllDel:hover,.btnSyslogAllDel:active{width: 126px; height:23px; background: url(../img/Btn/btnSyslogAllDel.png) no-repeat 0px -23px; }
+
+/*이벤트종료*/
+.p_btnEvtClose{width: 104px; height:23px; background: url(../img/Btn/btnEvtClose.png) no-repeat 0px 0px; }
+.p_btnEvtClose:hover,.btnEvtClose:active{width: 104px; height:23px; background: url(../img/Btn/btnEvtClose.png) no-repeat 0px -23px; }
+
+/*적용*/
+.p_btnApply{width: 72px; height:23px; background: url(../img/Btn/apply.png) no-repeat 0px 0px; }
+.p_btnApply:hover,.p_btnApply:active{width: 72px; height:23px; background: url(../img/Btn/apply.png) no-repeat 0px -23px; }
+
+/*가져오기*/
+.p_btnGet{width: 82px; height:23px; background: url(../img/Btn/bring.png) no-repeat 0px 0px; }
+.p_btnGet:hover,.p_btnGet:active{width: 82px; height:23px; background: url(../img/Btn/bring.png) no-repeat 0px -23px; }
+
+/* 목록보기 */
+.p_btnList2 {
+    width: 82px;
+    height: 23px;
+    background: url(../img/Btn/btnList2.png) no-repeat 0px 0px;}
+.p_btnList2:hover, .p_btnList2:active {
+    width: 82px;
+    height: 23px;
+    background: url(../img/Btn/btnList2.png) no-repeat 0px -23px;}   
+
+/*답글달기*/
+.p_btnReply{width: 82px; height:23px; background: url(../img/Btn/btnReply.png) no-repeat 0px 0px; }
+.p_btnReply:hover,.p_btnReply:active{width: 82px; height:23px; background: url(../img/Btn/btnReply.png) no-repeat 0px -23px; }
+
+/*조회제외회선*/
+.p_btnExceptSearchIf{width: 107px; height:23px; background: url(../img/Btn/btnExceptSearchIf.png) no-repeat 0px 0px; }
+.p_btnExceptSearchIf:hover,.p_btnExceptSearchIf:active{width: 107px; height:23px; background: url(../img/Btn/btnExceptSearchIf.png) no-repeat 0px -23px; }
+
+/*성능수집*/
+.p_btnPerfCollect{width: 82px; height:23px; background: url(../img/Btn/btnPerfCollect.png) no-repeat 0px 0px; }
+.p_btnPerfCollect:hover,.p_btnPerfCollect:active{width: 82px; height:23px; background: url(../img/Btn/btnPerfCollect.png) no-repeat 0px -23px; }
+
+
+
+
+button {
+	cursor: pointer;	
+	border:none;
+}
+.btn-green, 
+.btn-blue {padding: .1em 1em .4em 1em;}
+
+.btn-green {color:#fff !important; background-color:#0a9479; border-color:#23910e;}
+.btn-green:hover
+.btn-green:active,
+.btn-green.active {color:#fff !important;}
+.btn-green:hover,
+.btn-green:active,
+.btn-green.active,
+.btn-green {background-image:none;}
+.btn-green {
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#1fb56d), color-stop(60%, #1aa060), to(#1aa060));
+    background-image:-webkit-linear-gradient(#1fb56d, #1aa060 60%, #1aa060);
+    background-image:-moz-linear-gradient(top, #1fb56d, #1aa060 60%, #1aa060);
+    background-image:linear-gradient(#1fb56d, #1aa060 60%, #1aa060);
+    background-repeat:no-repeat;
+	/*background-color: #1fb56d;*/
+	border: 1px solid #0c7845;
+	cursor: pointer;
+	font-weight: bold;
+	/*0a9479, 017f66*/
+}
+.btn-green:hover {background-image:none; background-color:#32c17d; border-color:#006434;}
+.btn-green:active {background-image:none; background-color:#00856a; border-color:#00856a;}
+
+
+.btn-blue {color:#fff !important; background-color:#35578a; border-color:#284b7e;}
+.btn-blue:hover
+.btn-blue:active,
+.btn-blue.active {color:#fff !important;}
+.btn-blue:hover,
+.btn-blue:active,
+.btn-blue.active,
+.btn-blue {background-image:none;}
+.btn-blue {
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#466696), color-stop(60%, #35578a), to(#35578a));
+    background-image:-webkit-linear-gradient(#466696, #35578a 60%, #35578a);
+    background-image:-moz-linear-gradient(top, #466696, #35578a 60%, #35578a);
+    background-image:linear-gradient(#466696, #35578a 60%, #35578a);
+    background-repeat:no-repeat;
+	/*background-color: #1fb56d;*/
+	border: 1px solid #284b7e;
+	cursor: pointer;
+	font-weight: bold;
+	/*0a9479, 017f66*/
+}
+.btn-blue:hover {background-image:none; background-color:#5374a6; border-color:#19355f;}
+.btn-blue:active {background-image:none; background-color:#2a4876; border-color:#2a4876;}
+
+.btn-white{
+			cursor:pointer;
+			border:1px solid #b8b8b8; font-size:12px; padding: 4px;
+			text-decoration:none; display:inline-block; color: #000;
+			 background-color: #f4f5f5; background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f4f4f4));
+			 background-image: -webkit-linear-gradient(top, #fff, #f4f4f4);
+			 background-image: -moz-linear-gradient(top, #fff, #f4f4f4);
+			 background-image: -ms-linear-gradient(top, #fff, #f4f4f4);
+			 background-image: -o-linear-gradient(top, #fff, #f4f4f4);}
+			 
+
+		.btn-white:hover{
+		cursor:pointer;
+		 border:1px solid #afafaf;
+		 background-color: #d9dddd; background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e8e8e8));
+		 background-image: -webkit-linear-gradient(top, #f2f2f2, #e8e8e8);
+		 background-image: -moz-linear-gradient(top, #f2f2f2, #e8e8e8);
+		 background-image: -ms-linear-gradient(top, #f2f2f2, #e8e8e8);
+		 background-image: -o-linear-gradient(top, #f2f2f2, #e8e8e8);
+		}
+		.btn-white img{ vertical-align: middle;}
+
+/*로그아웃버튼  */
+.userLogout{background:url('../img/MainImg/main_logut.png') no-repeat; width:68px; height:20px; float:right; cursor:pointer; position:absolute; right:20px; top:17px;}
+.userId{color:#fff; font-weight: bold; position: absolute; right:100px; background:url("../img/MainImg/userIcon2.png") 0 2px no-repeat; padding-left:20px; top:19px;}
+
+/* 사고처리 */
+.p_btnAcc1{width: 82px; height:23px; background: url(../img/Btn/accident1.png) no-repeat 0px 0px; }
+.p_btnAcc1:hover,.p_btnAcc1:active{width: 82px; height:23px; background: url(../img/Btn/accident1.png) no-repeat 0px -23px; }
+
+/* 사고처리 */
+.p_btnAcc2{width: 82px; height:23px; background: url(../img/Btn/accident2.png) no-repeat 0px 0px; }
+.p_btnAcc2:hover,.p_btnAcc2:active{width: 82px; height:23px; background: url(../img/Btn/accident2.png) no-repeat 0px -23px; }
+
+/* 사고처리 */
+.p_btnAcc3{width: 82px; height:23px; background: url(../img/Btn/accident3.png) no-repeat 0px 0px; }
+.p_btnAcc3:hover,.p_btnAcc3:active{width: 82px; height:23px; background: url(../img/Btn/accident3.png) no-repeat 0px -23px; }
+
+.p_btnAppr2{width: 111px; height:23px; background: url(../img/Btn/btnAppr2.png) no-repeat 0px 0px; }
+.p_btnAppr2:hover,.p_btnAppr2:active{width: 111px; height:23px; background: url(../img/Btn/btnAppr2.png) no-repeat 0px -23px; }
+
+/* 한글 다운로드 */
+.p_btnHwpDownload{width: 108px; height:23px; background: url(../img/Btn/btnHwp.png) no-repeat 0px 0px; }
+.p_btnHwpDownload:hover,.p_btnHwpDownload:active{width: 108px; height:23px; background: url(../img/Btn/btnHwp.png) no-repeat 0px -23px; }
+
+/*위협등급관리*/
+.p_btnHistory{width: 82px; height:23px; background: url(../img/Btn/btnHistory.png) no-repeat 0px 0px; }
+.p_btnHistory:hover,.p_btnHistory:active{width: 82px; height:23px; background: url(../img/Btn/btnHistory.png) no-repeat 0px -23px; }
+
+.p_btnHistoryAdd{width: 82px; height:23px; background: url(../img/Btn/btnHistoryAdd.png) no-repeat 0px 0px; }
+.p_btnHistoryAdd:hover,.p_btnHistoryAdd:active{width: 82px; height:23px; background: url(../img/Btn/btnHistoryAdd.png) no-repeat 0px -23px; }
+
+
+/* 2018-09-06 KLID 버튼 이미지 추가 */
+/* 작업자 : 신은화 */
+
+/*사고복사*/
+.p_btnAccCopy{width: 82px; height:23px; background: url(../img/Btn/btnAccCopy.png) no-repeat 0px 0px;}
+.p_btnAccCopy:hover,.p_btnAccCopy:active{width: 82px; height:23px; background: url(../img/Btn/btnAccCopy.png) no-repeat 0px -23px;}
+
+/*할당*/
+.p_btnAssign{width: 72px; height:23px; background: url(../img/Btn/btnAssign.png) no-repeat 0px 0px;}
+.p_btnAssign:hover,.p_btnAssign:active{width: 72px; height:23px; background: url(../img/Btn/btnAssign.png) no-repeat 0px -23px;}
+
+/*주의관제*/
+.p_btnCaution{width: 82px; height:23px; background: url(../img/Btn/btnCaution.png) no-repeat 0px 0px;}
+.p_btnCaution:hover,.p_btnCaution:active{width: 82px; height:23px; background: url(../img/Btn/btnCaution.png) no-repeat 0px -23px;}
+
+/*주의관제승인*/
+.p_btnCAcc{width: 108px; height:23px; background: url(../img/Btn/btnCAcc.png) no-repeat 0px 0px;}
+.p_btnCAcc:hover,.p_btnCAcc:active{width: 108px; height:23px; background: url(../img/Btn/btnCAcc.png) no-repeat 0px -23px;}
+
+/*한글다운로드*/
+.p_btnHwp{width: 108px; height:23px; background: url(../img/Btn/btnHwp.png) no-repeat 0px 0px;}
+.p_btnHwp:hover,.p_btnHwp:active{width: 108px; height:23px; background: url(../img/Btn/btnHwp.png) no-repeat 0px -23px;}
+
+/*폐기*/
+.p_btnDiss{width: 72px; height:23px; background: url(../img/Btn/btnDiss.png) no-repeat 0px 0px;}
+.p_btnDiss:hover,.p_btnDiss:active{width: 72px; height:23px; background: url(../img/Btn/btnDiss.png) no-repeat 0px -23px;}
+
+/*폐기승인*/
+.p_btnDAcc{width: 82px; height:23px; background: url(../img/Btn/btnDAcc.png) no-repeat 0px 0px;}
+.p_btnDAcc:hover,.p_btnDAcc:active{width: 82px; height:23px; background: url(../img/Btn/btnDAcc.png) no-repeat 0px -23px;}
+
+/*중복확인*/
+.p_btnDCheck{width: 82px; height:23px; background: url(../img/Btn/btnDCheck.png) no-repeat 0px 0px;}
+.p_btnDCheck:hover,.p_btnDCheck:active{width: 82px; height:23px; background: url(../img/Btn/btnDCheck.png) no-repeat 0px -23px;}
+
+/*오탐*/
+.p_BtnError{width: 72px; height:23px; background: url(../img/Btn/BtnError.png) no-repeat 0px 0px;}
+.p_BtnError:hover,.p_BtnError:active{width: 72px; height:23px; background: url(../img/Btn/BtnError.png) no-repeat 0px -23px;}
+
+/*오탐승인*/
+.p_btnEAcc{width: 82px; height:23px; background: url(../img/Btn/btnEAcc.png) no-repeat 0px 0px;}
+.p_btnEAcc:hover,.p_btnEAcc:active{width: 82px; height:23px; background: url(../img/Btn/btnEAcc.png) no-repeat 0px -23px;}
+
+/*종결*/
+.p_btnFinish{width: 72px; height:23px; background: url(../img/Btn/btnFinish.png) no-repeat 0px 0px;}
+.p_btnFinish:hover,.p_btnFinish:active{width: 72px; height:23px; background: url(../img/Btn/btnFinish.png) no-repeat 0px -23px;}
+
+/*종결승인*/
+.p_btnFAcc{width: 82px; height:23px; background: url(../img/Btn/btnFAcc.png) no-repeat 0px 0px;}
+.p_btnFAcc:hover,.p_btnFAcc:active{width: 82px; height:23px; background: url(../img/Btn/btnFAcc.png) no-repeat 0px -23px;}
+
+/*이관*/
+.p_btnTrans{width: 72px; height:23px; background: url(../img/Btn/btnTrans.png) no-repeat 0px 0px;}
+.p_btnTrans:hover,.p_btnTrans:active{width: 72px; height:23px; background: url(../img/Btn/btnTrans.png) no-repeat 0px -23px;}
+
+/*이관승인*/
+.p_btnTAcc{width: 82px; height:23px; background: url(../img/Btn/btnTAcc.png) no-repeat 0px 0px;}
+.p_btnTAcc:hover,.p_btnTAcc:active{width: 82px; height:23px; background: url(../img/Btn/btnTAcc.png) no-repeat 0px -23px;}
+
+/*보내기*/
+.p_btnSend{width: 73px; height:23px; background: url(../img/Btn/btnSend.png) no-repeat 0px 0px;}
+.p_btnSend:hover,.p_btnSend:active{width: 73px; height:23px; background: url(../img/Btn/btnSend.png) no-repeat 0px -23px;}
+
+/*가져오기*/
+.p_btnGet{width: 82px; height:23px; background: url(../img/Btn/btnGet.png) no-repeat 0px 0px;}
+.p_btnGet:hover,.p_btnGet:active{width: 82px; height:23px; background: url(../img/Btn/btnGet.png) no-repeat 0px -23px;}
+
+/*메모*/
+.p_btnMemo{width: 72px; height:23px; background: url(../img/Btn/btnMemo.png) no-repeat 0px 0px;}
+.p_btnMemo:hover,.p_btnMemo:active{width: 72px; height:23px; background: url(../img/Btn/btnMemo.png) no-repeat 0px -23px;}
+
+/*반려*/
+.p_btnReturn{width: 72px; height:23px; background: url(../img/Btn/btnReturn.png) no-repeat 0px 0px;}
+.p_btnReturn:hover,.p_btnReturn:active{width: 72px; height:23px; background: url(../img/Btn/btnReturn.png) no-repeat 0px -23px;}
+
+/* 중복확인 */
+.p_btnDoubleCheck{width: 82px; height:23px; background: url(../img/Btn/btnDoubleCheck.png) no-repeat 0px 0px;}
+.p_btnDoubleCheck:hover,.p_btnDoubleCheck:active{width: 82px; height:23px; background: url(../img/Btn/btnDoubleCheck.png) no-repeat 0px -23px;}
+
+/* csv로 넣기 */
+.p_btnCsv{width: 102px; height:23px; background: url(../img/Btn/btnCsv.png) no-repeat 0px 0px;}
+.p_btnCsv:hover,.p_btnCsv:active{width: 102px; height:23px; background: url(../img/Btn/btnCsv.png) no-repeat 0px -23px;}
+
+/* eml로 넣기 */
+.p_btnEml{width: 102px; height:23px; background: url(../img/Btn/btnEml.png) no-repeat 0px 0px;}
+.p_btnEml:hover,.p_btnEml:active{width: 102px; height:23px; background: url(../img/Btn/btnEml.png) no-repeat 0px -23px;}
+
+/*제출*/
+.p_btnSubmit{width: 72px; height:23px; background: url(../img/Btn/btnSubmit.png) no-repeat 0px 0px;}
+.p_btnSubmit:hover,.p_btnSubmit:active{width: 72px; height:23px; background: url(../img/Btn/btnSubmit.png) no-repeat 0px -23px;}
+
+/* 양식 다운로드 */
+.p_btnDwn{width: 111px; height:23px; background: url(../img/Btn/btnDwn.png) no-repeat 0px 0px;}
+.p_btnDwn:hover,.p_btnDwn:active{width: 111px; height:23px; background: url(../img/Btn/btnDwn.png) no-repeat 0px -23px;}
+
+/* 비밀번호 초기화 */
+.p_btnReset{width: 123px; height:23px; background: url(../img/Btn/btnReset.png) no-repeat 0px 0px;}
+.p_btnReset:hover,.p_btnReset:active{width: 123px; height:23px; background: url(../img/Btn/btnReset.png) no-repeat 0px -23px;}
+
+/* 계정 잠금 해제 */
+.p_btnUnlock{width: 114px; height:23px; background: url(../img/Btn/btnUnlock.png) no-repeat 0px 0px;}
+.p_btnUnlock:hover,.p_btnUnlock:active{width: 114px; height:23px; background: url(../img/Btn/btnUnlock.png) no-repeat 0px -23px;}
+
+/* SMS 보내기 */
+.p_btnSms{width: 90px; height:23px; background: url(../img/Btn/btnSms.png) no-repeat 0px 0px;}
+.p_btnSms:hover,.p_btnSms:active{width: 90px; height:23px; background: url(../img/Btn/btnSms.png) no-repeat 0px -23px;}
+
+/*시도의견*/
+.p_btnCont{width: 82px; height:23px; background: url(../img/Btn/btnCont.png) no-repeat 0px 0px;}
+.p_btnCont:hover,.p_btnCont:active{width: 82px; height:23px; background: url(../img/Btn/btnCont.png) no-repeat 0px -23px;}
+
+/*확인*/
+.p_btnCheck{width: 72px; height:23px; background: url(../img/Btn/btnCheck.png) no-repeat 0px 0px;}
+.p_btnCheck:hover,.p_btnCheck:active{width: 72px; height:23px; background: url(../img/Btn/btnCheck.png) no-repeat 0px -23px;}
+
+/* 엑셀로 넣기 */
+.p_btnExcelPut{width: 102px; height:23px; background: url(../img/Btn/btnExcelPut.png) no-repeat 0px 0px;}
+.p_btnExcelPut:hover,.p_btnExcelPut:active{width: 102px; height:23px; background: url(../img/Btn/btnExcelPut.png) no-repeat 0px -23px;}
+
+/*엔지니어 - 수동동기화*/
+.p_btnSync{width: 95px; height:23px; background: url(../img/Btn/btnSync.png) no-repeat 0px 0px; }
+.p_btnSync:hover,.p_btnSync:active{width: 95px; height:23px; background: url(../img/Btn/btnSync.png) no-repeat 0px -23px; }
+
+/*처리방안 다운로드*/
+.p_btnPlanDwn{width: 123px; height:23px; background: url(../img/Btn/btnPlanDwn.png) no-repeat 0px 0px; }
+.p_btnPlanDwn:hover,.p_btnPlanDwn:active{width: 123px; height:23px; background: url(../img/Btn/btnPlanDwn.png) no-repeat 0px -23px; }
+
+/*집중감시등록*/
+.p_btnWatchOn{width: 97px; height:23px; background: url(../img/Btn/btnWatchOn.png) no-repeat 0px 0px; }
+.p_btnWatchOn:hover,.p_btnWatchOn:active{width: 97px; height:23px; background: url(../img/Btn/btnWatchOn.png) no-repeat 0px -23px; }
+
+/*집중감시해제*/
+.p_btnWatchOff{width: 97px; height:23px; background: url(../img/Btn/btnWatchOff.png) no-repeat 0px 0px; }
+.p_btnWatchOff:hover,.p_btnWatchOff:active{width: 97px; height:23px; background: url(../img/Btn/btnWatchOff.png) no-repeat 0px -23px; }

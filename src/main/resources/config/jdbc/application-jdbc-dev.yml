@@ -1,0 +1,7 @@
+spring:
+  config:
+    import: classpath:config/jdbc/application-jdbc.yml
+  datasource:
+    url: jdbc:oracle:thin:@docker-server.lan:1521:FREE
+    username: ENC(ToqoRHZNArDPGJfSyt63Pg==)
+    password: ENC(ToqoRHZNArDPGJfSyt63Pg==)

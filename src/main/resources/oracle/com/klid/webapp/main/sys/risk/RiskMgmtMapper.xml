@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sys.riskMgmt.persistence.RiskMgmtMapper">
+
+	<resultMap type="com.klid.webapp.main.sys.riskMgmt.dto.RiskMgmtDto" id="getRiskMgmtResultMap">
+			<result property="basis1"				column="basis1"/>
+			<result property="basis2"				column="basis2"/>
+			<result property="basis3"				column="basis3"/>
+			<result property="basis4"				column="basis4"/>
+			<result property="basis5"				column="basis5"/>
+			<result property="levelCd"				column="LEVEL_CD"/>
+			<result property="levelNm"				column="LEVEL_NM"/>
+			<result property="pastThreat"			column="PAST_THREAT"/>
+			<result property="nowThreat"			column="NOW_THREAT"/>
+			<result property="instCd"				column="INST_CD"/>
+			<result property="modDt"				column="MOD_DT"/>
+			<result property="pastNm"				column="PAST_NM"/>
+			<result property="nowNm"				column="NOW_NM"/>
+			<result property="period1"				column="PERIOD_1"/>
+			<result property="period2"				column="PERIOD_2"/>
+			<result property="period3"				column="PERIOD_3"/>
+		<result property="threatCont"				column="THREAT_CONT"/>
+		</resultMap>
+
+	<!--  발령단계 받아오기-->
+	<select id="selectThreatLevel" resultMap="getRiskMgmtResultMap">
+		SELECT LEVEL_CD, LEVEL_NM
+		FROM THREAT_BASIS
+	</select>
+
+	<!--  -->
+	<select id="selectThreatNow" resultMap="getRiskMgmtResultMap">
+		SELECT PAST_THREAT, NOW_THREAT, INST_CD, MOD_DT, b.LEVEL_NM as PAST_NM, c.LEVEL_NM as NOW_NM
+		FROM THREAT_NOW a
+		left outer join (select LEVEL_CD, LEVEL_NM from THREAT_BASIS) b
+		on a.PAST_THREAT=b.LEVEL_CD
+		left outer join (select LEVEL_CD, LEVEL_NM from THREAT_BASIS) c
+		on a.NOW_THREAT=c.LEVEL_CD
+		ORDER BY MOD_DT desc
+	</select>
+
+	<select id="selectThreatHist" resultMap="getRiskMgmtResultMap">
+		  SELECT B.LEVEL_NM AS PAST_NM, C.LEVEL_NM AS NOW_NM,  MOD_DT, THREAT_CONT
+		  FROM THREAT_NOW A
+		  INNER JOIN THREAT_BASIS B
+		  ON A.PAST_THREAT=B.LEVEL_CD
+		  INNER JOIN THREAT_BASIS C
+		  ON A.NOW_THREAT=C.LEVEL_CD
+		  ORDER BY MOD_DT DESC
+	</select>
+
+	<insert id="mergeThreat">
+		UPDATE THREAT_NOW SET
+		PAST_THREAT = #{pastThreat},
+		NOW_THREAT = #{nowThreat},
+		MOD_DT = SYSDATE
+	</insert>
+
+	<insert id="addThreat">
+		INSERT INTO THREAT_NOW
+		(PAST_THREAT, NOW_THREAT, INST_CD, MOD_DT, THREAT_CONT)
+		VALUES(#{pastThreat}, #{nowThreat}, 1100000, SYSDATE, #{threatCont})
+	</insert>
+
+	<select id="selectPeriodNow" resultMap="getRiskMgmtResultMap">
+		SELECT PERIOD_1,PERIOD_2,PERIOD_3,INST_CD
+		FROM PERIOD_NOW
+		WHERE INST_CD=#{instCd}
+	</select>
+
+	<insert id="mergePeriod">
+		<choose>
+			<when test="isPeriod==0">
+				INSERT INTO PERIOD_NOW
+				( PERIOD_1,PERIOD_2,PERIOD_3, INST_CD, MOD_DT )
+				VALUES
+				( #{period1},#{period2},#{period3},#{instCd},SYSDATE)
+			</when>
+			<when test="isPeriod==1">
+				UPDATE PERIOD_NOW SET
+				PERIOD_1 = #{period1},
+				PERIOD_2 = #{period2},
+				PERIOD_3 = #{period3},
+				MOD_DT = SYSDATE
+				WHERE inst_cd = #{instCd}
+			</when>
+		</choose>
+	</insert>
+
+	<!--  게시판 타입으로 리스트 받아오기-->
+	<select id="selectRiskMgmt" resultMap="getRiskMgmtResultMap">
+		SELECT
+		SUM(basis1) basis1,
+		SUM(basis2) basis2,
+		SUM(basis3) basis3,
+		SUM(basis4) basis4,
+		SUM(basis5) basis5
+		FROM (
+		SELECT
+		DECODE(level_cd, 1, basis, 0) basis1,
+		DECODE(level_cd, 2, basis, 0) basis2,
+		DECODE(level_cd, 3, basis, 0) basis3,
+		DECODE(level_cd, 4, basis, 0) basis4,
+		DECODE(level_cd, 5, basis, 0) basis5
+		FROM THREAT_BASIS
+		GROUP BY level_cd, basis
+		)
+	</select>
+
+	<update id="updateRiskMgmt">
+		UPDATE THREAT_BASIS SET
+			basis = #{basis}
+		WHERE
+			1=1
+		AND level_cd = #{levelCd}
+	</update>
+
+	<resultMap type="com.klid.webapp.main.sys.riskMgmt.dto.RiskMgmtDto" id="getRiskHistoryResultMap">
+		<result property="logSeq"				column="log_seq"/>
+		<result property="step"					column="step"/>
+		<result property="contents"				column="contents"/>
+		<result property="usrId"				column="usr_id"/>
+		<result property="usrName"				column="usr_name"/>
+		<result property="regDt"				column="reg_dt"/>
+		<result property="usrIp"				column="usr_ip"/>
+	</resultMap>
+
+	<select id="selectRiskHistory" resultMap="getRiskHistoryResultMap">
+		SELECT
+			log_seq,
+			step,
+			contents,
+			usr_id,
+            usr_name,
+            reg_dt,
+            usr_ip
+        FROM THREAT_BASIS_LOG
+        WHERE step = #{step}
+        ORDER BY reg_dt DESC
+	</select>
+
+	<insert id="addRiskHistory">
+		<selectKey keyProperty="logSeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(LOG_SEQ), 0) + 1 FROM THREAT_BASIS_LOG
+		</selectKey>
+		INSERT INTO THREAT_BASIS_LOG
+		(
+			LOG_SEQ,
+			STEP,
+			CONTENTS,
+			USR_ID,
+			USR_NAME,
+			REG_DT,
+			USR_IP
+		)
+		VALUES
+		(
+			#{logSeq},
+			#{step},
+			#{contents},
+			#{usrId},
+			#{usrName},
+			TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+			#{usrIp}
+		)
+	</insert>
+
+	<delete id="delRiskHistory">
+		DELETE  FROM THREAT_BASIS_LOG
+		WHERE LOG_SEQ = #{logSeq}
+	</delete>
+
+</mapper>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportSecurityResult.persistence.ReportSecurityResultMapper">
+	<resultMap type="com.klid.webapp.main.rpt.reportSecurityResult.dto.ReportResultTotalDto" id="resultTotal">
+		<result property="nisCnt" 					column="nis_cnt"/>
+		<result property="cntCnt" 					column="cnt_cnt"/>
+		<result property="tngCnt" 					column="tng_cnt"/>
+		<result property="totCnt" 					column="tot_cnt"/>
+		<result property="wormCnt" 					column="worm_cnt"/>
+		<result property="webCnt" 					column="web_cnt"/>
+	</resultMap>
+	<resultMap type="com.klid.webapp.main.rpt.reportSecurityResult.dto.ReportResultListDto" id="resultList">
+		<result property="inciDttTtlNm" 					column="inci_dtt_ttl_nm"/>
+		<result property="inciTtl" 					column="inci_ttl"/>
+		<result property="inciDttNm" 					column="inci_dtt_nm"/>
+		<result property="dclInstNm" 					column="dcl_inst_nm"/>
+		<result property="dclInstCd" 					column="dcl_inst_cd"/>
+		<result property="attdTypCdNm" 					column="attd_typ_cd_nm"/>
+		<result property="dmgInstNm" 					column="dmg_inst_nm"/>
+		<result property="searchNm" 					column="search_nm"/>
+	</resultMap>
+	<resultMap type="com.klid.webapp.main.rpt.reportSecurityResult.dto.ReportResultExceptlistDto" id="resultExceptlist">
+		<result property="inciAcpnDt" column="inci_acpn_dt"/>
+		<result property="inciNo" column="inci_no"/>
+		<result property="instNm" column="inst_nm"/>
+		<result property="accdTypCdNm" column="accd_typ_cd_nm"/>
+		<result property="ipAddr" column="ip_addr"/>
+		<result property="accdTypCd" column="accd_typ_cd"/>
+
+	</resultMap>
+
+    <!-- 일일 보안관제결과 통보양식 - 통계 / getReport_result_total() -->
+    <select id="selectResultTotal" resultMap="resultTotal">
+		SELECT nvl(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))),0) as nis_cnt,
+		nvl(count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))),0) as cnt_cnt,
+		nvl(count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1))),0) as tng_cnt,
+		nvl(count(inci_no),0) as tot_cnt,
+		nvl(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) + count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) + count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1))),0) as worm_cnt,
+		nvl(count(inci_no)-(count(decode(dcl_inst_cd,'1400000',decode(accd_typ_cd,'10',1))) + count(decode(dcl_inst_cd,'1100000',decode(accd_typ_cd,'10',1))) + count(decode(dcl_inst_cd,'1500000',decode(accd_typ_cd,'10',1)))),0) as web_cnt
+		FROM TBZLEDGE
+		WHERE
+		TO_DATE(INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+		AND EXISTS (
+		SELECT inst_cd
+		FROM tsminst
+		WHERE tsminst.inst_cd = tbzledge.dmg_inst_cd
+		AND pnt_inst_cd = #{sInstCd}
+		AND INST_CD NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND INST_CD  <![CDATA[ <> ]]> 1200000)
+		AND inci_no like 'CT%'
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+        AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+    </select>
+
+	<!-- 일일 보안관제결과 통보양식 - 악성코드 리스트 / getReport_result_list()-->
+    <select id="selectResultList" resultMap="resultList">
+		SELECT inci_ttl, INCI_DTT_NM, INCI_TTL||'['||INCI_DTT_NM||']' as inci_dtt_ttl_nm,
+		b.inst_nm as dmg_inst_nm,
+		(select inst_nm from tsminst where inst_cd=DCL_INST_CD) dcl_inst_nm,
+		INCI_ACPN_DT,
+		(select code_name from COMM_CODE where COM_CODE1=3002 and CODE_LVL=2 and USE_YN='Y' and COM_CODE2=ACCD_TYP_CD)
+		attd_typ_cd_nm
+		FROM TBZLEDGE tbzledge, tsminst b
+		WHERE tbzledge.dcl_inst_cd in ('1400000','1100000','1500000')
+		and tbzledge.DMG_INST_CD=b.INST_CD
+		and inci_acpn_dt between #{startDt} and #{endDt}
+		AND EXISTS (
+		SELECT inst_cd
+		FROM tsminst
+		WHERE tsminst.inst_cd = tbzledge.dmg_inst_cd
+		AND pnt_inst_cd = 1100000
+		AND INST_CD NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND INST_CD  <![CDATA[ <> ]]> 1200000)
+		AND inci_no like 'CT%'
+		AND inci_ttl not like'%훈련%'
+		AND inci_ttl not like'%확인%'
+		AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+		and accd_typ_cd = '10'
+		and length(tbzledge.inci_no) <![CDATA[ < ]]> 16
+		order by dcl_inst_nm, inci_dtt_nm
+	</select>
+
+	<!-- 일일 보안관제결과 통보양식 - 악성코드외 리스트 / getReport_result_exceptlist() -->
+    <select id="selectResultExceptlist" resultMap="resultExceptlist">
+		SELECT TO_DATE(INCI_ACPN_DT,'YYYY-MM-DD HH24:MI:SS') as INCI_ACPN_DT,
+		ledge.inci_no,
+		inst.inst_nm,
+		(SELECT code_name FROM comm_code WHERE COM_CODE1=3002 AND CODE_LVL=2 AND COM_CODE2=accd_typ_cd) AS accd_typ_cd_nm,
+		attip.ip_addr,
+		accd_typ_cd
+		FROM TBZLEDGE ledge
+		join(
+		select inst.inst_nm, inst.inst_cd, local.local_cd
+		from tsminst inst
+		join tsmlocal local
+		on inst.local_cd = local.local_cd
+		) inst
+		on ledge.dmg_inst_cd = inst.inst_cd
+		left join(
+		SELECT inci_no, DBMS_LOB.SUBSTR(rtrim(xmlagg(XMLELEMENT(e, ip_addr, ',').EXTRACT('//text()')).GetClobVal(), ','),  500) ip_addr
+		FROM (
+		SELECT inci_no, ip_addr, ROW_NUMBER() over (PARTITION BY inci_no ORDER BY inci_no) rnum
+		FROM tbzattip )
+		START WITH rnum = 1
+		CONNECT BY PRIOR rnum = rnum-1 AND PRIOR inci_no = inci_no
+		GROUP BY inci_no
+		ORDER BY inci_no
+		) attip
+		on ledge.inci_no = attip.inci_no
+		WHERE ledge.dcl_inst_cd in ('1400000','1100000','1500000')
+		and inci_acpn_dt between #{startDt} and #{endDt}
+		and accd_typ_cd in ('20','30','40','50','60','70','90','100','110')
+		and dmg_inst_cd <![CDATA[ <> ]]> 1200000
+		AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+		and length(ledge.inci_no) <![CDATA[ < ]]> 16
+		AND ledge.inci_ttl NOT LIKE '%훈련%'
+		AND ledge.inci_ttl NOT LIKE '%확인%'
+		order by inci_acpn_dt
+	</select>
+
+	<select id="selectSecurityTitle" resultMap="resultList">
+		SELECT
+		INCI_DTT_NM,
+		listagg(aa,	','	) WITHIN GROUP (ORDER BY aa	) AS search_nm,
+		(
+		SELECT inst_nm FROM TSMINST WHERE inst_cd = dcl_inst_cd
+		) dcl_inst_nm,
+		dcl_inst_cd
+		FROM
+		(
+		SELECT
+		INCI_DTT_NM,
+		dcl_inst_cd,
+		CONCAT( CONCAT( CONCAT( inst_nm, '(' ), cnt ), ')' ) AS aa
+		FROM
+		(
+		SELECT
+		INCI_DTT_NM,
+		b.inst_nm,
+		dcl_inst_cd,
+		COUNT( 1 ) cnt
+		FROM
+		TBZLEDGE tbzledge,
+		tsminst b
+		WHERE
+		tbzledge.dcl_inst_cd IN (
+		'1400000',
+		'1100000',
+		'1500000'
+		)
+		AND tbzledge.DMG_INST_CD = b.INST_CD
+		AND inci_acpn_dt between #{startDt} and #{endDt}
+		AND EXISTS (
+		SELECT
+		inst_cd
+		FROM
+		tsminst
+		WHERE
+		tsminst.inst_cd = tbzledge.dmg_inst_cd
+		AND pnt_inst_cd = 1100000
+		AND INST_CD NOT IN (
+		SELECT
+		com_code2
+		FROM
+		COMM_CODE
+		WHERE
+		com_code1 = '4002'
+		AND code_lvl = '2'
+		)
+		AND INST_CD <![CDATA[ <> ]]> 1200000
+		)
+		AND inci_no LIKE 'CT%'
+		AND inci_ttl NOT LIKE '%훈련%'
+		AND inci_ttl NOT LIKE '%확인%'
+		AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+		AND accd_typ_cd = '10'
+		AND LENGTH(tbzledge.inci_no) <![CDATA[ < ]]> 16
+		GROUP BY
+		INCI_DTT_NM,
+		b.inst_nm,
+		dcl_inst_cd
+		)
+		)
+		GROUP BY
+		INCI_DTT_NM, dcl_inst_cd
+		ORDER BY INCI_DTT_NM
+	</select>
+
+</mapper>

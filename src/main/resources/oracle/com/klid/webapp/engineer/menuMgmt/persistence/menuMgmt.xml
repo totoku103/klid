@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.engineer.menuMgmt.persistence.MenuMgmtMapper">
+	<resultMap type="com.klid.webapp.engineer.menuMgmt.dto.MenuMgmtDto" id="resultPageList">
+		<result property="menuNo" 						column="MENU_NO"/>
+		<result property="menuName" 					column="MENU_NAME"/>
+		<result property="menuKind" 					column="MENU_KIND"/>
+		<result property="menuAuth" 							column="MENU_AUTH"/>
+		<result property="menuAuthNM" 							column="MENU_AUTH_NM"/>
+		<result property="menuPageNo" 					column="MENU_PAGE_NO"/>
+		<result property="menuPageGrpNo" 					column="MENU_PAGE_GRP_NO"/>
+		<result property="guid" 							column="GUID"/>
+		<result property="siteName" 							column="SITENAME"/>
+		<result property="visibleOrder" 							column="VISIBLE_ORDER"/>
+		<result property="isWebuse" 							column="IS_WEBUSE"/>
+		<result property="isFileuse" 							column="IS_FILEUSE"/>
+		<result property="webIconClass" 							column="WEB_ICON_CLASS"/>
+	</resultMap>
+
+
+  	<!--  page 리스트	-->
+	<select id="selectPageList" resultMap="resultPageList">
+		SELECT	MENU_NO, MENU_NAME, MENU_KIND, MENU_AUTH, MENU_PAGE_NO, MENU_PAGE_GRP_NO, GUID, SITE_NAME, VISIBLE_ORDER, IS_WEBUSE, WEB_ICON_CLASS FROM COM_MENU WHERE MENU_KIND = 'PAGE' AND SITE_NAME = #{siteName}
+	</select>
+	
+  	<!--  page_group 리스트	-->
+	<select id="selectPageGroupList" resultMap="resultPageList">
+		SELECT MENU_NO, MENU_NAME, MENU_KIND, MENU_AUTH, MENU_PAGE_NO, MENU_PAGE_GRP_NO, GUID, SITE_NAME, VISIBLE_ORDER, IS_WEBUSE, WEB_ICON_CLASS FROM COM_MENU WHERE MENU_KIND = 'PAGE_GROUP' AND MENU_PAGE_NO = #{menuPageNo}  AND SITE_NAME = #{siteName}
+	</select>
+	
+	  	<!--  menu 리스트	-->
+	<select id="selectMenuList" resultMap="resultPageList">
+		SELECT MENU_NO, MENU_NAME, MENU_KIND, MENU_AUTH,
+		CASE MENU_AUTH
+            WHEN '1' THEN 'User'
+            WHEN '2' THEN 'Admin'
+            WHEN '3' THEN 'System'
+        END as MENU_AUTH_NM
+		, MENU_PAGE_NO, MENU_PAGE_GRP_NO, GUID, SITE_NAME, VISIBLE_ORDER, IS_WEBUSE, WEB_ICON_CLASS, IS_FILEUSE FROM COM_MENU WHERE MENU_KIND = 'MENU' AND MENU_PAGE_GRP_NO = #{menuPageGrpNo} AND MENU_PAGE_NO = #{menuPageNo} AND SITE_NAME = #{siteName}
+	</select>
+
+	<select id="getUserInfoById" resultMap="resultPageList">
+		select MEnu_no, menu_name, menu_kind
+				case MEnu_auth
+					when '1' then 'user'
+				END as Menu_auth_nm,
+				Menu_page_no,menu_page_grp_no
+
+	</select>
+
+</mapper>

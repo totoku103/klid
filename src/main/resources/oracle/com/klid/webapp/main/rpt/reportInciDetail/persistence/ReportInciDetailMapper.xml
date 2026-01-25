@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportInciDetail.persistence.ReportInciDetailMapper">
+	<resultMap type="com.klid.webapp.main.rpt.reportDaily.dto.ReportDailyDto" id="resultReportList">
+		<result property="seqNo" 					column="seq_no"/>
+		<result property="inciNo" 					column="inci_no"/>
+		<result property="instNm" 					column="inst_nm"/>
+		<result property="inciTtl" 					column="inci_ttl"/>
+		<result property="accdTypeCdNm" 					column="accd_type_cd_nm"/>
+		<result property="dclCrgr" 					column="dcl_crgr"/>
+		<result property="nationNm" 					column="nation_nm"/>
+		<result property="inciPrcsStatNm" 					column="inci_prcs_stat_nm"/>
+		<result property="inciAcpnDt" 					column="inci_acpn_dt"/>
+		<result property="inciUpdDt" 					column="inci_upd_dt"/>
+		<result property="inciPrty" 					column="inci_prty"/>
+		<result property="inciDttNm" 					column="inci_dtt_nm"/>
+		<result property="inciTtlDtt" 					column="inciTtlDtt"/>
+	</resultMap>
+
+    <!-- 상세조회 -->
+    <select id="selectInciDetail" resultMap="resultReportList">
+		SELECT
+  rownum AS seq_no,
+  inci_no,
+  inst_nm,
+  inci_ttl,
+  accd_type_cd_nm,
+  dcl_crgr,
+  nation_nm,
+  inci_prcs_stat_nm,
+  inci_acpn_dt,
+  inci_upd_dt,
+  inci_prty,
+  inci_dtt_nm,
+  inci_ttl||'['||inci_dtt_nm||']' as inciTtlDtt
+FROM (SELECT
+        inci_no,
+        inst_nm,
+        inci_ttl,
+        INCI_DTT_NM,
+        nvl(typ.code_name, '')                                           accd_type_cd_nm,
+        dcl_crgr,
+        nvl(nvl(kr_nm,nation_nm), '')                                               nation_nm,
+        stat.code_name                                                   inci_prcs_stat_nm,
+        TO_CHAR(TO_DATE(inci_acpn_dt, 'yyyymmddhh24miss'), 'yyyy-mm-dd') inci_acpn_dt,
+        TO_CHAR(TO_DATE(inci_upd_dt, 'yyyymmddhh24miss'), 'yyyy-mm-dd')  inci_upd_dt,
+        decode(inci_prty, '0010', '긴급', '일반')                            inci_prty
+      FROM tbzledge tbz LEFT OUTER JOIN (SELECT
+                                           com_code2,
+                                           code_name
+                                         FROM comm_code
+                                         WHERE com_code1 = '3002' AND code_lvl = '2') typ
+          ON tbz.ACCD_TYP_CD = typ.com_code2
+        LEFT OUTER JOIN (SELECT
+                           com_code2,
+                           code_name
+                         FROM comm_code
+                         WHERE com_code1 = '3001' AND code_lvl = '2') stat ON tbz.inci_prcs_stat = stat.com_code2
+        LEFT OUTER JOIN (SELECT
+                           nation_cd,
+                           nation_nm,kr_nm
+                         FROM tsmnation) nt ON tbz.att_natn_cd = nt.nation_cd
+        LEFT OUTER JOIN (SELECT
+                           inst_cd,
+                           inst_nm
+                         FROM tsminst) tsm ON tbz.dmg_inst_cd = tsm.inst_cd
+      WHERE 1 = 1
+      ORDER BY inci_no DESC)
+	</select>
+
+</mapper>

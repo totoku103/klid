@@ -1,0 +1,244 @@
+/**
+ * 사용자 관리 이력 페이지 전용 스타일
+ * 기존 CSS 간섭 방지를 위한 전용 스타일시트
+ */
+
+/* ========================================
+   페이지 전체 레이아웃
+======================================== */
+
+.user-history-page {
+    font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-history-page * {
+    box-sizing: border-box;
+}
+
+.user-history-page #section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ========================================
+   검색 영역 스타일
+======================================== */
+
+.user-history-search-container {
+    background: #f8f9fa;
+    border: 1px solid #989898;
+    border-top: 1px solid #036ca5;
+    padding: 3px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.user-history-search-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+/* 검색 조건 그룹 (좌측) */
+.user-history-search-fields {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+/* 검색 필드 그룹 */
+.user-history-search-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.user-history-search-field label {
+    font-weight: bold;
+    color: #495057;
+    white-space: nowrap;
+    min-width: 40px;
+    font-size: 11px;
+}
+
+.user-history-search-field input[type="text"] {
+    width: 90px;
+    height: 24px;
+    padding: 3px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 11px;
+    background: white;
+    transition: border-color 0.2s ease;
+}
+
+.user-history-search-field input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.user-history-search-field input[type="text"]::placeholder {
+    color: #6c757d;
+    font-size: 10px;
+}
+
+/* 날짜 범위 검색 필드 */
+.user-history-date-range {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.user-history-date-range label {
+    font-weight: bold;
+    color: #495057;
+    min-width: 50px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.user-history-date-range input[type="text"] {
+    width: 85px;
+    height: 24px;
+    padding: 3px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 10px;
+    text-align: center;
+    background: white;
+}
+
+.user-history-date-separator {
+    font-weight: bold;
+    color: #6c757d;
+    font-size: 12px;
+    margin: 0 2px;
+}
+
+/* 드롭다운 필드 */
+.user-history-dropdown-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.user-history-dropdown-field label {
+    font-weight: bold;
+    color: #495057;
+    min-width: 50px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* 기관 트리 영역 */
+.user-history-institution-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 150px;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   버튼 영역 레이아웃
+======================================== */
+
+.user-history-button-area {
+    display: flex;
+    gap: 8px;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-left: 20px;
+}
+
+/* ========================================
+   그리드 영역 스타일
+======================================== */
+
+.user-history-grid-container {
+    padding: 0 10px 10px 10px;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ========================================
+   반응형 처리
+======================================== */
+
+@media (max-width: 1200px) {
+    .user-history-search-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .user-history-search-field,
+    .user-history-date-range,
+    .user-history-dropdown-field {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .user-history-button-area {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .user-history-search-container {
+        padding: 15px;
+    }
+
+    .user-history-search-field input[type="text"],
+    .user-history-date-range input[type="text"] {
+        width: 100%;
+        min-width: 120px;
+    }
+
+}
+
+/* ========================================
+   접근성 개선
+======================================== */
+
+.user-history-search-field input[type="text"]:focus,
+.user-history-date-range input[type="text"]:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 1px;
+}
+
+/* 스크린 리더용 숨김 텍스트 */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}

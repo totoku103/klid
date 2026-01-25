@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.userConf.persistence.UserConfMapper">
+	<resultMap id="resultUserAddr" type="com.klid.webapp.common.dto.UserDto">
+		<result property="userId"           	column="USER_ID"/>
+		<result property="userName"            	column="USER_NAME"/>
+		<result property="moblPhnNo"           	column="MOBL_PHN_NO"/>
+		<result property="instNm"            	column="INST_NM"/>
+		<result property="instCd"            	column="INST_CD"/>
+		<result property="grade"            	column="GRADE"/>
+		<result property="offcTelNo"           	column="OFFC_TEL_NO"/>
+		<result property="emailAddr"           	column="EMAIL_ADDR"/>
+	</resultMap>
+	<select id="selectUserAddrList" resultMap="resultUserAddr">
+		SELECT 			
+			A.USER_ID,    	
+			B.INST_NM,   	
+			DECODE(A.GRADE,NULL,'-',A.GRADE) AS GRADE,
+			A.USER_NAME, 
+			A.MOBL_PHN_NO,  
+			B.INST_CD,      
+			DECODE(A.OFFC_TEL_NO,NULL,'-',A.OFFC_TEL_NO) AS OFFC_TEL_NO,
+			A.EMAIL_ADDR  
+		FROM            
+			COMM_USER A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD 
+		WHERE 1=1
+		<if test="authMain != null and authMain != ''">
+			<if test="authMain == 'AUTH_MAIN_2'">
+				AND B.INST_LEVEL = 0
+				AND B.INST_CD = 1100000
+			</if>
+			<if test="authMain == 'AUTH_MAIN_3'">
+				AND A.INST_CD = #{instCd}
+			</if>
+			<if test="authMain == 'AUTH_MAIN_4'">
+				AND A.INST_CD = #{instCd}
+			</if>
+		</if>
+		AND A.USE_YN = 'Y'
+	</select>
+
+	<resultMap id="resultUserConf" type="com.klid.webapp.common.dto.UserDto">
+		<result property="seq"           	column="SEQ"/>
+		<result property="userId"           	column="USER_ID"/>
+		<result property="instCd"            	column="INST_CD"/>
+		<result property="userName"            	column="USER_NAME"/>
+		<result property="grade"            	column="GRADE"/>
+		<result property="moblPhnNo"           	column="MOBL_PHN_NO"/>
+		<result property="homeTelNo"           	column="HOME_TEL_NO"/>
+		<result property="offcTelNo"           	column="OFFC_TEL_NO"/>
+		<result property="offcFaxNo"           	column="OFFC_FAX_NO"/>
+		<result property="emailAddr"           	column="EMAIL_ADDR"/>
+		<result property="smsYn"            	column="SMS_YN"/>
+		<result property="emailYn"            	column="EMAIL_YN"/>
+		<result property="useYn"            	column="USE_YN"/>
+		<result property="centerUserYn"         column="CENTER_USER_YN"/>
+		<result property="regDt"            	column="REG_DT"/>
+		<result property="instNm"            	column="INST_NM"/>
+		<result property="authMain"            	column="AUTH_MAIN"/>
+		<result property="authSub"            	column="AUTH_SUB"/>
+		<result property="inactiveYn"            	column="INACTIVE_YN"/>
+		<result property="gpkiSerialNo"            	column="GPKI_SERIAL_NO"/>
+	</resultMap>
+	<select id="selectUserConfList" resultMap="resultUserConf">
+		SELECT
+		    A.SEQ,
+			A.USER_ID,
+			A.INST_CD,
+			A.USER_NAME,
+			A.GRADE,
+			A.MOBL_PHN_NO,
+			A.HOME_TEL_NO,
+			A.OFFC_TEL_NO,
+			A.OFFC_FAX_NO,
+			A.EMAIL_ADDR,
+			A.SMS_YN,
+			A.EMAIL_YN,
+			A.USE_YN,
+			A.CENTER_USER_YN,
+			A.PKI_DN,
+			A.REG_DT,
+			A.AUTH_MAIN,
+			A.AUTH_SUB,
+			B.INST_NM,
+			A.INACTIVE_YN,
+			A.GPKI_SERIAL_NO
+		FROM
+			COMM_USER A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD
+		WHERE 1=1
+		<if test="instCd != null and instCd != ''">
+			AND A.INST_CD IN
+			(
+				SELECT inst_cd FROM tsminst
+				CONNECT BY PRIOR inst_cd = pnt_inst_cd
+				START WITH inst_cd = #{instCd}
+			)
+		</if>
+        <if test="useYn != null and useYn != ''">
+		  AND A.USE_YN = #{useYn}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND A.USER_NAME LIKE '%' || #{userName} || '%'
+        </if>
+        <if test="userId != null and userId != ''">
+			AND A.USER_ID LIKE '%' || #{userId} || '%'
+        </if>
+		<if test="inactiveUserOption != null and inactiveUserOption != ''">
+            AND A.INACTIVE_YN = #{inactiveUserOption}
+		</if>
+		ORDER BY A.reg_dt DESC
+	</select>
+
+	<insert id="addUser">
+		<selectKey keyProperty="seq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(TO_NUMBER(SEQ)),0) + 1 FROM COMM_USER
+		</selectKey>
+		INSERT INTO COMM_USER (
+			seq,
+			user_id,
+			inst_cd,
+			user_name,
+			user_pwd,
+			grade,
+			mobl_phn_no,
+			offc_tel_no,
+			email_addr,
+			sms_yn,
+			email_yn,
+			use_yn,
+			center_user_yn,
+			pki_dn,
+			reg_dt,
+			role_ctrs,
+			role_iics,
+			role_rms,
+			role_ews,
+			role_sd,
+			trns_yn,
+			LASTPWDMODIFIED,
+			AUTH_MAIN,
+			AUTH_SUB,
+			IP_ADDR
+		) VALUES(
+			#{seq},
+			#{userId},
+			#{instCd},
+			#{userName},
+			#{password},
+			#{grade},
+			#{moblPhnNo},
+			#{offcTelNo},
+			#{emailAddr},
+			#{smsYn},
+			#{emailYn},
+			#{useYn},
+			#{centerUserYn},
+			#{pkiDn},
+			TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+			null,<!-- {roleCtrs} -->
+			null,
+			null,
+			null,
+			#{roleSd},
+			'Y',
+			systimestamp,
+			#{authMain},
+			#{authSub},
+			#{ipAddr}
+		)
+	</insert>
+
+	<select id="selectUserIdDuplicateCnt" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM COMM_USER
+		WHERE USER_ID = #{userId}
+	</select>
+
+	<resultMap id="resultDetailUser" type="com.klid.webapp.common.dto.UserDto">
+		<result property="seq"           	column="SEQ"/>
+		<result property="userId"           	column="USER_ID"/>
+		<result property="instCd"            	column="INST_CD"/>
+		<result property="userName"            	column="USER_NAME"/>
+		<result property="grade"            	column="GRADE"/>
+		<result property="moblPhnNo"           	column="MOBL_PHN_NO"/>
+		<result property="homeTelNo"           	column="HOME_TEL_NO"/>
+		<result property="offcTelNo"           	column="OFFC_TEL_NO"/>
+		<result property="offcFaxNo"           	column="OFFC_FAX_NO"/>
+		<result property="emailAddr"           	column="EMAIL_ADDR"/>
+		<result property="smsYn"            	column="SMS_YN"/>
+		<result property="emailYn"            	column="EMAIL_YN"/>
+		<result property="useYn"            	column="USE_YN"/>
+		<result property="centerUserYn"         column="CENTER_USER_YN"/>
+		<result property="regDt"            	column="REG_DT"/>
+		<result property="instNm"            	column="INST_NM"/>
+		<result property="authMain"            	column="AUTH_MAIN"/>
+		<result property="authSub"            	column="AUTH_SUB"/>
+		<result property="passResetYn"          column="PASS_RESET_YN"/>
+		<result property="lockYn"	            column="LOCK_YN"/>
+		<result property="ipAddr"	            column="IP_ADDR"/>
+		<result property="lastpwdmodified"	            column="LASTPWDMODIFIED"/>
+		<result property="otpKey"	            column="OTP_KEY"/>
+		<result property="gpkiSerialNo"	            column="GPKI_SERIAL_NO"/>
+		<result property="inactiveYn"	            column="INACTIVE_YN"/>
+	</resultMap>
+	<select id="selectDetailUser" resultMap="resultDetailUser">
+		SELECT
+			A.SEQ,
+			A.USER_ID,
+			A.INST_CD,
+			A.USER_NAME,
+			A.GRADE,
+			A.MOBL_PHN_NO,
+			A.HOME_TEL_NO,
+			A.OFFC_TEL_NO,
+			A.OFFC_FAX_NO,
+			A.EMAIL_ADDR,
+			A.SMS_YN,
+			A.EMAIL_YN,
+			A.USE_YN,
+			A.CENTER_USER_YN,
+			A.PKI_DN,
+			A.REG_DT,
+			B.INST_NM,
+			A.AUTH_MAIN,
+			A.AUTH_SUB,
+			A.PASS_RESET_YN,
+			A.LOCK_YN,
+			A.IP_ADDR,
+			TO_CHAR(A.LASTPWDMODIFIED, 'YYYY-MM-DD HH24:MI:SS') as LASTPWDMODIFIED,
+            A.OTP_KEY,
+            A.GPKI_SERIAL_NO,
+			A.INACTIVE_YN
+		FROM
+			COMM_USER A
+		INNER JOIN TSMINST B ON A.INST_CD = B.INST_CD
+		WHERE 1=1
+		AND A.USER_ID = #{userId }
+	</select>
+
+	<update id="editUser">
+		UPDATE COMM_USER SET
+			LASTPWDMODIFIED = systimestamp
+			,USER_NAME 	= #{userName}
+			,INST_CD 	= #{instCd}
+			,SMS_YN 	= #{smsYn}
+			,EMAIL_YN 	= #{emailYn}
+			,USE_YN 	= #{useYn}
+			,CENTER_USER_YN = #{centerUserYn}
+		<if test="grade != null and grade != ''">
+			,GRADE = #{grade}
+		</if>
+		<if test="moblPhnNo != null and moblPhnNo != ''">
+			,MOBL_PHN_NO = #{moblPhnNo}
+		</if>
+		<if test="offcTelNo != null and offcTelNo != ''">
+			,OFFC_TEL_NO = #{offcTelNo}
+		</if>
+		<if test="emailAddr != null and emailAddr != ''">
+			,EMAIL_ADDR = #{emailAddr}
+		</if>
+        <if test="authMain != null and authMain != ''">
+            ,AUTH_MAIN = #{authMain}
+        </if>
+        <if test="authSub != null and authSub != ''">
+            ,AUTH_SUB = #{authSub}
+        </if>
+		<if test="lockYn != null and lockYn != ''">
+			,LOCK_YN = #{lockYn}
+		</if>
+		<if test="ipAddr != null and ipAddr != ''">
+			,IP_ADDR = #{ipAddr}
+		</if>
+
+		WHERE USER_ID = #{userId}
+	</update>
+	
+	<!-- 사용자  자신의 정보 수정 -->
+	<update id="editSelfUser">
+		UPDATE COMM_USER 
+		SET
+		USER_NAME 	= #{userName}
+		<if test="moblPhnNo != null and moblPhnNo != ''">
+			,MOBL_PHN_NO = #{moblPhnNo}
+		</if>
+		<if test="offcTelNo != null and offcTelNo != ''">
+			,OFFC_TEL_NO = #{offcTelNo}
+		</if>
+		<if test="offcFaxNo != null and offcFaxNo != ''">
+			,OFFC_FAX_NO = #{offcFaxNo}
+		</if>
+		<if test="emailAddr != null and emailAddr != ''">
+			,EMAIL_ADDR = #{emailAddr}
+		</if>
+		WHERE USER_ID = #{userId}
+	</update>
+
+
+	<!-- 사용자 패스워드 수정 -->
+	<update id="updateUserPassword">
+		UPDATE COMM_USER
+		SET 
+			USER_PWD = #{password},
+			LASTPWDMODIFIED = systimestamp,
+			PASS_RESET_YN = 'N'
+		WHERE USER_ID = #{userId}
+	</update>
+
+	<select id="selectPushUsers" resultMap="resultUserAddr">
+		SELECT USER_ID FROM COMM_USER
+		WHERE 1=1
+		<choose>
+			<when test='sType=="A"'>
+				AND AUTH_MAIN='AUTH_MAIN_2'
+				AND AUTH_SUB IN ('AUTH_SUB_2','AUTH_SUB_3')
+			</when>
+			<when test='sType=="B"'>
+				AND AUTH_MAIN='AUTH_MAIN_2'
+				AND AUTH_SUB = ('AUTH_SUB_2')
+			</when>
+			<when test='sType=="C"'>
+				AND AUTH_MAIN='AUTH_MAIN_3'
+				AND AUTH_SUB IN ('AUTH_SUB_2','AUTH_SUB_3')
+			</when>
+			<when test='sType=="D"'>
+				AND AUTH_MAIN='AUTH_MAIN_3'
+				AND AUTH_SUB = ('AUTH_SUB_2')
+			</when>
+			<when test='sType=="E"'>
+				AND AUTH_MAIN='AUTH_MAIN_4'
+				AND AUTH_SUB IN ('AUTH_SUB_2', 'AUTH_SUB_3')
+			</when>
+		</choose>
+		AND inst_cd =#{sInstCd}
+		AND USER_ID != #{sUserId}
+		AND USE_YN='Y'
+	</select>
+	
+	<resultMap type="com.klid.webapp.common.code.dto.CodeDto" id="resultCode">
+		<result property="comCode1" column="COM_CODE1"/>
+		<result property="comCode2" column="COM_CODE2"/>
+		<result property="comCode3" column="COM_CODE3"/>
+		<result property="codeName" column="CODE_NAME"/>
+		<result property="codeLvl" column="CODE_LVL"/>
+	</resultMap>
+
+	<select id="selectAuthList" resultMap="resultCode">
+		SELECT
+			COM_CODE1,
+			COM_CODE2,
+			COM_CODE3,
+		  	CODE_NAME,
+			CODE_LVL
+		FROM COMM_CODE
+		WHERE USE_YN = 'Y'
+		<choose>
+			<when test="authType == 'main'">
+				AND COM_CODE1 = 4008
+			</when>
+			<otherwise>
+				AND COM_CODE1 = 4009
+			</otherwise>
+		</choose>
+		<if test="authMainType != null">
+			<choose>
+				<when test="authMainType == 1 ">
+					AND COM_CODE2 IN (1,2,3)
+				</when>
+				<otherwise>
+					AND COM_CODE2 IN (1,2,3)
+				</otherwise>
+			</choose>
+		</if>
+		AND CODE_LVL = 2
+	</select>
+
+	<update id="userPassReset">
+		UPDATE COMM_USER SET
+			USER_PWD	  = #{password},
+			PASS_RESET_YN = 'Y'
+		WHERE USER_ID = #{userId}
+	</update>
+
+	<update id="userLockReset">
+		<choose>
+			<when test='resetType=="OTP"'>
+				UPDATE COMM_USER SET
+					otp_key = null
+				WHERE USER_ID = #{userId}
+			</when>
+			<otherwise>
+				UPDATE COMM_USER SET
+					LOCK_YN = 'N',
+					LOGIN_FAIL_CNT = 0
+				WHERE USER_ID = #{userId}
+			</otherwise>
+		</choose>
+	</update>
+
+	<select id="passwordCheck" resultType="INTEGER">
+		SELECT COUNT(*)
+		FROM COMM_USER
+		WHERE USER_ID = #{userId} AND USER_PWD = #{password}
+	</select>
+
+	<update id="updateLoginFailCnt">
+		UPDATE COMM_USER SET
+			LOGIN_FAIL_CNT = NVL(LOGIN_FAIL_CNT, 0) + 1
+		WHERE USER_ID = #{userId}
+	</update>
+
+	<update id="updateLoginFailCntReset">
+		UPDATE COMM_USER SET
+		LOGIN_FAIL_CNT = 0
+		WHERE USER_ID = #{userId}
+	</update>
+
+	<update id="updateLoginLock">
+		UPDATE COMM_USER SET
+			LOCK_YN = 'Y'
+		WHERE USER_ID = #{userId}
+		AND LOCK_YN = 'N'
+	</update>
+
+	<delete id="delUser">
+		DELETE  FROM COMM_USER
+		WHERE USER_ID = #{userId}
+	</delete>
+
+	<update id="updateAllUserPassReset">
+		UPDATE comm_user SET
+		USER_PWD	  = #{password},
+		PASS_RESET_YN = 'Y',
+		LASTPWDMODIFIED = sysdate
+		WHERE USER_ID = #{userId}
+		AND USER_ID NOT IN ('center1', 'si_seoul', 'si_gwang', 'hamontest', 'admin')
+	</update>
+</mapper>

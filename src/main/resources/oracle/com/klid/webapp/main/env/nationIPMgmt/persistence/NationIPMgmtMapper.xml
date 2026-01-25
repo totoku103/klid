@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.nationIPMgmt.persistence.NationIPMgmtMapper">
+	<resultMap id="resultNationMgmt" type="com.klid.webapp.main.env.nationIPMgmt.dto.NationIPMgmtDto">
+		<result property="nationCd"            	column="NATION_CD"/>
+		<result property="nationNm"             column="NATION_NM"/>
+		<result property="nationNmCnt"            column="NATION_NM_CNT"/>
+		<result property="domain"           	column="DOMAIN"/>
+		<result property="continental"			column="CONTINENTAL"/>
+		<result property="nationCnt" 			column="NATION_CNT"/>
+		<result property="regDt"          		column="REG_DT"/>
+		<result property="krNm"          		column="KR_NM"/>
+	</resultMap>
+	
+	<resultMap id="resultNationIp" type="com.klid.webapp.main.env.nationIPMgmt.dto.NationIPMgmtDto">
+		<result property="nationCd"            	column="NATION_CD"/>
+		<result property="sip"            		column="SIP"/>
+		<result property="eip"            		column="EIP"/>
+	</resultMap>
+	
+	<!-- 국가 리스트 조회 -->
+	<select id="selectNationMgmtList" resultMap="resultNationMgmt">
+		SELECT	NATION_CD, NATION_NM, DOMAIN, NATION_CNT, CONTINENTAL
+					, NATION_NM||' ['||NATION_CNT||']' AS NATION_NM_CNT
+					, TO_CHAR(TO_DATE(REG_DT, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') AS REG_DT
+					, KR_NM
+		FROM	(
+			SELECT	A.NATION_CD, A.NATION_NM, UPPER(A.DOMAIN) DOMAIN,
+				    (SELECT NVL(COUNT(NATION_CD), 0) FROM TSMNATIONIP
+				    	WHERE NATION_CD = A.NATION_CD ) NATION_CNT, 
+				    (SELECT DISTINCT REG_DT FROM TSMNATIONIP  
+				    	WHERE NATION_CD = A.NATION_CD AND ROWNUM = 1) REG_DT,
+				    DECODE(A.CONTINENTAL, 1, '아시아', 2,'유럽', 3, '북아메리카',
+				    	4, '남아메리카', 5, '아프리카', 6, '오세아니아', ' ') CONTINENTAL , A.KR_NM
+			FROM	(
+					SELECT	NATION_CD, NATION_NM, CONTINENTAL, DOMAIN, KR_NM
+				    FROM	TSMNATION
+				    WHERE	1=1
+			        <if test="_parameter.containsKey('sNationNm') and sNationNm != ''">
+			        	AND UPPER (NATION_NM) LIKE '%'||UPPER (#{sNationNm})||'%'
+			        </if>
+			 ) A
+		 ) A
+		 ORDER BY	A.NATION_CD, A.NATION_NM
+	</select>
+	
+	<!-- 국가정보 조회 -->
+	<select id="selectNationMgmtInfo" resultMap="resultNationMgmt"> 
+		SELECT	A.NATION_CD, A.NATION_NM, UPPER(A.DOMAIN) DOMAIN,
+			    (SELECT NVL(COUNT(NATION_CD), 0) FROM TSMNATIONIP
+			    	WHERE NATION_CD = A.NATION_CD ) NATION_CNT, 
+			    (SELECT DISTINCT REG_DT FROM TSMNATIONIP  
+			    	WHERE NATION_CD = A.NATION_CD AND ROWNUM = 1) REG_DT,
+			    DECODE(A.CONTINENTAL, 1, '아시아', 2,'유럽', 3, '북아메리카',
+			    	4, '남아메리카', 5, '아프리카', 6, '오세아니아', ' ') CONTINENTAL
+		FROM	(
+				SELECT	NATION_CD, NATION_NM, CONTINENTAL, DOMAIN
+			    FROM	TSMNATION
+			    WHERE	1=1
+		        <if test="_parameter.containsKey('sNationNm') and sNationNm != ''">
+		        	AND NATION_NM LIKE '%'||${sNationNm}||'%'
+		        </if>
+		 ) A
+		WHERE	NATION_CD = #{nationCd}
+	</select>
+	
+	<!-- 국가 도메인 리스트 조회 -->
+	<select id="selectNationList_domain" resultMap="resultNationMgmt">
+		SELECT  NATION_CD, UPPER(DOMAIN) AS DOMAIN
+		FROM	TSMNATION
+		ORDER BY DOMAIN
+	</select>
+	
+	<!-- IP대역에 해당하는 국가코드 조회-->
+	<select id="selectNationIP_nationCd" resultMap="resultNationIp">
+		SELECT  NATION_CD
+		FROM	TSMNATIONIP
+		WHERE	1=1
+		<![CDATA[
+		AND		SIP <= #{sip}
+		AND		EIP >= #{eip}
+		]]>
+	</select>
+	
+	<!-- 국가별 IP대역 리스트 조회-->
+	<select id="selectNationIPList" resultMap="resultNationIp">
+		SELECT  SIP, EIP
+		FROM	TSMNATIONIP
+		WHERE	NATION_CD = #{nationCd}
+	</select>
+
+	<!-- 국가정보 추가 -->
+	<insert id="insertNation" useGeneratedKeys="true" keyProperty="nationCd">
+		INSERT INTO TSMNATION (
+			NATION_CD, NATION_NM, DOMAIN, CONTINENTAL, USR_ID, USR_IP, REG_DT
+		)
+		VALUES ( 
+			#{nationCd}, #{nationNm}, #{domain}, #{continental}, #{usrId}, #{usrIp}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+	<!-- 국가정보 전체 삭제 -->
+	<delete id="deleteNation_all">
+	 	DELETE FROM TSMNATION
+	</delete>
+	
+	<!-- 국가IP정보 추가 -->
+	<insert id="insertNationIp">
+		INSERT INTO TSMNATIONIP (
+			NATION_CD, SIP, EIP, USR_ID, USR_IP, REG_DT
+		)
+		VALUES ( 
+			#{nationCd}, #{sip}, #{eip}, #{usrId}, #{usrIp}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+	<!-- 국가IP정보 추가 -->
+	<insert id="insertNationIp_list">
+		<foreach collection="list" item="item">
+			INSERT INTO TSMNATIONIP (
+				NATION_CD, SIP, EIP, USR_ID, USR_IP, REG_DT
+			)
+			VALUES ( 
+				#{item.nationCd}, #{item.sip}, #{item.eip}, #{item.usrId}, #{item.usrIp}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			);
+		</foreach>
+	</insert>
+	
+	
+	<!-- 국가IP정보  전체 삭제 -->
+	<delete id="deleteNationIP_all">
+	 	DELETE FROM TSMNATIONIP
+	</delete>
+
+	<!-- 국가 정보 조회 -->
+	<select id="selectNationDetail" resultMap="resultNationMgmt">
+		SELECT NATION_CD,
+			    NVL(NATION_NM,' ') AS NATION_NM,
+			    CONTINENTAL,
+			    NVL(KR_NM,' ') AS KR_NM
+		FROM TSMNATION
+	   WHERE NATION_CD = #{nationCd}
+	</select>
+
+	<!-- 국가정보 업데이트 -->
+	<update id="editNation">
+		UPDATE TSMNATION
+			SET
+				NATION_NM= #{nationNm},
+				CONTINENTAL= #{continental},
+				KR_NM= #{krNm}
+		 WHERE
+				NATION_CD= #{nationCd}
+	</update>
+</mapper>

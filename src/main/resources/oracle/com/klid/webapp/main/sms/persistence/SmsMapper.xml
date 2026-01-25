@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sms.persistence.SmsMapper">
+
+	<resultMap type="com.klid.webapp.main.sms.dto.SmsInfoDto" id="getResultMap">
+        <result property="sms_ip" column="sms_ip"/>
+        <result property="sms_port" column="sms_port"/>
+        <result property="sms_user" column="sms_user"/>
+        <result property="sms_pwd" column="sms_pwd"/>
+        <result property="sms_sid" column="sms_sid"/>
+	</resultMap>
+	
+	<select id="getSmsInfo" resultMap="getResultMap">
+		select * from comm_key where rownum=1
+	</select>
+
+    <insert id="insertSmsHist">
+		 insert into cm_short_msg(
+            YYYYMMDD,
+            HHMMSS,
+            CELL_NO,
+            SHORT_MSG,
+            PLAN_DATE,
+            SND_FLAG,
+            SEND_NO,
+            CELL_NAME,
+            SEND_USER_ID
+            ) values (
+            #{yyyymmdd},
+            #{hhmmss},
+            #{cellNo},
+            #{contents},
+            SYSDATE,
+            '1',
+            #{sendNo},
+            #{cellName},
+            #{sendUserId}
+        )
+	</insert>
+
+</mapper>

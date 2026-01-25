@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportInciAttNatn.persistence.ReportInciAttNatnMapper">
+	<resultMap type="com.klid.webapp.main.rpt.reportInciAttNatn.dto.ReportInciAttNatnDto" id="resultReportList">
+		<result property="nation_cd" 					column="nation_cd"/>
+		<result property="name" 					column="nation_nm"/>
+		<result property="y" 					column="cnt"/>
+	</resultMap>
+
+    <select id="selectAttNatnList" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2' or sAuthMain == 'AUTH_MAIN_1'"><!-- 완료 -->
+				SELECT * FROM
+				(
+					SELECT b.nation_cd, b.nation_nm, count(a.att_natn_cd) cnt
+					FROM (
+							select att_natn_cd
+							from tbzledge D
+							WHERE
+							1=1
+							  AND
+							  EXISTS(
+								SELECT sub_cd
+								FROM tsminst_leaf tsminst
+								WHERE tsminst.sub_cd= d.dmg_inst_cd
+								AND inst_cd = #{instCd}
+								AND sub_cd NOT IN (
+								SELECT com_code2
+								FROM COMM_CODE
+								WHERE com_code1 = '4002'
+								AND code_lvl = '2')
+								AND sub_cd  <![CDATA[ <> ]]> 1200000)
+								AND inci_no LIKE 'CT%'
+								AND length(inci_no) <![CDATA[ < ]]> 16
+								AND TO_DATE(${dateType},'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE( #{endDt},'yyyymmddhh24miss')+1
+							AND inci_ttl not like '%훈련%'
+							AND inci_ttl not like '%확인%'
+					        AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+						  ) a,
+						  (
+							SELECT nation_cd, nvl(kr_nm,nation_nm) as nation_nm
+							FROM tsmnation
+							WHERE NATION_CD <![CDATA[ <> ]]> 225
+						  ) b
+						  WHERE a.att_natn_cd(+) = b.nation_cd
+						  GROUP BY b.nation_cd, b.nation_nm
+						  ORDER BY cnt DESC, NATION_CD asc
+				)
+				WHERE rownum <![CDATA[ <= ]]>  #{topSize}
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"><!-- 완료 -->
+					SELECT * FROM
+					(
+					SELECT b.nation_cd, b.nation_nm, count(a.att_natn_cd) cnt
+					FROM (
+					SELECT ATT_NATN_CD
+					FROM TBZLEDGE
+					WHERE 1=1
+					AND (
+					INCI_TRNS_RCPT_INST_CD IN (
+					1100000,
+					#{instCd}
+					)
+					OR INCI_TRNS_RCPT_SIDO_INST_CD IN (
+					SELECT
+					inst_cd
+					FROM
+					tsminst
+					CONNECT BY
+					PRIOR inst_cd = pnt_inst_cd
+					START WITH
+					inst_cd = #{instCd}
+					)
+					OR DCL_INST_CD IN (#{instCd})
+					)
+					AND TO_DATE(${dateType},'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE( #{endDt},'yyyymmddhh24miss')+1
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND length(inci_no)=15
+					) a,
+					(
+					SELECT nation_cd, nvl(kr_nm,nation_nm) as nation_nm
+					FROM tsmnation
+					WHERE NATION_CD <![CDATA[ <> ]]> 225
+					) b
+					WHERE a.att_natn_cd(+) = b.nation_cd
+					GROUP BY b.nation_cd, b.nation_nm
+					ORDER BY cnt DESC, NATION_CD asc
+					)
+					WHERE rownum <![CDATA[ <= ]]>  #{topSize}
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"><!-- 완료 -->
+					SELECT * FROM
+					(
+					SELECT b.nation_cd, b.nation_nm, count(a.att_natn_cd) cnt
+					FROM (
+					SELECT ATT_NATN_CD
+					FROM TBZLEDGE
+					WHERE 1=1
+					AND TO_DATE(${dateType},'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE( #{endDt},'yyyymmddhh24miss')+1
+					AND INCI_TRNS_RCPT_SIDO_INST_CD = #{instCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					) a,
+					(
+					SELECT nation_cd,  nvl(kr_nm,nation_nm) as nation_nm
+					FROM tsmnation
+					WHERE NATION_CD <![CDATA[ <> ]]> 225
+					) b
+					WHERE a.att_natn_cd(+) = b.nation_cd
+					GROUP BY b.nation_cd, b.nation_nm
+					ORDER BY cnt DESC, NATION_CD asc
+					)
+					WHERE rownum <![CDATA[ <= ]]>  #{topSize}
+				</when>
+			</choose>
+		</if>
+    </select>
+
+</mapper>

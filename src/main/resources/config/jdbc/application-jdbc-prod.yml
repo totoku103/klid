@@ -1,0 +1,7 @@
+spring:
+  config:
+    import: classpath:config/jdbc/application-jdbc.yml
+  datasource:
+    url: jdbc:oracle:thin:@10.1.2.99:1521:FREE
+    username: ENC(ToqoRHZNArDPGJfSyt63Pg==)
+    password: ENC(ToqoRHZNArDPGJfSyt63Pg==)

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.webdash.center.persistence.WebDashCenterMapper">
+    <select id="selectAttNationTop5" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+      SELECT attCnt, nationCd, NVL(krNm,nationNm) AS nationNm FROM
+      (
+        SELECT
+          SUM(A.ATT_CNT)        AS attCnt,
+          A.NATION_CD           AS nationCd,
+          B.NATION_NM           AS nationNm,
+          B.KR_NM               AS krNm
+        FROM
+          HM_DASH_NT A
+        INNER JOIN
+          TSMNATION B ON A.NATION_CD = B.NATION_CD
+        WHERE
+          1=1
+        <if test="atype==1">
+            and 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+            AND TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test="atype==0">
+            and 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE-1, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+            AND TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+        </if>
+        GROUP BY A.NATION_CD, B.NATION_NM, B.KR_NM
+        ORDER BY ATTCNT DESC
+      )
+      WHERE ROWNUM <![CDATA[ <= ]]> 5
+    </select>
+
+  <select id="selectTypeChart" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+    SELECT  SUM_JSON, TO_CHAR(REG_TIME, 'fmHH24') AS regHh,  LOCAL_NM, ORG_NM
+        FROM HM_DASH_LC
+      <if test="atype==1">
+          WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '000000', 'YYYYMMDDHH24MISS')
+          AND TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '235959', 'YYYYMMDDHH24MISS')
+      </if>
+      <if test="atype==0">
+          WHERE 	REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE-1, 'YYYYMMDD') || '060000', 'YYYYMMDDHH24MISS')
+          AND TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '055959', 'YYYYMMDDHH24MISS')
+      </if>
+      <if test="sAuthMain=='AUTH_MAIN_2'">
+          AND 	LOCAL_NM = '유형총합' AND 	ORG_NM = '유형총합' AND level_type=1
+      </if>
+      <if test="sAuthMain=='AUTH_MAIN_3'">
+          AND 	LOCAL_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd} ) AND 	ORG_NM = '유형총합'
+      </if>
+      <if test="sAuthMain=='AUTH_MAIN_4'">
+          AND 	ORG_NM = (select inst_nm from tsminst where inst_cd = #{sInstCd})
+      </if>
+        ORDER BY   regHh
+    </select>
+    
+    <select id="selectTodayEvtCnt" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+    SELECT  
+    	REG_TIME, 
+    	LOCAL_NM, 
+    	SUM_JSON	AS sumJson
+     FROM HM_DASH_LC
+     WHERE 1=1
+    </select>
+    
+    <select id="selectYesterDayEvtCnt" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+    SELECT  
+    	REG_TIME, 
+    	LOCAL_NM, 
+    	SUM_JSON 	AS sumJson
+     FROM HM_DASH_LC
+     WHERE 1=1
+    </select>
+
+    <select id="selectEvtChart" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+        SELECT * FROM
+        (
+            SELECT
+              SUM_JSON ,
+              TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+              'today' as dayType
+            FROM HM_DASH_LC
+            WHERE 1=1
+            and REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '000000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '235959', 'yyyymmddhh24miss')
+            AND ORG_NM = '지역총합'
+            <if test="localNm != null and localNm != ''">
+                AND LOCAL_NM = #{localNm}
+            </if>
+
+            union all
+
+            SELECT
+              SUM_JSON ,
+              TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+              'yesterday' as dayType
+            FROM HM_DASH_LC
+            WHERE 1=1
+            AND REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE - 1, 'yyyymmdd') || '000000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE-1, 'yyyymmdd') || '235959', 'yyyymmddhh24miss')
+            AND ORG_NM = '지역총합'
+            <if test="localNm != null and localNm != ''">
+                AND LOCAL_NM = #{localNm}
+            </if>
+
+            union all
+
+            SELECT *
+            FROM
+            (
+                SELECT
+                  SUM_JSON,
+                  TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+                  'lastWeek' as dayType
+                FROM HM_DASH_LC
+                WHERE 1=1
+                AND REG_TIME BETWEEN TO_DATE( TO_CHAR( SYSDATE -7, 'yyyymmdd' ) || '000000', 'yyyymmddhh24miss' ) AND TO_DATE( TO_CHAR( SYSDATE - 7, 'yyyymmdd' ) || '235959', 'yyyymmddhh24miss' )
+                AND ORG_NM = '지역총합'
+                <if test="localNm != null and localNm != ''">
+                    AND LOCAL_NM = #{localNm}
+                </if>
+                ORDER BY REG_TIME DESC
+            )
+            WHERE 1=1
+        )
+        order by dayType, regHh,  length(SUM_JSON)
+    </select>
+
+    <select id="selectEvtAllChart" resultType="com.klid.webapp.webdash.center.dto.WebDashCenterDto">
+        SELECT * FROM
+        (
+        SELECT
+        SUM_JSON ,
+        TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+        'today' as dayType
+        FROM HM_DASH_LC
+        WHERE 1=1
+        and REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '000000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE, 'yyyymmdd') || '235959', 'yyyymmddhh24miss')
+        AND LOCAl_NM = '지역총합' and ORG_NM='지역총합'
+
+        union all
+
+        SELECT
+        SUM_JSON ,
+        TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+        'yesterday' as dayType
+        FROM HM_DASH_LC
+        WHERE 1=1
+        AND REG_TIME BETWEEN TO_DATE(TO_CHAR(SYSDATE - 1, 'yyyymmdd') || '000000', 'yyyymmddhh24miss') AND TO_DATE(TO_CHAR(SYSDATE-1, 'yyyymmdd') || '235959', 'yyyymmddhh24miss')
+        AND LOCAl_NM = '지역총합' and ORG_NM='지역총합'
+
+        union all
+
+        SELECT *
+        FROM
+        (
+        SELECT
+        SUM_JSON,
+        TO_CHAR(REG_TIME, 'fmHH24') as regHh,
+        'lastWeek' as dayType
+        FROM HM_DASH_LC
+        WHERE 1=1
+        AND REG_TIME BETWEEN TO_DATE( TO_CHAR( SYSDATE -7, 'yyyymmdd' ) || '000000', 'yyyymmddhh24miss' ) AND TO_DATE( TO_CHAR( SYSDATE - 7, 'yyyymmdd' ) || '235959', 'yyyymmddhh24miss' )
+        AND LOCAl_NM = '지역총합' and ORG_NM='지역총합'
+        ORDER BY REG_TIME DESC
+        )
+        WHERE 1=1
+        )
+        order by dayType, regHh,  length(SUM_JSON)
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.hist.userActHist.persistence.UserActHistMapper">
+
+    <resultMap type="com.klid.webapp.main.hist.userActHist.dto.UserActHistDto" id="getUserActHistResultMap">
+        <result property="seq"				column="seq"        />
+        <result property="guid"				column="guid"       />
+        <result property="actType"			column="act_type"   />
+        <result property="refTable"			column="ref_table"  />
+        <result property="regUserId"		column="reg_user_id"/>
+        <result property="regUserName"		column="reg_user_name"/>
+        <result property="regDate"			column="reg_date"   />
+        <result property="menuName"			column="menu_name"  />
+        <result property="parentMenuName"   column="parent_menu_name"  />
+        <result property="instNm"			column="inst_nm"  />
+        <result property="usrIp"			column="usr_ip"  />
+	</resultMap>
+    <select id="selectUserActHist" resultMap="getUserActHistResultMap">
+        SELECT
+          a.seq,
+          a.guid,
+          a.act_type,
+          a.ref_table,
+          a.reg_user_id,
+          a.reg_user_name,
+          a.reg_date,
+          b.menu_name,
+          b1.menu_name AS parent_menu_name,
+          d.inst_nm,
+          (
+		  SELECT
+            sub.usr_ip
+          FROM (
+					(
+				    SELECT usr_ip FROM usr_loginfo info
+				    WHERE info.usr_id = a.reg_user_id
+				    ORDER BY log_dt DESC
+			        )
+		  )sub
+		  WHERE rownum = 1
+	      ) AS usr_ip
+        FROM user_act_hist a
+        INNER JOIN com_menu b ON a.guid = b.guid AND b.menu_kind = 'MENU'
+        INNER JOIN com_menu b1 ON b.menu_page_no = b1.menu_no AND b1.menu_kind = 'PAGE'
+        LEFT JOIN comm_user c ON a.reg_user_id = c.user_id
+        INNER JOIN tsminst d ON c.inst_cd = d.inst_cd
+        WHERE 1=1
+        <if test="_parameter.containsKey('srchUserName') and srchUserName != ''">
+            AND a.reg_user_name LIKE '%' || #{srchUserName} || '%'
+        </if>
+        <if test="_parameter.containsKey('srchUserId') and srchUserId != ''">
+            AND a.reg_user_id LIKE '%' || #{srchUserId} || '%'
+        </if>
+        <if test="_parameter.containsKey('srchActType') and srchActType != ''">
+            AND a.act_type = #{srchActType}
+        </if>
+        <if test="period != null and period != ''">
+            AND a.reg_date BETWEEN #{date1} AND #{date2}
+        </if>
+        ORDER BY a.seq DESC
+    </select>
+
+	<insert id="addUserActHist">
+		<selectKey keyProperty="seq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(SEQ), 0) + 1 FROM USER_ACT_HIST
+		</selectKey>
+		INSERT INTO USER_ACT_HIST (
+			SEQ,
+			GUID,
+			ACT_TYPE,
+			REF_TABLE,
+			REG_USER_ID,
+			REG_DATE,
+            REG_USER_NAME
+		) VALUES(
+			#{seq},
+			#{guid},
+			#{actType},
+			#{refTable},
+			#{regUserId},
+			TO_CHAR(sysdate, 'yyyymmddhh24miss'),
+            #{regUserName}
+		)
+	</insert>
+
+    <insert id="insertFileDownloadHistory">
+        INSERT INTO FILE_DOWNLOAD_HIST (USER_ACT_HIST_SEQ, REASON, EXTRA_ATTR, FILE_NAME)
+        VALUES
+            (#{userActHistSeq}, #{reason}, #{extraAttr}, #{fileName})
+    </insert>
+</mapper>

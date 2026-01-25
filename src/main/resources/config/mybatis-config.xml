@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="logImpl" value="SLF4J"/>
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <!-- CGLIB은 deprecated, MyBatis 3.5+에서 Javassist가 기본값이며 mybatis jar에 내장됨 -->
+        <setting name="proxyFactory" value="JAVASSIST"/>
+        <setting name="mapUnderscoreToCamelCase" value="True"/>
+    </settings>
+</configuration>

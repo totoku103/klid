@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="912px"
+	 height="405px" viewBox="0 0 912 405" enable-background="new 0 0 912 405" xml:space="preserve">
+<g id="Layer_1">
+	<g id="BExtGridBG">
+		<g>
+			<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="456.02" y1="52.063" x2="456.02" y2="405.0005">
+				<stop  offset="0" style="stop-color:#000000;stop-opacity:0.3"/>
+				<stop  offset="1" style="stop-color:#000000;stop-opacity:0.5"/>
+			</linearGradient>
+			<path fill="url(#SVGID_1_)" d="M912.021,401.619c0,1.867-1.565,3.381-3.498,3.381H3.518c-1.931,0-3.497-1.514-3.497-3.381V55.444
+				c0-1.867,1.566-3.381,3.497-3.381h905.005c1.933,0,3.498,1.514,3.498,3.381V401.619z"/>
+			<path opacity="0.35" fill="#FFFFFF" d="M908.522,52.401H3.518c-1.931,0-3.497,1.515-3.497,3.383v0.677
+				c0-1.868,1.566-3.383,3.497-3.383h905.005c1.933,0,3.498,1.515,3.498,3.383v-0.677C912.021,53.916,910.455,52.401,908.522,52.401
+				z"/>
+		</g>
+		<g>
+			<path fill="#808080" d="M908.522,52.991c1.378,0,2.498,1.068,2.498,2.381v346.175c0,1.313-1.12,2.381-2.498,2.381H3.518
+				c-1.377,0-2.497-1.068-2.497-2.381V55.372c0-1.313,1.12-2.381,2.497-2.381H908.522 M908.522,51.991H3.518
+				c-1.931,0-3.497,1.514-3.497,3.381v346.175c0,1.867,1.566,3.381,3.497,3.381h905.005c1.933,0,3.498-1.514,3.498-3.381V55.372
+				C912.021,53.504,910.455,51.991,908.522,51.991L908.522,51.991z"/>
+		</g>
+	</g>
+	<g id="BExtGridTop" opacity="0.8">
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="456.0005" y1="88.792" x2="456.0005" y2="51.9707">
+			<stop  offset="0.9086" style="stop-color:#2B3990;stop-opacity:0"/>
+			<stop  offset="1" style="stop-color:#262262"/>
+		</linearGradient>
+		<path fill="url(#SVGID_2_)" d="M912,86.819c0,1.089-1.314,1.973-2.936,1.973H2.935C1.314,88.792,0,87.909,0,86.819V54.953
+			c0-1.089,1.314-2.982,2.935-2.982h906.129c1.621,0,2.936,2.112,2.936,3.201V86.819z"/>
+		<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="455.7954" y1="53.6836" x2="455.7954" y2="0">
+			<stop  offset="0" style="stop-color:#25347A;stop-opacity:0.992"/>
+			<stop  offset="0.086" style="stop-color:#5CC7FF"/>
+			<stop  offset="0.2673" style="stop-color:#48BCF3;stop-opacity:0.8017"/>
+			<stop  offset="0.4944" style="stop-color:#35B2E9;stop-opacity:0.5531"/>
+			<stop  offset="0.7331" style="stop-color:#2BACE3;stop-opacity:0.292"/>
+			<stop  offset="1" style="stop-color:#27AAE1;stop-opacity:0"/>
+		</linearGradient>
+		<polygon opacity="0.7" fill="url(#SVGID_3_)" points="869.334,0 42.908,0 0.344,53.684 911.246,53.684 		"/>
+		<g>
+			<linearGradient id="SVGID_4_" gradientUnits="userSpaceOnUse" x1="456.0005" y1="88.792" x2="456.0005" y2="51.9707">
+				<stop  offset="0.4731" style="stop-color:#13817D;stop-opacity:0"/>
+				<stop  offset="1" style="stop-color:#00AEEF"/>
+			</linearGradient>
+			<path fill="url(#SVGID_4_)" d="M909.064,53.971h-0.014c0.311,0.077,0.894,0.858,0.949,1.232v31.369
+				c-0.158,0.097-0.483,0.22-0.936,0.22H2.935c-0.452,0-0.777-0.123-0.935-0.22V54.785c0-0.008,0.131-0.814,0.935-0.814H909.064
+				 M909.064,51.971H2.935C0.969,51.971,0,53.692,0,54.781v32.038c0,1.089,1.314,1.973,2.935,1.973h906.129
+				c1.621,0,2.936-0.883,2.936-1.973V55.203C912,54.114,910.686,51.971,909.064,51.971L909.064,51.971z"/>
+		</g>
+		<linearGradient id="SVGID_5_" gradientUnits="userSpaceOnUse" x1="70.0327" y1="51.9453" x2="842.6328" y2="51.9453">
+			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0"/>
+			<stop  offset="0.5323" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+		</linearGradient>
+		
+			<line fill="none" stroke="url(#SVGID_5_)" stroke-width="3" stroke-miterlimit="10" x1="70.033" y1="51.945" x2="842.633" y2="51.945"/>
+	</g>
+	<g id="BExtGridBottom">
+		<linearGradient id="SVGID_6_" gradientUnits="userSpaceOnUse" x1="456.02" y1="364.9463" x2="456.02" y2="393.0586">
+			<stop  offset="0" style="stop-color:#3B3B3B;stop-opacity:0.35"/>
+			<stop  offset="1" style="stop-color:#808181"/>
+		</linearGradient>
+		<polygon fill="url(#SVGID_6_)" points="891.521,393.059 20.521,393.059 42.222,364.946 869.819,364.946 		"/>
+		<linearGradient id="SVGID_7_" gradientUnits="userSpaceOnUse" x1="456.021" y1="400.9688" x2="456.021" y2="393.0586">
+			<stop  offset="0" style="stop-color:#808080"/>
+			<stop  offset="1" style="stop-color:#3B3B3B"/>
+		</linearGradient>
+		<rect x="20.521" y="393.059" fill="url(#SVGID_7_)" width="871" height="7.91"/>
+		<linearGradient id="SVGID_8_" gradientUnits="userSpaceOnUse" x1="20.5205" y1="394.0469" x2="891.5205" y2="394.0469">
+			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0"/>
+			<stop  offset="0.5" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+		</linearGradient>
+		<rect x="20.521" y="393.059" fill="url(#SVGID_8_)" width="871" height="1.978"/>
+		<g opacity="0.2">
+			<rect x="20.521" y="399.979" fill="#FFFFFF" width="871" height="0.989"/>
+			<rect x="20.521" y="397.96" fill="#FFFFFF" width="871" height="0.988"/>
+			<rect x="20.521" y="395.982" fill="#FFFFFF" width="871" height="0.989"/>
+			<rect x="20.521" y="394.005" fill="#FFFFFF" width="871" height="0.988"/>
+		</g>
+		<polygon opacity="0.05" fill="#FFFFFF" points="42.188,364.946 20.521,393.059 517.943,393.059 429.061,364.946 		"/>
+	</g>
+	<g id="BExtGridTopBG">
+		<g>
+			<path fill="#22639D" d="M321.333,53.684c1.189,0.01,10.488,0.309,16.714,7.268c6.314,7.055,12.252,32.732,35.525,32.732h165.521
+				c23.277,0,29.213-25.678,35.523-32.732c6.229-6.959,15.523-7.258,16.717-7.268H321.333z"/>
+		</g>
+		<defs>
+			<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="321.333" y="53.684" width="270" height="40">
+				
+					<feColorMatrix  type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0" color-interpolation-filters="sRGB" result="source"/>
+			</filter>
+		</defs>
+		<mask maskUnits="userSpaceOnUse" x="321.333" y="53.684" width="270" height="40" id="SVGID_9_">
+			<g filter="url(#Adobe_OpacityMaskFilter)">
+				
+					<image overflow="visible" width="1142" height="184" xlink:href="866458D1.jpg"  transform="matrix(0.24 0 0 0.24 319.3325 51.6836)">
+				</image>
+			</g>
+		</mask>
+		<g opacity="0.7" mask="url(#SVGID_9_)">
+			<path fill="#47ACE5" d="M321.333,53.684c1.189,0.01,10.488,0.309,16.714,7.268c6.314,7.055,12.252,32.732,35.525,32.732h165.521
+				c23.277,0,29.213-25.678,35.523-32.732c6.229-6.959,15.523-7.258,16.717-7.268H321.333z"/>
+		</g>
+	</g>
+</g>
+<g id="BExtGridTitTxt">
+	<text transform="matrix(1 0 0 1 376.5 85.5)" fill="#FFFFFF" font-family="맑은 고딕" font-weight="bold" font-size="30">유형별 추이</text>
+</g>
+</svg>

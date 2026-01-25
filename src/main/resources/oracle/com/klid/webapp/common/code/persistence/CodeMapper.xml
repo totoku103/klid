@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.common.code.persistence.CodeMapper">
+
+    <resultMap type="com.klid.webapp.common.code.dto.CodeDto" id="resultCode">
+        <result property="comCode1" column="COM_CODE1"/>
+        <result property="comCode2" column="COM_CODE2"/>
+        <result property="comCode3" column="COM_CODE3"/>
+        <result property="codeName" column="CODE_NAME"/>
+        <result property="codeLvl" column="CODE_LVL"/>
+        <result property="flag1" column="FLAG1"/>
+        <result property="flag2" column="FLAG2"/>
+        <result property="codeCont" column="CODE_CONT"/>
+        <result property="useYn" column="USE_YN"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="trnsDt" column="TRNS_DT"/>
+        <result property="localCd" column="LOCAL_CD"/>
+        <result property="localNm" column="LOCAL_NM"/>
+        <result property="nationCd" column="NATION_CD"/>
+        <result property="nationNm" column="NATION_NM"/>
+        <result property="instCd" column="INST_CD"/>
+        <result property="instNm" column="INST_NM"/>
+        <result property="agentIp" column="AGENT_IP"/>
+        <result property="agtNm" column="AGT_NM"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.common.code.dto.CustUserDto" id="resultCustUser">
+        <result property="seqNo" column="SEQ_NO"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="custNm" column="CUST_NM"/>
+        <result property="custCellNo" column="CUST_CELL_NO"/>
+        <result property="custMailAddr" column="CUST_MAIL_ADDR"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="modDt" column="MOD_DT"/>
+        <result property="smsGroupSeq"  column="SMS_GROUP_SEQ"/>
+        <result property="smsGroupName" column="SMS_GROUP_NAME"/>
+    </resultMap>
+
+    <resultMap type="com.klid.webapp.common.code.dto.BoardMgmtDto" id="resultBoardMgmt">
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="guid" column="GUID"/>
+        <result property="fileExt" column="FILE_EXT"/>
+        <result property="fileSize" column="FILE_SIZE"/>
+        <result property="label" column="LABEL"/>
+        <result property="value" column="VALUE"/>
+    </resultMap>
+
+    <select id="selectDashTextCode" resultMap="resultCode">
+        SELECT com_code2, CODE_CONT FROM COMM_CODE WHERE COM_CODE1=#{comCode1} AND COM_CODE2=#{comCode2} AND USE_YN='Y'
+    </select>
+
+    <!-- 공통코드 리스트 조회
+        comCode1 - 대코드
+        comCode2 - 중코드
+        comCode3 - 소코드
+        codeLvl - 코드레벨
+    -->
+    <select id="selectCommonCode" resultMap="resultCode">
+        SELECT COM_CODE1, COM_CODE2, COM_CODE3, CODE_NAME, CODE_LVL,
+        FLAG1, FLAG2, CODE_CONT, USE_YN, TRNS_DT, REG_DT
+        FROM COMM_CODE
+        WHERE USE_YN = 'Y'
+        <if test="comCode1!=null">
+            AND COM_CODE1 = #{comCode1}
+        </if>
+        <if test="comCode2!=null">
+            AND COM_CODE2 = #{comCode2}
+        </if>
+        <if test="comCode3!=null">
+            AND COM_CODE3 = #{comCode3}
+        </if>
+        <if test="codeLvl > 0">
+            AND CODE_LVL = #{codeLvl}
+        </if>
+        ORDER BY COM_CODE2 ASC
+    </select>
+    <!-- 지역코드 리스트 -->
+    <select id="selectLocalCode" resultMap="resultCode">
+        SELECT LOCAL_CD, LOCAL_NM
+        FROM TSMLOCAL
+        WHERE LOCAL_CD <![CDATA[ <> ]]> -1
+    </select>
+    <!-- 국가코드 리스트 -->
+    <select id="selectNationCode" resultMap="resultCode">
+        SELECT NATION_CD, NATION_NM
+          FROM TSMNATION
+         ORDER BY NATION_NM ASC
+    </select>
+    <!-- 기관코드 리스트 -->
+    <select id="selectInstCode" resultMap="resultCode">
+        SELECT INST_CD, INST_NM, LOCAL_CD
+        FROM TSMINST
+        WHERE USE_YN <![CDATA[ <> ]]> 'N'
+        <if test="authGrp">
+            AND INST_CD  = ?
+        </if>
+        <if test="">
+            AND (INST_LEVEL = 1 OR INST_LEVEL = 0)
+            AND INST_CD NOT IN (SELECT COM_CODE2 FROM COMM_CODE
+            WHERE COM_CODE1 = '4002'
+            AND CODE_LVL = '2')
+        </if>
+        ORDER BY INST_CD ASC
+    </select>
+    <!-- 사고유형 & 인지기관 전체 갯수
+        comCode1 - 사고유형 & 인지지관 구분 코드
+        codeName - 사고유형명 & 기관명
+    -->
+    <select id="selectOrganTotalCnt" resultMap="resultCode">
+        SELECT COUNT(*) TOTALCNT
+        FROM COMM_CODE
+        WHERE COM_CODE1 = #{comCode} AND CODE_LVL = '2'
+        <if test="codeName!=null">
+            AND code_name like '%' || #{codeName} || '%'
+        </if>
+    </select>
+    <!-- 사고유형 & 인지기관 목록 조회
+        curPage - 현재페이지
+        listSize - 리스트에 보여줄 갯수
+        comCode1 - 사고유형 & 기관 구분 코드
+        codeName - 사고유형명 & 기관명
+    -->
+    <select id="selectAcdtOrganList" resultMap="resultCode">
+        SELECT ROWNUM, COM_CODE2, CODE_NAME, CODE_CONT, USE_YN
+        FROM (SELECT FLOOR((ROWNUM -1) / #{listSize} + 1) PAGE, COM_CODE2, CODE_NAME, CODE_CONT, USE_YN
+        FROM (SELECT TO_NUMBER(COM_CODE2) COM_CODE2, CODE_NAME, NVL(CODE_CONT, ' ') CODE_CONT, USE_YN
+        FROM COMM_CODE
+        WHERE COM_CODE1 = #{comCode1} AND CODE_LVL = '2'
+        <if test="codeName!=null">
+            AND CODE_NAME LIKE '%' || #{codeName} || '%'
+        </if>
+        ORDER BY use_yn DESC, com_code2
+        )
+        WHERE ROWNUM <![CDATA[ <= ]]> #{listSize} * #{curPage}
+        )
+        WHERE page = #{curPage}
+    </select>
+    <!-- 사고유형 & 인지기관 상세 조회
+        comCode1 - 사고유형 & 기관 구분 코드
+        comCode2 - 사고유형 & 기관 코드
+    -->
+    <select id="selectAcdtOrganDetail" resultMap="resultCode">
+        SELECT COM_CODE2, CODE_NAME,  NVL(CODE_CONT, ' ') CODE_CONT, USE_YN
+	    FROM COMM_CODE
+	    WHERE COM_CODE1 = #{comCode1} AND COM_CODE2 = #{comCode2}
+    </select>
+
+    <select id="getCodeList" resultMap="resultCode">
+        SELECT
+        COM_CODE1,
+        COM_CODE2,
+        COM_CODE3,
+        CODE_NAME,
+        CODE_LVL,
+        FLAG1,
+        FLAG2,
+        CODE_CONT,
+        USE_YN,
+        TO_CHAR(TO_DATE(TRNS_DT, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') TRNS_DT,
+        TO_CHAR(TO_DATE(REG_DT, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') REG_DT
+        FROM COMM_CODE
+        WHERE 1=1
+        <if test="comCode1!=null">
+            AND COM_CODE1 = #{comCode1}
+        </if>
+        <if test="comCode2!=null">
+            AND COM_CODE2 = #{comCode2}
+        </if>
+        <if test="comCode3!=null">
+            AND COM_CODE3 = #{comCode3}
+        </if>
+        <if test="codeLvl > 0">
+            AND CODE_LVL = #{codeLvl}
+        </if>
+        <choose>
+            <when test="sortType == 'regDt'">
+                ORDER BY REG_DT DESC
+            </when>
+            <when test="sortType == 'nameRise'">
+                ORDER BY CODE_NAME ASC
+            </when>
+            <otherwise>
+                ORDER BY COM_CODE2 ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="addCode">
+        <selectKey keyProperty="comCode1" resultType="int" order="BEFORE">
+            <choose>
+                <when test="codeLvl == 1">
+                    SELECT	NVL(MAX(COM_CODE1), 0) + 1 FROM COMM_CODE
+                </when>
+                <otherwise>
+                    SELECT	#{comCode1} FROM DUAL
+                </otherwise>
+            </choose>
+        </selectKey>
+        INSERT INTO
+        COMM_CODE
+        (
+        COM_CODE1,
+        COM_CODE2,
+        COM_CODE3,
+        CODE_NAME,
+        CODE_LVL,
+        FLAG1,
+        FLAG2,
+        CODE_CONT,
+        USE_YN,
+        REG_DT
+        )
+        VALUES
+        (
+        #{comCode1},
+        #{comCode2},
+        <choose>
+            <when test="codeLvl == 3">
+                (
+                SELECT	NVL(MAX(COM_CODE3), 0) + 1 FROM COMM_CODE WHERE CODE_LVL =3 AND COM_CODE1 = #{comCode1} AND COM_CODE2 = #{comCode2}
+                )
+                ,
+            </when>
+            <otherwise>
+                #{comCode3},
+            </otherwise>
+        </choose>
+        #{codeName},
+        #{codeLvl},
+        #{flag1},
+        #{flag2},
+        #{codeCont},
+        'Y',
+        TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+        )
+    </insert>
+
+    <update id="editCode" >
+        UPDATE COMM_CODE SET
+        CODE_NAME = #{codeName}
+        <if test="codeCont != null">
+            ,USE_YN   = #{useYn}
+        </if>
+        <if test="codeCont != null">
+            ,CODE_CONT = #{codeCont}
+        </if>
+        <if test="comCode2 != null">
+            ,TRNS_DT  = TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+        </if>
+
+        WHERE 1=1
+        AND COM_CODE1 = #{comCode1}
+        <if test="comCode2 != null">
+            AND COM_CODE2 = #{comCode2}
+        </if>
+        <if test="codeLvl != null">
+            AND CODE_LVL = #{codeLvl}
+        </if>
+    </update>
+
+    <select id="getCodeDuplCnt" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM COMM_CODE
+        WHERE 1=1
+        AND CODE_NAME = #{codeName}
+        <if test="comCode1 != null">
+            AND COM_CODE1 = #{comCode1}
+        </if>
+        <if test="comCode2 != null">
+            AND COM_CODE2 = #{comCode2}
+        </if>
+        <if test="comCode3 != null">
+            AND COM_CODE3 = #{comCode3}
+        </if>
+        <if test="codeLvl > 0">
+            AND CODE_LVL = #{codeLvl}
+        </if>
+    </select>
+
+    <delete id="delCode" >
+        DELETE
+	 	FROM	COMM_CODE
+	 	WHERE	COM_CODE1 = #{comCode1}
+	 	AND COM_CODE2 = #{comCode2}
+    </delete>
+
+    <select id="getCustUserList" resultMap="resultCustUser">
+        SELECT a.SEQ_NO ,
+               a.USER_ID,
+               CUST_NM,
+               NVL(a.CUST_CELL_NO,' ') AS CUST_CELL_NO,
+               a.CUST_MAIL_ADDR,
+               a.REG_DT,
+               a.MOD_DT,
+               a.SMS_GROUP_SEQ,
+               sub.SMS_GROUP_NAME
+        FROM CUST_USER_MGMT a
+        INNER JOIN (
+            SELECT
+              sms_group_seq,
+              sms_group_name
+            FROM sms_group
+            WHERE 1=1
+            START WITH sms_group_seq = #{smsGroupSeq}
+            CONNECT BY PRIOR sms_group_seq = sms_parent_group_seq
+        )sub on a.sms_group_seq = sub.sms_group_seq
+        WHERE a.USER_ID = #{userId}
+    </select>
+
+    <insert id="addCustUser">
+        INSERT INTO
+        CUST_USER_MGMT
+        (
+        SEQ_NO,
+        USER_ID,
+        CUST_NM,
+        CUST_CELL_NO,
+        CUST_MAIL_ADDR,
+        REG_DT,
+        SMS_GROUP_SEQ
+        )
+        VALUES
+        (
+        SEQ_CUST_USER_MGMT.NEXTVAL,
+        #{userId},
+        #{custNm},
+        #{custCellNo},
+        #{custMailAddr},
+        TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+        #{smsGroupSeq}
+        )
+    </insert>
+
+    <update id="updateCustUser" >
+        UPDATE CUST_USER_MGMT SET
+        CUST_NM = #{custNm}
+        ,CUST_CELL_NO = #{custCellNo}
+        ,CUST_MAIL_ADDR = #{custMailAddr}
+        ,MOD_DT = TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+        ,SMS_GROUP_SEQ = #{smsGroupSeq}
+        WHERE
+        USER_ID=#{userId}
+        AND SEQ_NO=#{seqNo}
+    </update>
+
+    <update id="deleteCustUser" >
+        DELETE
+	 	FROM	CUST_USER_MGMT
+	 	WHERE	USER_ID = #{userId}
+	 	AND SEQ_NO = #{seqNo}
+    </update>
+
+    <select id="selectBoardMgmtList" resultMap="resultBoardMgmt">
+        SELECT MENU_NAME, GUID, FILE_EXT, FILE_SIZE
+        FROM COM_MENU
+        WHERE SITE_NAME='Klid' and IS_WEBUSE=1 and IS_FILEUSE=1
+        ORDER BY MENU_NAME
+    </select>
+
+    <update id="updateBoardMgmt" >
+        UPDATE COM_MENU SET
+          FILE_EXT = #{fileExt}
+          ,FILE_SIZE = #{fileSize}
+        WHERE
+          GUID=#{guid}
+    </update>
+
+    <select id="selectSurveyType" resultMap="resultCode">
+        SELECT
+            COM_CODE1,
+            COM_CODE2,
+            COM_CODE3,
+            CODE_NAME,
+            CODE_LVL,
+            FLAG1,
+            FLAG2,
+            CODE_CONT,
+            USE_YN,
+            TRNS_DT,
+            REG_DT
+        FROM COMM_CODE
+        WHERE
+          USE_YN = 'Y'
+        AND COM_CODE1 = 4007
+        AND CODE_LVL = 2
+        ORDER BY COM_CODE1 ASC
+    </select>
+
+    <select id="selectSurveyExam" resultMap="resultCode">
+        SELECT
+            COM_CODE1,
+            COM_CODE2,
+            COM_CODE3,
+            CODE_NAME,
+            CODE_LVL,
+            FLAG1,
+            FLAG2,
+            CODE_CONT,
+            USE_YN,
+            TRNS_DT,
+            REG_DT
+        FROM COMM_CODE
+        WHERE
+        USE_YN = 'Y'
+        AND CODE_LVL = 1
+        AND FLAG1 = 'survey'
+        ORDER BY COM_CODE1 ASC
+    </select>
+
+    <select id="selectBoardMgmt" resultMap="resultBoardMgmt">
+        SELECT CODE_NAME AS LABEL, COM_CODE2 AS VALUE
+        FROM COMM_CODE
+        WHERE USE_YN = 'Y'
+        <if test="comCode1!=null">
+            AND COM_CODE1 = #{comCode1}
+        </if>
+        <if test="comCode2!=null">
+            AND COM_CODE2 = #{comCode2}
+        </if>
+        <if test="comCode3!=null">
+            AND COM_CODE3 = #{comCode3}
+        </if>
+        <if test="codeLvl > 0">
+            AND CODE_LVL = #{codeLvl}
+        </if>
+        ORDER BY COM_CODE2 ASC
+    </select>
+
+    <select id="detailBoardMgmtList" resultMap="resultBoardMgmt">
+        SELECT
+          MENU_NAME,
+          GUID,
+          FILE_EXT,
+          FILE_SIZE
+        FROM COM_MENU
+        WHERE
+          SITE_NAME ='Klid'
+        AND IS_WEBUSE = 1
+        AND IS_FILEUSE = 1
+        AND GUID = #{guid}
+    </select>
+
+    <select id="getCodeFilePath" resultMap="resultCode">
+        SELECT
+          COM_CODE3
+        FROM COMM_CODE
+        WHERE
+          COM_CODE1=3002 AND
+          CODE_LVL=2 AND
+          COM_CODE2=#{comCode2}
+    </select>
+
+    <select id="selectNoticeSrcType" resultMap="resultCode">
+        SELECT
+        COM_CODE1,
+        COM_CODE2,
+        COM_CODE3,
+        CODE_NAME,
+        CODE_LVL,
+        FLAG1,
+        FLAG2,
+        CODE_CONT,
+        USE_YN,
+        TRNS_DT,
+        REG_DT
+        FROM COMM_CODE
+        WHERE
+        USE_YN = 'Y'
+        AND COM_CODE1 = 4021
+        AND CODE_LVL = 2
+        ORDER BY CAST(COM_CODE2 AS INT) ASC
+    </select>
+
+    <select id="getCustUserRegCnt" resultType="int">
+          select
+              count(1)
+          from cust_user_mgmt
+          where
+          1=1
+          and user_id = #{sUserId}
+          and reg_dt BETWEEN TO_CHAR(SYSDATE -1/24, 'YYYYMMDDHH24MISS') AND TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+    </select>
+
+</mapper>

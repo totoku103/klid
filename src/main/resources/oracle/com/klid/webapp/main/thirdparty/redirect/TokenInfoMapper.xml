@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.thirdparty.redirect.persistence.TokenInfoMapper">
+    <insert id="insertToken">
+        insert into TOKEN_INFO
+            (IDX, USER_ID, CLIENT_IP, SYSTEM_TYPE, TOKEN, EXPIRED_AT, STATUS)
+        values (SEQ_TOKEN_INFO.nextval, #{userId}, #{clientIp}, #{systemType}, #{token}, #{expiredAt}, #{status})
+    </insert>
+
+    <select id="selectActiveAndNotUsedTokenByToken"
+            resultType="com.klid.webapp.main.thirdparty.redirect.dto.SimpleTokenInfoDto">
+        SELECT IDX,
+               USER_ID,
+               CLIENT_IP,
+               SYSTEM_TYPE,
+               TOKEN,
+               CREATED_AT,
+               EXPIRED_AT,
+               STATUS,
+               IS_USED,
+               UPDATED_AT
+        FROM TOKEN_INFO
+        WHERE TOKEN = #{token}
+          AND STATUS = 'ACTIVE'
+          AND IS_USED = 'N'
+    </select>
+
+    <update id="updateOnlyExpiredByToken">
+        UPDATE TOKEN_INFO
+        SET STATUS     = 'EXPIRED',
+            EXPIRED_AT = SYSDATE,
+            UPDATED_AT  = SYSDATE
+        WHERE TOKEN = #{token}
+          AND STATUS = 'ACTIVE'
+          AND IS_USED = 'N'
+    </update>
+
+    <update id="updateExpiredAndUsedByToken">
+        UPDATE TOKEN_INFO
+        SET STATUS     = 'EXPIRED',
+            IS_USED    = 'Y',
+            EXPIRED_AT = SYSDATE,
+            UPDATED_AT  = SYSDATE
+        WHERE TOKEN = #{token}
+          AND STATUS = 'ACTIVE'
+          AND IS_USED = 'N'
+    </update>
+</mapper>

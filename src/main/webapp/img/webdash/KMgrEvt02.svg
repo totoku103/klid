@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="163px"
+	 height="80px" viewBox="0 0 163 80" enable-background="new 0 0 163 80" xml:space="preserve">
+<g id="KMgrEvtBG">
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.5" y1="40" x2="162.5" y2="40">
+			<stop  offset="0" style="stop-color:#424242"/>
+			<stop  offset="0.5" style="stop-color:#808080"/>
+			<stop  offset="1" style="stop-color:#424242"/>
+		</linearGradient>
+		<rect x="0.5" y="0.5" fill="url(#SVGID_1_)" width="162" height="79"/>
+		<path fill="#141414" d="M162,1v78H1V1H162 M163,0H0v80h163V0L163,0z"/>
+	</g>
+	<rect x="3.128" y="3.583" opacity="0.7" stroke="#E6E6E6" stroke-miterlimit="10" width="156.745" height="73.168"/>
+	<rect x="4.069" y="4.366" opacity="0.4" fill="#FF0000" width="154.863" height="28.44"/>
+</g>
+<g id="EvtTxt">
+	<rect x="6.5" y="7.667" fill="none" width="150.25" height="25.833"/>
+	<text transform="matrix(1 0 0 1 22.7578 26.981)" fill="#FFFFFF" font-family="맑은 고딕" font-size="22">고위협 공격</text>
+</g>
+</svg>
+

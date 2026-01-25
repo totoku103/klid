@@ -1,0 +1,28 @@
+# Third Party Common Settings
+app:
+  third-party:
+    header:
+      api:
+        key: CTRS
+        secret: cl9OJ7SQ/oEaIVNtQ62eu6UaKr7/ofH9alJp9iyWmC/tblThpK6lQBR+bmqnKaCG
+    seed:
+      cbc:
+        key: i+Nd7+lwxDcwQ4xqVDEXnIMnte7DE2ulI3r4pXkx+rl7m5cXjx6kQIf9/6zYMtw5
+    hmac:
+      key: BuL74HCYcPg4UQUdQKsH6V8d6viaEuv/iXyE8ks31WgrOUhNonmlqWBM6tZ2hqlw7qRRkTIWVqC3g2s21pVMbKeGwv5vWponZsXEkiOIG5M=
+
+  vms:
+    url:
+      rest: /API/UserInfoController
+      link:
+        policy: /Pages/Privacy/PrivacyMenu/PrivacyChange.aspx
+      redirect:
+        signup: /Management/SignUp/SignUpStandalone.aspx?mode=account_signup
+
+  ctss:
+    url:
+      rest: /API/UserInfoController
+      link:
+        policy: /Pages/Privacy/PrivacyMenu/PrivacyChange.aspx
+      redirect:
+        signup: /Ctss/Management/SignUp/SignUpStandalone.aspx?mode=account_signup

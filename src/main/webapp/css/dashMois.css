@@ -1,0 +1,159 @@
+body, html {
+	background: #FFF;
+	font-size: 13px;
+	font-family: Malgun Gothic,'맑은고딕',Verdana, Helvetica, Sans-Serif;
+	margin: 0;
+	padding: 0;
+	color: #444;
+	width: 100%;
+	height: 100%; 
+	overflow: hidden;
+	box-sizing:border-box;
+}
+body.wait *, body.wait {cursor: progress !important;}
+
+/** scale begin */
+body {overflow: hidden}
+div#dashMain {
+	width: 1920px; height: 1080px;
+	transform-origin: top left;
+	-ms-transform-origin: top left;
+	object-fit: cover;
+}
+/** scale end */
+
+table { width: 100%; border: 1px; border-spacing: 0px;}
+select { border: 1px solid #ccc; padding: 2px; font-size: 12px; color: #444; font-family: "맑은 고딕", dotum, "Trebuchet MS", Verdana, Helvetica,Sans-Serif;}
+img {border: 0;vertical-align: middle;}
+ul, li {list-style: none; padding: 0; margin: 0;}
+
+/*============
+공통 요소
+=============*/
+body {background: url('../img/webdash/BackKlid1Admin.jpg') no-repeat;}
+.AllTitle { margin:0 auto; background: url('../img/webdash/titleBg.png') no-repeat; width:1166px; height: 46px; line-height: 46px; text-align: center; font-size:34px; font-weight:bold; color:#4df4ff; letter-spacing: -0.5px;}
+
+/*==============================
+홈페이지 위변조 및 모니터링 현황
+===============================*/
+#wrap { width:1920px; height: 1080px; padding: 34px 12px 12px 12px;  box-sizing: border-box;}
+#wrap .bigBox { box-sizing:border-box; border:1px solid #1a6386; float:left;}
+#wrap .bigBox .bnTit {margin: auto; width:553px; height:39px; text-align: center; font-size:28px; color:#78d1ff; font-weight:bold;}
+#leftbn { width:870px; height:980px; margin-right: 12px; background: url('../img/webdash/leftBottom.png') no-repeat bottom center;}
+#rightbn {width:1014px; height:980px; background: url('../img/webdash/map.svg') no-repeat top center; position:relative;}
+#leftbn .bnTit {background: url('../img/webdash/stitleBg.png') no-repeat;}
+#rightbn .bnTit {background: url('../img/webdash/stitleBg.png') no-repeat;}
+
+.bnSection { width:100%; height: 900px; box-sizing: border-box; padding:20px 30px;}
+.panelBox { width:162px; height:85px; line-height:33px; background: url('../img/webdash/panelBox1.svg') no-repeat center center; text-align:center; font-size:14px; color:#fff; flex-basis: 25%;}
+.panelBoxTitle { line-height:33px; text-align:center; font-size:14pt; fill:#fff; flex-basis: 25%;}
+.rightIndex { position:absolute; bottom:20px; right:20px; width:214px; height:170px; background:url("../img/webdash/MHpgIndex.svg") no-repeat;}
+
+/*==============================
+지방자치단체 사이버위협 대응현황
+===============================*/
+#cyberSection {background: url("../img/webdash/BackKlid2Admin.jpg") no-repeat!important;}
+#wrap .cyberWrap {position: relative; width:1920px; height: 1033px; box-sizing:border-box; padding: 33px 12px 0 12px; position: relative;}
+#wrap .gridBox {box-sizing:border-box; border:1px solid #a9a9a9; border-radius: 5px;}
+
+.leftIndex { position:absolute; left:0; top:0; width:408px; height:128px; background:url("../img/webdash/leftIndex.svg") no-repeat;}
+.panelBox2 { width:151px; height:87px; line-height:45px; text-align:center; font-size:22px; color:#353535; font-weight: bold;} /*background: url("../img/webdash/manualBox.svg") no-repeat center center;*/
+
+.gridTit { margin: auto; width:380px; height:40px; line-height: 40px; background: url("../img/webdash/gridTit.svg") no-repeat; text-align: center; font-size:25px; font-weight: bold; color:#fff;}
+
+#rightSection { position:absolute; top:130px; right:50px; width:650px; height:820px;}
+#auto { width:650px; height:300px; text-align: center; line-height:405px;}
+#manual { width: 650px; height:470px; background: url("../img/webdash/gridBottom.svg") no-repeat center bottom; text-align: center;}
+.gridTop { margin: auto; width:646px; height:50px; background:url("../img/webdash/gridTop.svg") no-repeat;}
+.mGrid { margin: 15px auto 0; width:620px; height:374px;}
+
+/*==============================
+전자정부 사이버보안 종합현황
+===============================*/
+/*공통*/
+#allStatusGrid {width:100%!important; margin:auto!important;}
+#allStatusGrid  > div {margin-bottom:30px; }
+#allStatusGrid .gridTit {
+	text-align:left;
+	width:auto; height:32px;
+	line-height:32px;
+	color:#6ccdff;
+	font-size:20px;
+	padding-left:15px;
+	margin-bottom: 5px;
+	background:url('../img/webdash/bullet.svg') no-repeat left center;
+}
+
+#allStatusGrid table {box-sizing:border-box; table-layout:fixed;}
+div[class^="statusGrid"] {width:100%;}
+div[class^="statusGrid"] th, tr, td {height:30px; box-sizing:border-box; padding:0; font-size:18px; color:#fff;}
+div[class^="statusGrid"] td {text-align:center; border-top:1px solid #bbbbbb; border-right:1px solid #bbbbbb;}
+div[class^="statusGrid"] td:last-child {border-right:none;}
+div[class^="statusGrid"] tr.backFill {background:rgba(21,21,21,1);}
+div[class^="statusGrid"] tr.backTrans {background:rgba(143,143,143,0.25);}
+
+/*근무 현황*/
+#workStatus .statusGrid tr:nth-child(1) {background:linear-gradient(#1c5177,#143f5e); color:#fff;}
+#workStatus .statusGrid tr:nth-child(1) th {border-right:1px solid #d8d8d8;}
+#workStatus .statusGrid tr:nth-child(1) th:last-child {border-right:none;}
+
+/*사이버위협 탐지/차단 현황*/
+#gridWidget {width:auto; height:260px; margin-bottom:30px;}
+#gridWidget > div {
+	position: relative;
+	width:938px;
+	height:260px;
+	border:1px solid #bdbdbd;
+	box-sizing: border-box;
+	text-align: center;
+	background:url("../img/webdash/gridTit.svg") no-repeat top center;
+	background-size: 385px 38px;
+}
+#gridWidget > div:first-child {float:left; margin-right: 20px;}
+
+#gridWidget > div:last-child {float:right;}
+.wtit {font-size:22px; font-weight:bold; color:#fff; line-height:38px;}
+
+#gridWidget .graphChart {position:absolute; top:0; left:0; width:936px; height:258px;}
+
+#actionStatus .statusGrid tr:nth-child(1) {color:#fff;}
+#actionStatus .statusGrid tr:nth-child(1) th {border-right:1px solid #bdbdbd;}
+#actionStatus .statusGrid tr:nth-child(1) th:last-child {border-right:none;}
+th[data-info~="prpl"] {background:#36254b; color:#fff;}
+th[data-info~="grn"] {background:#273514; color:#fff;}
+th[data-info~="org"] {background:#805305; color:#fff;}
+td[data-info~="prpl"] {background:#36254b; color:#fff;}
+td[data-info~="grn"] {background:#273514; color:#fff;}
+td[data-info~="org"] {background:#805305; color:#fff;}
+
+/*전자정부*/
+#elecGovernment {height:150px;} /*margin-bottom 적용 가능하기 위해 추가함*/
+#elecGovernment > div {width:938px;}
+.networkStatus {float:left;}
+.issueStatus {float:right;}
+.networkStatus select {height:20px; padding:0;}
+
+#elecGovernment .statusGrid tr:nth-child(1) {background:#0a73a7; color:#fff;}
+#elecGovernment .statusGrid tr:nth-child(1) th {border-right:1px solid #d8d8d8;}
+#elecGovernment .statusGrid tr:nth-child(1) th:last-child {border-right:none;}
+#elecGovernment #issueGrid  tr:nth-child(1) th {background:linear-gradient(#1c5177,#143f5e);}
+#elecGovernment #issueGrid  tr:nth-child(3) td {background:#5a6974;}
+#elecGovernment #issueGrid  tr:nth-child(3) td:first-child {background:none;}
+
+/*상황전파 현황, 보안동향*/
+#boardStatus {clear:both; width:auto; height:80px;} /*margin-bottom 적용 가능하기 위해 추가함*/
+#boardStatus > div {width:938px; height:80px; background:url("../img/webdash/allBoardGrid.svg") no-repeat; position:relative;}
+#boardStatus .b_Tit {width:310px; height:80px; line-height:80px; text-align: center; font-size:23px; color:#fff; font-weight:bold;}
+#boardStatus  .brdTxtArea {position:absolute; top:6px; left:345px; line-height:34px; font-size:18px; color:#fff; width:60%;}
+#boardStatus .inputTxt {width:570px; height:34px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+#boardStatus .l_board {float:left;}
+#boardStatus .r_board {float:right;}
+
+#mois3_region_svg text.cntText { font-family: "맑은 고딕"; font-size: 24pt; font-weight: bold; width: 45px; height: 37px; text-anchor: middle;}
+
+/*==============================
+사이버 위기경보
+===============================*/
+
+#CyberAlert {text-align: center;}
+#CyberAlert > div {margin-bottom:10px;}

@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Common">
+  
+  <!-- ==============================================
+  	 공통
+  =============================================== -->
+  <!-- 권한그룹 목록 조회 -->
+  <sql id="selectAuthGrpNos">
+  	(
+	SELECT DISTINCT SUB_NO
+	FROM		NT_CFG_LEAF
+	WHERE	GRP_NO IN (
+								SELECT 	NT_GRP_NO 
+								FROM 	COM_AUTH_GROUP_SUBGRP 
+								WHERE 	AUTH_GRP_NO = #{authGrpNo}
+								)
+	)
+  </sql>
+  
+  <!--=========================================== 
+  	좌측 그룹탭에 따른 장비목록을 조회
+  	필수 파라미터 :
+  		grpType		|	그룹타입				|	(DEFAULT | SEARCH)
+  		itemKind		|	트리노드타입			|	(GROUP or DEV_KIND2)
+  		sIp				|	검색조건IP			|	장비IP
+  		sDevName	|	검색조건장비명		|	장비명
+  		userId			|	세션사용자ID			|	로그인 사용자ID
+   ============================================ -->
+  <sql id="selectDevListForGrpTab">
+  	<choose>
+  		<when test="grpType == 'SEARCH'">
+  			SELECT	SDEV.GRP_NAME, DEV.*
+  			FROM		CM_DEV10 DEV, 
+  						(
+  						SELECT	SGRP.GRP_NAME, SDEV.*
+  						FROM		CM_SEARCH_DEV SDEV,
+  									(
+  									SELECT	*
+  									FROM		CM_SEARCH_GROUP
+  									<choose>
+  										<when test="itemKind == 'GROUP'">
+		  									START WITH GRP_NO = #{grpNo} AND USER_ID = #{userId}
+		  									CONNECT BY PRIOR GRP_NO = GRP_PARENT
+	  									</when>
+	  									<otherwise>
+	  										WHERE	USER_ID = #{userId}
+	  									</otherwise>
+  									</choose>
+  									) SGRP
+						WHERE	SDEV.GRP_NO = SGRP.GRP_NO
+						AND		SDEV.USER_ID = SGRP.USER_ID
+  						) SDEV
+			WHERE	DEV.MNG_NO = SDEV.MNG_NO
+			<if test="mngNo != null and mngNo != 0 and mngNo != -1">
+				AND DEV.MNG_NO = #{mngNo}
+			</if>
+			<if test="_parameter.containsKey('sIp') and sIp != null and sIp != ''">
+				AND	DEV.DEV_IP LIKE '%' || #{sIp} || '%'
+			</if>
+			<if test="_parameter.containsKey('sDevName') and sDevName != null and sDevName != ''">
+				AND	UPPER(NVL(DEV.USER_DEV_NAME, DEV.DEV_NAME)) LIKE '%' || UPPER(#{sDevName}) || '%'
+			</if>
+  		</when>
+  		<when test="grpType == 'DEFAULT'">
+  			SELECT	GRP.GRP_NAME, DEV.*
+  			FROM		CM_DEV10 DEV, NT_CFG_GROUP GRP
+  			WHERE	DEV.GRP_NO = GRP.GRP_NO
+  			<choose>
+  				<when test="itemKind == 'GROUP'">
+		  			AND	GRP.GRP_NO IN (SELECT DISTINCT SUB_NO FROM NT_CFG_LEAF WHERE GRP_NO = #{grpNo})
+	  			</when>
+	  			<otherwise>
+	  				<if test="grpNo != null and grpNo != 0 and grpNo != -1">
+	  					AND	DEV.MNG_NO = #{grpNo}
+	  				</if>
+	  			</otherwise>
+			</choose>
+			<if test="_parameter.containsKey('sIp') and sIp != null and sIp != ''">
+				AND	DEV.DEV_IP LIKE '%' || #{sIp} || '%'
+			</if>
+			<if test="_parameter.containsKey('sDevName') and sDevName != null and sDevName != ''">
+				AND	UPPER(NVL(DEV.USER_DEV_NAME, DEV.DEV_NAME)) LIKE '%' || UPPER(#{sDevName}) || '%'
+			</if>
+  		</when>
+  		<when test="grpType == 'IF'">
+  			SELECT	(SELECT GRP_NAME FROM NT_CFG_GROUP WHERE GRP_NO = IF.IF_GRP_NO) GRP_NAME, 
+  					DEV.*, IF.IF_IDX
+  			FROM		CM_DEV10 DEV, 
+  						(
+  						SELECT	IGRP.GRP_NO AS IF_GRP_NO, IF.*
+  						FROM		CM_DEV20 IF,
+  									(
+  									SELECT	*
+  									FROM	CM_IF_GROUP
+  									<if test="itemKind == 'GROUP'">
+  									WHERE	GRP_NO IN (SELECT GRP_NO FROM NT_CFG_GROUP WHERE GRP_TYPE = 8 START WITH GRP_NO = #{grpNo} CONNECT BY GRP_NO = GRP_PARENT)
+  									</if>
+  									) IGRP
+						WHERE	IF.MNG_NO = IGRP.MNG_NO
+						AND		IF.IF_IDX = IGRP.IF_IDX
+  						) IF
+			WHERE	DEV.MNG_NO = IF.MNG_NO
+			<if test="itemKind != 'GROUP'">
+				<if test="grpNo != null and grpNo != 0 and grpNo != -1">
+  					AND	DEV.MNG_NO = #{grpNo}
+  				</if>
+ 			</if>
+			<if test="_parameter.containsKey('sIp') and sIp != null and sIp != ''">
+				AND	DEV.DEV_IP LIKE CONCAT('%', #{sIp}, '%')
+			</if>
+			<if test="_parameter.containsKey('sDevName') and sDevName != null and sDevName != ''">
+				AND	UPPER(IF(ISNULL(DEV.USER_DEV_NAME) OR DEV.USER_DEV_NAME='', DEV.DEV_NAME, DEV.USER_DEV_NAME)) LIKE CONCAT('%', UPPER(#{sDevName}), '%')
+			</if>
+  		</when>
+  		<otherwise>
+  			SELECT	GRP.GRP_NAME, DEV.*
+  			FROM		CM_DEV10 DEV, NT_CFG_GROUP GRP
+  			WHERE	DEV.GRP_NO = GRP.GRP_NO
+  			AND		GRP.GRP_NO IN <include refid="Common.selectAuthGrpNos" />
+  		</otherwise>
+  	</choose>
+  </sql>
+  
+  <!--=========================================== 
+  	그룹트리에 따른 서버목록을 조회
+  	필수 파라미터 :
+  		itemKind		|	트리노드타입			|	(GROUP or DEV_KIND2)
+  		sIp				|	검색조건IP			|	서버IP
+  		sName		|	검색조건서버명		|	서버명
+   ============================================ -->
+  <sql id="selectSvrListForGrp">
+  	SELECT	*
+  	FROM		NT_CFG_SERVER
+  	WHERE	1 = 1
+  	<choose>
+  		<when test="itemKind == 'GROUP'">
+  			AND	GRP_NO IN (
+  									SELECT	GRP_NO
+  									FROM		(
+  												SELECT	*
+  												FROM		NT_CFG_GROUP
+  												WHERE	GRP_TYPE = 7
+  												START WITH GRP_NO = #{grpNo}
+  												CONNECT BY PRIOR GRP_NO = GRP_PARENT
+  												) X,
+  												(
+  												SELECT DISTINCT SUB_NO
+  												FROM		NT_CFG_LEAF
+  												WHERE	GRP_NO IN (
+  																			SELECT	NT_GRP_NO
+  																			FROM		COM_AUTH_GROUP_SUBGRP
+  																			WHERE	AUTH_GRP_NO = #{authGrpNo}
+  																			)
+  												) Y
+									WHERE	X.GRP_REF = Y.SUB_NO
+  									)
+  		</when>
+  		<otherwise>
+  			AND	SVR_NO = #{grpNo}
+  		</otherwise>
+  	</choose>
+  	<if test="_parameter.containsKey('sIp') and sIp != null and sIp != ''">
+		AND	IP LIKE '%' || #{sIp} || '%'
+	</if>
+	<if test="_parameter.containsKey('sName') and sName != null and sName != ''">
+		AND	UPPER (NVL (DISPLAY_NAME, NAME)) LIKE '%' || UPPER(#{sName}) || '%'
+	</if>
+  </sql>
+  
+  
+  <!-- ==============================================
+  	토폴로지
+  =============================================== -->
+  <sql id="selectMapUserId">
+  	(
+	SELECT	DECODE(ISSHARE, 1, PARENT_ID, USER_ID) 
+	FROM 	COM_USER 
+	WHERE 	USER_ID = #{userId}
+	)
+  </sql>
+  
+  
+  <!-- ==============================================
+  	TMS
+  =============================================== -->
+  <!-- 
+  	망그룹까지 조건이 걸리는 경우 (기존 3.0패키지)
+   -->
+   <sql id="tmsVW_RAW_PART">
+  	WITH	VW_RAW_PART
+  	AS		(
+  			<choose>
+  				<when test="grpNo == 3">
+		  			SELECT	*
+		  			FROM		VW_RAW A, CM_DEV10 B
+		  			WHERE	A.DEV_IP = B.DEV_IP
+		  			AND		GRP_NO IN <include refid="Common.selectAuthGrpNos"/>  				
+  				</when>
+  				<otherwise>
+  					SELECT	*
+  					FROM		VW_RAW
+  					WHERE	(DEV_IP, OUT_IF_NO) IN (
+  																SELECT	B.DEV_IP, A.IF_NO
+  																FROM		NT_CFG_NET A, CM_DEV10 B
+  																WHERE	A.MNG_NO = B.MNG_NO
+  																AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+  																AND		A.GRP_NO = #{grpNo}
+  																AND		A.IF_INOUT = 'O'
+  																)
+					UNION ALL
+					SELECT	*
+  					FROM		VW_RAW
+  					WHERE	(DEV_IP, IN_IF_NO) IN (
+  																SELECT	B.DEV_IP, A.IF_NO
+  																FROM		NT_CFG_NET A, CM_DEV10 B
+  																WHERE	A.MNG_NO = B.MNG_NO
+  																AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+  																AND		A.GRP_NO = #{grpNo}
+  																AND		A.IF_INOUT = 'I'
+  																)
+  				</otherwise>
+  			</choose>
+  			)
+  </sql>
+  
+  <sql id="tmsNT_RAW_PART">
+	WITH	NT_RAW_PART
+	AS		(
+			<choose>
+				<when test="grpNo == 3">
+					SELECT	*
+					<choose>
+						<when test="period == 'REALTIME'">	<!-- 실시간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+									WHERE	YYYYMMDDHH = #{date1}
+								</when>
+								<otherwise>
+									FROM		NT_RAW PARTITION (PART${partition}) A, CM_DEV10 B
+									WHERE	1 = 1
+								</otherwise>
+							</choose>
+							<choose>
+								<when test="startMM != endMM">
+									AND	MM BETWEEN #{startMM} AND #{endMM}
+									AND	MM != #{endMM}									
+								</when>
+								<otherwise>
+									AND	MM = #{startMM}
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>		<!-- 기간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+									WHERE	1 = 1
+									<choose>
+										<when test="date1 == date2 and startMM == endMM">
+											AND	YYYYMMDDHH = '${date1}${startMM}'
+										</when>
+										<otherwise>
+											AND	YYYYMMDDHH BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+											AND	YYYYMMDDHH != '${date2}${endMM}'
+										</otherwise>
+									</choose>
+								</when>
+								<otherwise>
+									FROM		NT_RAW_SHORT PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					AND	A.DEV_IP = B.DEV_IP
+					AND	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+				</when>
+				<otherwise>
+					SELECT	*
+					FROM		(
+								SELECT	*
+								<choose>
+									<when test="period == 'REALTIME'">
+										<choose>
+											<when test="dbVer == 'standard'">
+												FROM		${standardTable}
+											</when>
+											<otherwise>
+												FROM		NT_RAW PARTITION (PART${partition})
+											</otherwise>
+										</choose>
+									</when>
+									<otherwise>
+										<choose>
+											<when test="dbVer == 'standard'">
+												FROM		${standardTable}
+											</when>
+											<otherwise>
+												FROM		NT_RAW_SHORT PARTITION (PART${partition})
+											</otherwise>
+										</choose>
+									</otherwise>
+								</choose>
+								WHERE	(DEV_IP, OUT_IF_NO) IN (
+																			SELECT	B.DEV_IP, A.IF_NO
+																			FROM		NT_CFG_NET A, CM_DEV10 B
+																			WHERE	A.GRP_NO = #{grpNo}
+																			AND		A.MNG_NO = B.MNG_NO
+																			AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+																			AND		IF_INOUT = 'O'
+																			)
+								UNION ALL
+								SELECT	*
+								<choose>
+									<when test="period == 'REALTIME'">
+										<choose>
+											<when test="dbVer == 'standard'">
+												FROM		${standardTable}
+											</when>
+											<otherwise>
+												FROM		NT_RAW PARTITION (PART${partition})
+											</otherwise>
+										</choose>
+									</when>
+									<otherwise>
+										<choose>
+											<when test="dbVer == 'standard'">
+												FROM		${standardTable}
+											</when>
+											<otherwise>
+												FROM		NT_RAW_SHORT PARTITION (PART${partition})
+											</otherwise>
+										</choose>
+									</otherwise>
+								</choose>
+								WHERE	(DEV_IP, IN_IF_NO) IN (
+																			SELECT	B.DEV_IP, A.IF_NO
+																			FROM		NT_CFG_NET A, CM_DEV10 B
+																			WHERE	A.GRP_NO = #{grpNo}
+																			AND		A.MNG_NO = B.MNG_NO
+																			AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+																			AND		IF_INOUT = 'I'
+																			)
+								)
+					WHERE	1 = 1
+					<choose>
+						<when test="period == 'REALTIME'">
+							<choose>
+								<when test="startMM != endMM">
+									AND	MM BETWEEN #{startMM} AND #{endMM}
+									AND	MM != #{endMM}
+								</when>
+								<otherwise>
+									AND	MM = #{startMM}
+								</otherwise>
+							</choose>
+							<if test="dbVer == 'standard'">
+								AND	YYYYMMDDHH = #{date1}
+							</if>
+						</when>
+						<otherwise>
+							<if test="dbVer == 'standard'">
+								<choose>
+									<when test="date1 == date2 and startMM == endMM">
+										AND	YYYYMMDDHHMM = '#{date1}#{startMM}'										
+									</when>
+									<otherwise>
+										AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+										AND	YYYYMMDDHHMM != '${date2}${endMM}'
+									</otherwise>
+								</choose>
+							</if>
+						</otherwise>
+					</choose>
+				</otherwise>
+			</choose>
+			)
+  </sql>
+  
+  <sql id="tmsNT_SUM_PART">
+	WITH	NT_SUM_PART
+	AS		(
+			<choose>
+				<when test="grpNo == 3">
+					SELECT	PORT, PROTOCOL, IP_C_NO, IP_NO, IP, BYTES, PKT, P_64, P_128, P_256, P_512, P_1024, P_1518, P_OVER
+					<choose>
+						<when test="period == 'REALTIME'">	<!-- 실시간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+								</when>
+								<otherwise>
+									FROM		NT_SUM PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>		<!-- 기간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+								</when>
+								<otherwise>
+									FROM		NT_SUM_SHORT PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					WHERE	1 = 1
+					<choose>
+						<when test="startMM != endMM">
+							AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+							AND	YYYYMMDDHHMM != '${date2}${endMM}'
+						</when>
+						<otherwise>
+							AND	YYYYMMDDHHMM = '${date1}${startMM}'
+						</otherwise>
+					</choose>
+					AND	A.DEV_IP = B.DEV_IP
+					AND	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+				</when>
+				<otherwise>
+					SELECT	PORT, PROTOCOL, IP_C_NO, IP_NO, IP, BYTES, PKT, P_64, P_128, P_256, P_512, P_1024, P_1518, P_OVER
+					<choose>
+						<when test="period == 'REALTIME'">
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} P
+								</when>
+								<otherwise>
+									FROM		NT_SUM PARTITION (PART${partition}) P
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} P
+								</when>
+								<otherwise>
+									FROM		NT_SUM_SHORT PARTITION (PART${partition}) P
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					WHERE	1 = 1
+					<choose>
+						<when test="startMM != endMM">
+							AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+							AND	YYYYMMDDHHMM != '${date2}${endMM}'
+						</when>
+						<otherwise>
+							AND	YYYYMMDDHHMM = '${date1}${startMM}'
+						</otherwise>
+					</choose>
+					AND	EXISTS (
+									SELECT	1
+									FROM		NT_CFG_NET A, CM_DEV10 B
+									WHERE	A.GRP_NO = #{grpNo}
+									AND		A.MNG_NO = B.MNG_NO
+									AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+									AND		B.DEV_IP = P.DEV_IP
+									AND		A.IF_NO = P.IF_NO
+									AND		A.IF_INOUT = P.IF_INOUT
+									)
+				</otherwise>
+			</choose>
+			)
+  </sql>
+   
+   
+   <!-- 
+   	망그룹 하위 인터페이스까지 조건이 걸리는 경우(3.2부터 변경 - SK요건)
+    -->
+   <sql id="tmsVW_RAW_PART2">
+  	WITH	VW_RAW_PART
+  	AS		(
+  			<choose>
+  				<when test="grpNo == 3 and itemKind == 'GROUP'">
+		  			SELECT	*
+		  			FROM		VW_RAW A, CM_DEV10 B
+		  			WHERE	A.DEV_IP = B.DEV_IP
+		  			AND		GRP_NO IN <include refid="Common.selectAuthGrpNos"/>  				
+  				</when>
+  				<otherwise>
+  					<choose>
+  						<when test="itemKind == 'GROUP'">
+		  					SELECT	*
+		  					FROM		VW_RAW
+		  					WHERE	(DEV_IP, OUT_IF_NO) IN (
+		  																SELECT	B.DEV_IP, A.IF_NO
+		  																FROM		NT_CFG_NET A, CM_DEV10 B
+		  																WHERE	A.MNG_NO = B.MNG_NO
+		  																AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+		  																AND		A.GRP_NO IN (
+		  																							SELECT	GRP_NO 
+		  																							FROM 	NT_CFG_GROUP 
+		  																							START 	WITH GRP_NO = #{grpNo} 
+		  																							CONNECT BY PRIOR GRP_NO = GRP_PARENT
+		  																							)
+		  																AND		A.IF_INOUT = 'O'
+		  																)
+							UNION ALL
+							SELECT	*
+		  					FROM		VW_RAW
+		  					WHERE	(DEV_IP, IN_IF_NO) IN (
+		  																SELECT	B.DEV_IP, A.IF_NO
+		  																FROM		NT_CFG_NET A, CM_DEV10 B
+		  																WHERE	A.MNG_NO = B.MNG_NO
+		  																AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+		  																AND		A.GRP_NO IN (
+		  																							SELECT	GRP_NO 
+		  																							FROM 	NT_CFG_GROUP 
+		  																							START 	WITH GRP_NO = #{grpNo} 
+		  																							CONNECT BY PRIOR GRP_NO = GRP_PARENT
+		  																							)
+		  																AND		A.IF_INOUT = 'I'
+		  																)
+		  				</when>
+		  				<otherwise>
+		  					SELECT	*
+		  					FROM		VW_RAW
+		  					WHERE	(DEV_IP, ${ifInout}_IF_NO) IN (
+		  															SELECT	B.DEV_IP, A.IF_NO
+		  															FROM		NT_CFG_NET A, CM_DEV10 B
+		  															WHERE	A.MNG_NO = B.MNG_NO
+		  															AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+		  															AND		A.NET_NO = #{netNo}
+		  															)
+		  				</otherwise>
+					</choose>
+  				</otherwise>  					
+  			</choose>
+  			)
+  </sql>
+    
+  <sql id="tmsNT_RAW_PART2">
+	WITH	NT_RAW_PART
+	AS		(
+			<choose>
+				<when test="grpNo == 3 and itemKind == 'GROUP'">
+					SELECT	*
+					<choose>
+						<when test="period == 'REALTIME'">	<!-- 실시간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+									WHERE	YYYYMMDDHH = #{date1}
+								</when>
+								<otherwise>
+									FROM		NT_RAW PARTITION (PART${partition}) A, CM_DEV10 B
+									WHERE	1 = 1
+								</otherwise>
+							</choose>
+							<choose>
+								<when test="startMM != endMM">
+									AND	MM BETWEEN #{startMM} AND #{endMM}	
+								</when>
+								<otherwise>
+									AND	MM = #{startMM}
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>		<!-- 기간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+									WHERE	1 = 1
+									<choose>
+										<when test="date1 == date2 and startMM == endMM">
+											AND	YYYYMMDDHH = '${date1}${startMM}'
+										</when>
+										<otherwise>
+											AND	YYYYMMDDHH BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+										</otherwise>
+									</choose>
+								</when>
+								<otherwise>
+									FROM		NT_RAW_SHORT PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					AND	A.DEV_IP = B.DEV_IP
+					AND	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+				</when>
+				<otherwise>
+					<choose>
+						<when test="itemKind == 'GROUP'">
+							SELECT	*
+							FROM		(
+										SELECT	*
+										<choose>
+											<when test="period == 'REALTIME'">
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</when>
+											<otherwise>
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW_SHORT PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</otherwise>
+										</choose>
+										WHERE	(DEV_IP, OUT_IF_NO) IN (
+																					SELECT	B.DEV_IP, A.IF_NO
+																					FROM		NT_CFG_NET A, CM_DEV10 B
+																					WHERE	A.GRP_NO IN (
+																												SELECT	GRP_NO 
+					  																							FROM 	NT_CFG_GROUP 
+					  																							START 	WITH GRP_NO = #{grpNo} 
+					  																							CONNECT BY PRIOR GRP_NO = GRP_PARENT
+					  																							)
+																					AND		A.MNG_NO = B.MNG_NO
+																					AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+																					AND		IF_INOUT = 'O'
+																					)
+										UNION ALL
+										SELECT	*
+										<choose>
+											<when test="period == 'REALTIME'">
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</when>
+											<otherwise>
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW_SHORT PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</otherwise>
+										</choose>
+										WHERE	(DEV_IP, IN_IF_NO) IN (
+																					SELECT	B.DEV_IP, A.IF_NO
+																					FROM		NT_CFG_NET A, CM_DEV10 B
+																					WHERE	A.GRP_NO IN (
+																												SELECT	GRP_NO 
+					  																							FROM 	NT_CFG_GROUP 
+					  																							START 	WITH GRP_NO = #{grpNo} 
+					  																							CONNECT BY PRIOR GRP_NO = GRP_PARENT
+					  																							)
+																					AND		A.MNG_NO = B.MNG_NO
+																					AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+																					AND		IF_INOUT = 'I'
+																					)
+										)
+							WHERE	1 = 1
+							<choose>
+								<when test="period == 'REALTIME'">
+									<choose>
+										<when test="startMM != endMM">
+											AND	MM BETWEEN #{startMM} AND #{endMM}
+										</when>
+										<otherwise>
+											AND	MM = #{startMM}
+										</otherwise>
+									</choose>
+									<if test="dbVer == 'standard'">
+										AND	YYYYMMDDHH = #{date1}
+									</if>
+								</when>
+								<otherwise>
+									<if test="dbVer == 'standard'">
+										<choose>
+											<when test="date1 == date2 and startMM == endMM">
+												AND	YYYYMMDDHHMM = '#{date1}#{startMM}'										
+											</when>
+											<otherwise>
+												AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+											</otherwise>
+										</choose>
+									</if>
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>
+							SELECT	*
+							FROM		(
+										SELECT	*
+										<choose>
+											<when test="period == 'REALTIME'">
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</when>
+											<otherwise>
+												<choose>
+													<when test="dbVer == 'standard'">
+														FROM		${standardTable}
+													</when>
+													<otherwise>
+														FROM		NT_RAW_SHORT PARTITION (PART${partition})
+													</otherwise>
+												</choose>
+											</otherwise>
+										</choose>
+										WHERE	(DEV_IP, ${ifInout}_IF_NO) IN (
+																					SELECT	B.DEV_IP, A.IF_NO
+																					FROM		NT_CFG_NET A, CM_DEV10 B
+																					WHERE	A.MNG_NO = B.MNG_NO
+																					AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+																					AND		A.NET_NO = #{netNo}
+																					)
+										)
+							WHERE	1 = 1
+							<choose>
+								<when test="period == 'REALTIME'">
+									<choose>
+										<when test="startMM != endMM">
+											AND	MM BETWEEN #{startMM} AND #{endMM}
+										</when>
+										<otherwise>
+											AND	MM = #{startMM}
+										</otherwise>
+									</choose>
+									<if test="dbVer == 'standard'">
+										AND	YYYYMMDDHH = #{date1}
+									</if>
+								</when>
+								<otherwise>
+									<if test="dbVer == 'standard'">
+										<choose>
+											<when test="date1 == date2 and startMM == endMM">
+												AND	YYYYMMDDHHMM = '#{date1}#{startMM}'
+											</when>
+											<otherwise>
+												AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+											</otherwise>
+										</choose>
+									</if>
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+				</otherwise>
+			</choose>
+			)
+  </sql>
+    
+  <sql id="tmsNT_SUM_PART2">
+	WITH	NT_SUM_PART
+	AS		(
+			<choose>
+				<when test="grpNo == 3 and itemKind == 'GROUP'">
+					SELECT	PORT, PROTOCOL, IP_C_NO, IP_NO, IP, BYTES, PKT, P_64, P_128, P_256, P_512, P_1024, P_1518, P_OVER
+					<choose>
+						<when test="period == 'REALTIME'">	<!-- 실시간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+								</when>
+								<otherwise>
+									FROM		NT_SUM PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>		<!-- 기간 -->
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} A, CM_DEV10 B
+								</when>
+								<otherwise>
+									FROM		NT_SUM_SHORT PARTITION (PART${partition}) A, CM_DEV10 B
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					WHERE	1 = 1
+					<choose>
+						<when test="startMM != endMM">
+							AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+						</when>
+						<otherwise>
+							AND	YYYYMMDDHHMM = '${date1}${startMM}'
+						</otherwise>
+					</choose>
+					AND	A.DEV_IP = B.DEV_IP
+					AND	B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+				</when>
+				<otherwise>
+					SELECT	PORT, PROTOCOL, IP_C_NO, IP_NO, IP, BYTES, PKT, P_64, P_128, P_256, P_512, P_1024, P_1518, P_OVER
+					<choose>
+						<when test="period == 'REALTIME'">
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} P
+								</when>
+								<otherwise>
+									FROM		NT_SUM PARTITION (PART${partition}) P
+								</otherwise>
+							</choose>
+						</when>
+						<otherwise>
+							<choose>
+								<when test="dbVer == 'standard'">
+									FROM		${standardTable} P
+								</when>
+								<otherwise>
+									FROM		NT_SUM_SHORT PARTITION (PART${partition}) P
+								</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+					WHERE	1 = 1
+					<choose>
+						<when test="startMM != endMM">
+							AND	YYYYMMDDHHMM BETWEEN '${date1}${startMM}' AND '${date2}${endMM}'
+						</when>
+						<otherwise>
+							AND	YYYYMMDDHHMM = '${date1}${startMM}'
+						</otherwise>
+					</choose>
+					AND	EXISTS (
+									SELECT	1
+									FROM		NT_CFG_NET A, CM_DEV10 B
+									WHERE	A.MNG_NO = B.MNG_NO
+									AND		B.GRP_NO IN <include refid="Common.selectAuthGrpNos"/>
+									<choose>
+										<when test="itemKind == 'GROUP'">
+											AND	A.GRP_NO IN (
+																	SELECT	GRP_NO 
+																	FROM 	NT_CFG_GROUP 
+																	START 	WITH GRP_NO = #{grpNo} 
+																	CONNECT BY PRIOR GRP_NO = GRP_PARENT
+																	)
+										</when>
+										<otherwise>
+											AND	A.NET_NO = #{netNo}
+										</otherwise>
+									</choose>
+									AND		B.DEV_IP = P.DEV_IP
+									AND		A.IF_NO = P.IF_NO
+									AND		A.IF_INOUT = P.IF_INOUT
+									)
+				</otherwise>
+			</choose>
+			)
+  </sql>
+  
+  
+  <sql id="selectTmsCfgNet">
+  	SELECT	B1.DEV_IP || '/' || A1.IF_NO || '/' || A1.IF_INOUT
+	FROM		P_TMS_CFG_NET A1, C_DEV B1, P_NMS_IF C1
+	WHERE	A1.DEV_NO = B1.DEV_NO
+	AND		A1.GRP_NO IN (
+									SELECT DISTINCT SUB_NO
+									FROM		C_GRP_LEAF
+									WHERE	GRP_NO = #{grpNo}
+									)
+	AND		B1.DEV_NO = C1.DEV_NO
+	AND		A1.IF_NO = C1.IF_IDX
+  </sql>
+  
+  <sql id="selectTmsLogData">
+  	SELECT	INS_TIME
+	FROM		P_TMS_LOG_DATA
+	WHERE	INS_TIME BETWEEN '${date1}${time1}' AND '${date2}${time2}'
+	AND		S_FLAG = 1
+  </sql>
+  
+  <sql id="tmsCommColumns">
+  	ROUND(SUM(BYTES) * 8 / ${sec} / ${count}, 2) AS BPS_BYTES,
+	ROUND(SUM(PKT) / ${sec} / ${count}, 2) AS PPS_PACKET,
+	SUM(HOST_CNT) AS HOST_CNT,
+	SUM(BYTES) AS BYTES,
+	SUM(PKT) AS PKT,
+	SUM(P_64) AS P_64,
+	SUM(P_128) AS P_128,
+	SUM(P_256) AS P_256,
+	SUM(P_512) AS P_512,
+	SUM(P_1024) AS P_1024,
+	SUM(P_1518) AS P_1518,
+	SUM(P_OVER) AS P_OVER,
+	SUM(URG) AS URG,
+	SUM(ACK) AS ACK,
+	SUM(PSH) AS PSH,
+	SUM(RST) AS RST,
+	SUM(SYN) AS SYN,
+	SUM(FIN) AS FIN
+  </sql>
+  
+  <sql id="tmsCommChartColumns">
+  	TO_CHAR(CAST(YYYYMMDDHHMM || '00' AS DATETIME), 'YYYY-MM-DD HH24:MI:SS') AS YMDHMS,
+	ROUND(SUM(BYTES) * 8 / ${sec} / ${count}, 2) AS BPS,
+	ROUND(SUM(PKT) / ${sec} / ${count}, 2) AS PPS
+  </sql>
+
+	<sql id="dmgInstCd">
+		AND EXISTS (
+		SELECT inst_cd
+		FROM tsminst
+		WHERE tsminst.inst_cd = tbzledge.dmg_inst_cd
+		AND pnt_inst_cd = 1100000
+		AND INST_CD NOT IN (
+		SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 = '4002'
+		AND code_lvl = '2')
+		AND INST_CD <![CDATA[ <> ]]>  1200000)
+		AND inci_no like 'CT%'
+		AND inci_ttl not like '%훈련%'
+		AND inci_ttl not like '%확인%'
+	</sql>
+
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.env.instMgmt.persistence.InstMgmtMapper">
+	<resultMap id="resultInstMgmt" type="com.klid.webapp.main.env.instMgmt.dto.InstMgmtDto">
+		<result property="instCd"            	column="INST_CD"/>
+		<result property="instNm"              	column="INST_NM"/>
+		<result property="pntSInstCd"           column="PNT_INST_CD"/>
+		<result property="pntSInstCdNm"			column="PNT_INST_CD_NM"/>
+		<result property="localCd" 				column="LOCAL_CD"/>
+		<result property="localCdNm" 			column="LOCAL_CD_NM"/>
+		<result property="useYn"           		column="USE_YN"/>
+		<result property="useYnNm"            	column="USE_YN_NM"/>
+		<result property="regDt"          		column="REG_DT"/>
+		<result property="instLevel"          	column="INST_LEVEL"/>
+		<result property="instOrder"          	column="INST_ORDER"/>
+		<result property="typeBig"          	column="TYPE_BIG"/>
+		<result property="typeMid"          	column="TYPE_MID"/>
+		<result property="typeSml"          	column="TYPE_SML"/>
+		<result property="pmsAssUnitYn"         column="PMS_ASS_UNIT_YN"/>
+		<result property="depth"          		column="DEPTH"/>
+		<result property="typeMidNm"          	column="TYPE_MID_NM"/>
+		<result property="typeSmlNm"          	column="TYPE_SML_NM"/>
+		<result property="instClf"          	column="INST_CLF"/>
+		<result property="agentIp"          	column="AGENT_IP"/>
+		<result property="posDiv"          		column="POS_DIV"/>
+		
+	</resultMap>
+
+	<select id="selectInstMgmtList" resultMap="resultInstMgmt"> 
+		SELECT	INST_CD, INST_NM, PNT_INST_CD, INST_LEVEL, INST_ORDER, TYPE_BIG, 
+				    TYPE_MID, TYPE_SML, PMS_ASS_UNIT_YN, DEPTH, LOCAL_CD,
+				    USE_YN, CASE USE_YN WHEN 'Y' THEN '사용' ELSE '미사용' END USE_YN_NM,
+				    TO_CHAR(TO_DATE(REG_DT, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI') REG_DT,
+				    PNT_INST_CD_NM, LOCAL_CD_NM, TYPE_MID_NM, TYPE_SML_NM
+		FROM ( 
+				SELECT 
+		            A.INST_CD, A.INST_NM, A.PNT_INST_CD, A.INST_LEVEL, A.INST_ORDER, A.TYPE_BIG,
+		            A.TYPE_MID, A.TYPE_SML, A.USE_YN, A.PMS_ASS_UNIT_YN, A.DEPTH, A.LOCAL_CD, A.REG_DT,
+		            (SELECT INST_NM FROM TSMINST WHERE INST_CD = A.PNT_INST_CD) AS PNT_INST_CD_NM,
+		            (SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD = A.LOCAL_CD) AS LOCAL_CD_NM,
+		            (SELECT CODE_NAME FROM COMM_CODE WHERE COM_CODE1 = '2009' AND USE_YN = 'Y' AND COM_CODE2 = A.TYPE_MID AND COM_CODE3 IS NULL) AS TYPE_MID_NM,
+		            (SELECT CODE_NAME FROM COMM_CODE WHERE COM_CODE1 = '2009' AND USE_YN = 'Y' AND COM_CODE2 = A.TYPE_MID AND COM_CODE3 = TYPE_SML) AS TYPE_SML_NM
+		    FROM (  
+		        SELECT	INST_CD, INST_NM, PNT_INST_CD, INST_LEVEL, INST_ORDER, TYPE_BIG,  
+			                TYPE_MID, TYPE_SML, USE_YN, PMS_ASS_UNIT_YN, DEPTH, LOCAL_CD, REG_DT 
+		        FROM	TSMINST
+		        WHERE	1=1
+		        <if test="_parameter.containsKey('useYn') and useYn != ''">
+		        	AND USE_YN = #{useYn}
+		        </if>
+		        <if test="_parameter.containsKey('gLocalCd') and gLocalCd != ''">
+		        	AND LOCAL_CD = #{gLocalCd}
+		        </if>
+		        <if test="_parameter.containsKey('sInstNm') and sInstNm != ''">
+		        	AND INST_NM LIKE '%'||#{sInstNm}||'%'
+		        </if>
+		        <if test="_parameter.containsKey('expInstCd') and expInstCd != ''">
+		        	AND INST_CD != #{expInstCd}
+		        </if>
+		        <choose>
+		        	<when test="_parameter.containsKey('pntInstCd') and pntInstCd != ''">
+		        		AND INST_CD IN (
+								SELECT	INST_CD
+								FROM	(
+				        				SELECT	INST_CD, PNT_INST_CD
+										FROM	TSMINST
+										WHERE	1=1
+										START WITH INST_CD = (
+											SELECT	INST_CD
+											FROM	COMM_USER
+											WHERE	USER_ID = #{userId}
+										)
+										CONNECT BY PRIOR INST_CD = PNT_INST_CD
+				        		)
+								WHERE	1=1
+								START WITH INST_CD = #{pntInstCd}
+								CONNECT BY PRIOR INST_CD = PNT_INST_CD
+						)
+		        	</when>
+		        	<otherwise>
+		        		AND INST_CD IN (
+		        				SELECT	INST_CD
+								FROM	TSMINST
+								WHERE	1=1
+								START WITH INST_CD = (
+									SELECT	INST_CD
+									FROM	COMM_USER
+									WHERE	USER_ID = #{userId}
+								)
+								CONNECT BY PRIOR INST_CD = PNT_INST_CD
+		        		)
+		        	</otherwise>
+		        </choose>
+		        ORDER BY INST_CD ASC
+			) A 
+		) TMP
+		ORDER BY INST_LEVEL, INST_CD ASC
+	</select>
+	
+	<select id="selectInstMgmtInfo" resultMap="resultInstMgmt"> 
+		SELECT	INST_CD, INST_NM, INST_CLF, AGENT_IP, PNT_INST_CD, INST_LEVEL, INST_ORDER, TYPE_BIG, 
+				    TYPE_MID, TYPE_SML, USE_YN, PMS_ASS_UNIT_YN, DEPTH, LOCAL_CD, REG_DT, POS_DIV,
+				    PNT_INST_CD_NM, LOCAL_CD_NM, TYPE_MID_NM, TYPE_SML_NM
+		FROM ( 
+				SELECT 
+		            A.INST_CD, A.INST_NM, INST_CLF, AGENT_IP, A.PNT_INST_CD, A.INST_LEVEL, A.INST_ORDER, 
+		            A.TYPE_BIG, A.TYPE_MID, A.TYPE_SML, A.USE_YN, A.PMS_ASS_UNIT_YN, A.DEPTH, A.LOCAL_CD
+		            , A.REG_DT, POS_DIV,
+		            (SELECT INST_NM FROM TSMINST WHERE INST_CD = A.PNT_INST_CD) AS PNT_INST_CD_NM,
+		            (SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD = A.LOCAL_CD) AS LOCAL_CD_NM,
+		            (SELECT CODE_NAME FROM COMM_CODE WHERE COM_CODE1 = '2009' AND USE_YN = 'Y' AND COM_CODE2 = A.TYPE_MID AND COM_CODE3 IS NULL) AS TYPE_MID_NM,
+		            (SELECT INST_NM FROM COMM_CODE WHERE COM_CODE1 = '2009' AND USE_YN = 'Y' AND COM_CODE2 = A.TYPE_MID AND COM_CODE3 = TYPE_SML) AS TYPE_SML_NM
+		    FROM (  
+		        SELECT	INST_CD, INST_NM, INST_CLF, AGENT_IP, PNT_INST_CD, INST_LEVEL,
+			                INST_ORDER, TYPE_BIG, TYPE_MID, TYPE_SML, USE_YN, PMS_ASS_UNIT_YN,
+			                DEPTH, LOCAL_CD, REG_DT, POS_DIV
+		        FROM	TSMINST
+		        <if test="_parameter.containsKey('sLocalCd') and sLocalCd != ''">
+		        	AND LOCAL_CD = #{sLocalCd}
+		        </if>
+		        <if test="_parameter.containsKey('sInstNm') and sInstNm != ''">
+		        	AND INST_NM LIKE '%'||#{sInstNm}||'%'
+		        </if>
+			) A 
+		) TMP
+		WHERE	INST_CD = #{instCd}
+	</select>
+
+	<!-- 기관정보 추가 -->
+	<insert id="insertInst">
+		INSERT INTO TSMINST (
+			INST_CD, INST_NM, INST_CLF, PNT_INST_CD, INST_LEVEL, INST_ORDER, TYPE_BIG, TYPE_MID, TYPE_SML,
+			PMS_ASS_UNIT_YN, DEPTH, LOCAL_CD, USE_YN, STATE, POS_DIV, POS_CD, REG_DT
+		)
+		SELECT
+			#{instCd}, #{instNm}, #{instClf}, #{pntSInstCd}, #{instLevel}, #{instOrder}, #{typeBig}, #{typeMid}, #{typeSml},
+			#{pmsAssUnitYn}, #{depth}, #{localCd}, #{useYn}, #{state}, #{posDiv}
+			, #{gIncidentNo}||TRIM(TO_CHAR(MAX(SUBSTR(POS_CD, 3, 2))+1, '00'))||'-'
+			, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		FROM 	TSMINST
+		WHERE	PNT_INST_CD = #{pntSInstCd}
+	</insert>
+	
+	<!-- 기관정보 저장 -->
+	<update id="updateInst">
+		UPDATE  TSMINST
+		SET		INST_NM = #{instNm}
+		          	, INST_CLF = #{instClf}
+		          	, AGENT_IP = #{agentIp}
+		          	, PNT_INST_CD = #{pntSInstCd}
+		          	, INST_ORDER = #{instOrder}
+		          	, TYPE_BIG = #{typeBig}
+		          	, TYPE_MID = #{typeMid}
+		          	, TYPE_SML = #{typeSml}
+		          	, LOCAL_CD = #{localCd}
+		          	, USE_YN = #{useYn}
+		          	, PMS_ASS_UNIT_YN = #{pmsAssUnitYn}
+		          	, POS_DIV = #{posDiv}
+       	WHERE	INST_CD = #{instCd}
+	</update>
+	
+	<!-- 기관정보 삭제 -->
+	<delete id="deleteInst">
+	 	DELETE
+	 	FROM	TSMINST
+	 	WHERE	INST_CD = #{instCd}
+	</delete>
+</mapper>

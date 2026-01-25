@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.home.forgery.persistence.ForgeryUrlMapper">
+
+	<resultMap type="com.klid.webapp.main.home.forgery.dto.ForgeryUrlDto" id="getForgeryUrlResultMap">
+		<result property="forgerySeq"			column="FORGERY_SEQ"/>
+		<result property="instCd"				column="INST_CD"	/>
+		<result property="instNm"				column="INST_NM"	/>
+		<result property="wsisIp"				column="WSIS_IP"	/>
+		<result property="localCd"				column="LOCAL_CD"	/>
+		<result property="instLevel"			column="INST_LEVEL"	/>
+		<result property="pntInstCd"			column="PNT_INST_CD"/>
+		<result property="domain"				column="DOMAIN"		/>
+		<result property="url"					column="URL"		/>
+		<result property="sIp"					column="S_IP"		/>
+		<result property="dIp"					column="D_IP"		/>
+		<result property="sPort"				column="S_PORT"		/>
+		<result property="dPort"				column="D_PORT"		/>
+		<result property="depth"				column="DEPTH"		/>
+		<result property="excpYn"				column="EXCP_YN"	/>
+		<result property="delYn"				column="DEL_YN"		/>
+		<result property="lastRes"				column="LAST_RES"		/>
+		<result property="pLocalNm"				column="P_LOCAL_NM"		/>
+		<result property="checkYn"				column="CHECK_YN"		/>
+
+		<result property="detectTime"			column="DETECT_TIME"	/>
+		<result property="evtName"				column="EVT_NAME"		/>
+		<result property="depthRes"				column="DEPTH_RES"		/>
+	</resultMap>
+
+	<select id="selectForgeryUrl" resultMap="getForgeryUrlResultMap">
+		SELECT
+			FORGERY_SEQ	,    
+		    INST_CD		,
+		    INST_NM		,
+			LOCAL_CD	,
+			INST_LEVEL	,
+			PNT_INST_CD ,
+			(SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD = A.LOCAL_CD AND ROWNUM =1 ) AS P_LOCAL_NM,
+			WSIS_IP		,
+			DOMAIN		,
+			URL			,
+			S_IP		,
+			D_IP		,
+			S_PORT		,
+			D_PORT		,
+			DEPTH		,
+			EXCP_YN		,
+			DEL_YN,
+			LAST_RES, CHECK_YN
+		FROM FORGERY_URL A
+		WHERE 1=1
+		<if test="srchInstCd != null and srchInstCd != ''">
+			AND INST_CD IN(
+				SELECT inst_cd FROM tsminst
+				CONNECT BY PRIOR inst_cd = pnt_inst_cd
+				START WITH inst_cd = #{srchInstCd}
+			)
+		</if>
+		<if test="srchWsisIp != null and srchWsisIp != ''">
+			AND WSIS_IP LIKE '%' || #{srchWsisIp} || '%'
+		</if>
+		<if test="srchDomain != null and srchDomain != ''">
+			AND DOMAIN LIKE '%' || #{srchDomain} || '%'
+		</if>
+		<if test="srchLastRes != null and srchLastRes != ''">
+			<choose>
+				<when test="srchLastRes == '200'">
+					AND LAST_RES not in ( 5,4)
+				</when>
+				<otherwise>
+					AND LAST_RES in ( 5,4)
+				</otherwise>
+			</choose>
+		</if>
+		<if test="srchDelYn != null and srchDelYn != ''">
+			AND DEL_YN = #{srchDelYn}
+		</if>
+		<if test="srchCheckYn != null and srchCheckYn != ''">
+			AND CHECk_YN = #{srchCheckYn}
+		</if>
+	</select>
+
+	<select id="selectForgeryUrlHist" resultMap="getForgeryUrlResultMap">
+		SELECT
+		A.DETECT_TIME,
+		A.EVT_NAME,
+		A.DEPTH_RES,
+		A.INST_CD ,
+		A.INST_NM ,
+		B.LOCAL_CD	,
+		(SELECT LOCAL_NM FROM TSMLOCAL WHERE LOCAL_CD = B.LOCAL_CD AND ROWNUM =1 ) AS P_LOCAL_NM,
+		A.WSIS_IP		,
+		A.DOMAIN		,
+		A.URL			,
+		A.S_IP		,
+		A.D_IP		,
+		A.S_PORT		,
+		A.D_PORT		,
+		A.CHECK_YN
+		FROM FORGERY_HIST A, TSMINST B
+		WHERE 1=1
+		AND EVT_CODE IN (5, 4)
+		AND A.INST_CD = B.INST_CD
+		<if test="srchInstCd != null and srchInstCd != ''">
+			AND A.INST_CD IN(
+			SELECT inst_cd FROM tsminst
+			CONNECT BY PRIOR inst_cd = pnt_inst_cd
+			START WITH inst_cd = #{srchInstCd}
+			)
+		</if>
+		<if test="srchWsisIp != null and srchWsisIp != ''">
+			AND A.WSIS_IP LIKE '%' || #{srchWsisIp} || '%'
+		</if>
+		<if test="srchDomain != null and srchDomain != ''">
+			AND A.DOMAIN LIKE '%' || #{srchDomain} || '%'
+		</if>
+		<if test="srchCheckYn != null and srchCheckYn != ''">
+			AND A.CHECk_YN = #{srchCheckYn}
+		</if>
+		<if test="date1 != null and date1 != ''">
+			AND A.DETECT_TIME BETWEEN TO_DATE(#{date1} || #{time1}, 'yyyymmddhh24miss') AND TO_DATE(#{date2} || #{time2}, 'yyyymmddhh24miss')
+		</if>
+		ORDER BY DETECT_TIME DESC
+	</select>
+
+	<resultMap type="com.klid.webapp.main.home.forgery.dto.ForgeryUrlDto" id="getMainForgeryHmResultMap">
+		<result property="instNm"				column="INST_NM"	/>
+		<result property="hmCnt"				column="HM_CNT"	/>
+		<result property="foCnt"				column="FO_CNT"	/>
+		<result property="instCd"				column="instCd"	/>
+	</resultMap>
+
+	<resultMap id="getMainForgeryCntResultMap" type="com.klid.webapp.main.home.forgery.dto.ForgeryUrlDto">
+		<result property="healthNormalCnt"				column="healthNormalCnt"	/>
+		<result property="healthErrCnt"				column="healthErrCnt"	/>
+		<result property="urlNormalCnt"				column="urlNormalCnt"	/>
+		<result property="urlErrCnt"				column="urlErrCnt"	/>
+	</resultMap>
+
+
+	<select id="selectMainForgeryHm" resultMap="getMainForgeryHmResultMap">
+		WITH tree AS
+		(
+			SELECT	INST_CD
+			FROM TSMINST
+			WHERE 1=1
+			AND inst_cd != 4560000	<!-- 연기군 제외 -->
+			<if test="sInstCd == '1100000'">
+				AND INST_LEVEL = 1
+			</if>
+			CONNECT BY
+			PRIOR INST_CD = PNT_INST_CD
+			START WITH
+			INST_CD = #{sInstCd}
+		)
+select * from
+		(
+		SELECT
+		decode(INST_NM, '행정안전부', 1, '개발원', 2, '서울', 3, '부산', 4,'대구', 5,'인천', 6,'광주', 7,'대전', 8,'울산', 9,'세종', 10,'경기', 11,'강원', 12,'충북', 13,'충남', 14,'전북', 15,'전남', 16,'경북', 17,'경남', 18,'제주', 19, 20) AS srt,
+					INST_NM,
+					instCd,
+					LOCAL_CD,
+					PNT_INST_CD,
+				   SUM(HM_CNT) AS HM_CNT,
+				   SUM(FO_CNT) AS FO_CNT
+		FROM   (
+		     	SELECT INST_NM,
+						instCd,
+						LOCAL_CD,
+						PNT_INST_CD,
+						SUM(LAST_RES) AS HM_CNT,
+					 	0 AS FO_CNT
+				FROM  (
+							SELECT
+							DISTINCT c.inst_NM AS INST_NM,
+							c.inst_cd AS instCd, LOCAL_CD, PNT_INST_CD,
+							DECODE( NVL( B.LAST_RES, 200 ), 200, 0, 1 ) LAST_RES
+							FROM
+							TSMINST A,
+							HM_HC_URL B,
+							tsminst_leaf c
+							WHERE a.INST_CD in (SELECT * FROM tree)
+							AND B.inst_cd = #{sInstCd}
+							AND a.inst_cd = c.inst_cd
+							AND c.sub_CD = B.INST_CD (+)
+							AND A.inst_cd NOT IN (
+							1400000,
+							1500000,
+							1600000
+							)
+							UNION ALL
+							SELECT
+							DISTINCT c.inst_NM AS INST_NM,
+							c.inst_cd AS instCd, LOCAL_CD, PNT_INST_CD,
+							DECODE( NVL( B.LAST_RES, 200 ), 200, 0, 1 ) LAST_RES
+							FROM
+							TSMINST A,
+							HM_HC_URL B,
+							tsminst_leaf c
+							WHERE a.INST_CD in (SELECT * FROM tree)
+							AND A.inst_cd != #{sInstCd}
+							AND a.inst_cd = c.inst_cd
+							AND c.sub_CD = B.INST_CD (+)
+							AND A.inst_cd NOT IN (
+							1400000,
+							1500000,
+							1600000
+							)
+                    )
+				GROUP BY INST_NM,LOCAL_CD,PNT_INST_CD,instCd
+                UNION ALL
+				SELECT INST_NM,
+						instCd,
+						LOCAL_CD,
+						PNT_INST_CD,
+						0 AS HM_CNT,
+						SUM(LAST_RES) AS FO_CNT
+				FROM  (
+							SELECT
+							DISTINCT c.inst_NM AS INST_NM,
+							c.inst_cd AS instCd, a.LOCAL_CD, a.PNT_INST_CD,
+							DECODE( NVL( B.LAST_RES, 200 ), 5, 1, 4, 1, 0 ) LAST_RES
+							FROM
+							TSMINST A,
+							FORGERY_URL B,
+							tsminst_leaf c
+							WHERE
+							A.INST_CD IN (SELECT * FROM tree)
+							AND B.inst_cd = #{sInstCd}
+							AND a.inst_cd = c.inst_cd
+							AND c.sub_CD = B.INST_CD (+)
+							AND A.inst_cd NOT IN (
+							1400000,
+							1500000,
+							1600000
+							)
+							UNION ALL
+							SELECT
+							DISTINCT c.inst_NM AS INST_NM,
+							c.inst_cd AS instCd, a.LOCAL_CD, a.PNT_INST_CD,
+							DECODE( NVL( B.LAST_RES, 200 ), 5, 1, 4, 1, 0 ) LAST_RES
+							FROM
+							TSMINST A,
+							FORGERY_URL B,
+							tsminst_leaf c
+							WHERE
+							A.INST_CD IN (SELECT * FROM tree)
+							AND A.inst_cd != #{sInstCd}
+							AND a.inst_cd = c.inst_cd
+							AND c.sub_CD = B.INST_CD (+)
+							AND A.inst_cd NOT IN (
+							1400000,
+							1500000,
+							1600000
+							)
+           			 )
+				GROUP BY INST_NM,LOCAL_CD,PNT_INST_CD,instCd
+  			 )
+  		    GROUP  BY INST_NM,LOCAL_CD, PNT_INST_CD,instCd
+			ORDER  BY LOCAL_CD ASC, PNT_INST_CD ASC
+		)SUB
+		order by SUB.srt asc, sub.LOCAL_CD, sub.instCd
+	</select>
+
+	<select id="selectMainForgeryCnt" resultMap="getMainForgeryCntResultMap">
+		SELECT
+			NVL( SUM( sub.healthNormalCnt ), 0 ) AS healthNormalCnt,
+			NVL( SUM( sub.healthErrCnt ), 0 ) AS healthErrCnt,
+			NVL( SUM( sub.urlNormalCnt ), 0 ) AS urlNormalCnt,
+			NVL( SUM( sub.urlErrCnt ), 0 ) AS urlErrCnt
+		FROM(
+		 	SELECT
+					SUM( CASE WHEN last_res = 200 THEN 1 ELSE 0 END ) AS healthNormalCnt,
+					SUM( CASE WHEN last_res != 200 THEN 1 ELSE 0 END ) AS healthErrCnt,
+					0 AS urlNormalCnt, 0 AS urlErrCnt
+		 	FROM hm_hc_url
+		 		WHERE INST_CD IN (
+				  SELECT inst_cd FROM tsminst
+				  CONNECT BY PRIOR inst_cd = pnt_inst_cd
+				  START WITH inst_cd = #{sInstCd}
+				)
+				 AND USE_YN=1
+
+		 	UNION ALL
+
+			SELECT
+				0 AS healthNormalCnt, 0 AS healthErrCnt,
+				SUM( CASE WHEN last_res != 4 OR last_res != 5 THEN 1 ELSE 0 END ) AS urlNormalCnt,
+				SUM( CASE WHEN last_res = 4 OR last_res = 5  THEN 1 ELSE 0 END ) AS urlErrCnt
+			 FROM forgery_url
+			 WHERE INST_CD IN (
+				  SELECT inst_cd FROM tsminst
+				  CONNECT BY PRIOR inst_cd = pnt_inst_cd
+				  START WITH inst_cd = #{sInstCd}
+				)
+		)sub
+	</select>
+
+	<select id="getByInstNm" resultMap="getForgeryUrlResultMap">
+		select inst_cd, inst_nm from tsminst
+		where inst_cd  = #{instCd }
+		and rownum = 1
+	</select>
+
+</mapper>

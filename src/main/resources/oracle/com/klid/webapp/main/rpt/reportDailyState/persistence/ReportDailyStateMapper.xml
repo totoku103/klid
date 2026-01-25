@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.rpt.reportDailyState.persistence.ReportDailyStateMapper">
+	<resultMap type="com.klid.webapp.main.rpt.reportDaily.dto.ReportDailyDto" id="resultReportList">
+		<result property="total_cnt" 					column="total_cnt"/>
+		<result property="end_cnt" 					column="end_cnt"/>
+		<result property="ing_cnt" 					column="ing_cnt"/>
+		<result property="inci_type_nm" 					column="type_nm"/>
+		<result property="inci_type_inst1" 					column="inst1"/>
+		<result property="inci_type_inst2" 					column="inst2"/>
+		<result property="inci_type_inst3" 					column="inst3"/>
+		<result property="inci_type_inst4" 					column="inst4"/>
+		<result property="inci_type_inst5" 					column="inst5"/>
+		<result property="sums" 					column="sums"/>
+	</resultMap>
+
+	<!-- 일일 유형별 사고-->
+	<select id="selectReportDayType" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2' or sAuthMain == 'AUTH_MAIN_1'"><!-- 완료 -->
+					SELECT nvl(type_nm, '0합 계') type_nm, nvl(sum(total_cnt), 0) total_cnt,
+					nvl(sum(inst1), 0) inst1, nvl(sum(inst2), 0) inst2, nvl(sum(inst3), 0) inst3,
+					nvl(sum(inst4), 0) inst4
+					FROM (
+					select case com_code2 when '20' then '1비인가접근'
+					when '30' then '2서비스거부'
+					when '10' then '3악성코드'
+					when '70' then '4정보수집'
+					WHEN '90' THEN '5시스템권한획득'
+					WHEN '100' THEN '6홈페이지변조'
+					WHEN '110' THEN '7정보유출'
+					else '8기 타' end as type_nm,
+					total_cnt, inst1, inst2, inst3, inst4
+					from (
+					SELECT accd_typ_cd,COUNT (*) total_cnt,
+					COUNT (DECODE (dcl_inst_cd, 1100000, 1, NULL)) inst1,
+					COUNT (DECODE (dcl_inst_cd, 1400000, 1, NULL)) inst2,
+					COUNT (DECODE (dcl_inst_cd, 1500000, 1, NULL)) inst3,
+					COUNT (DECODE (dcl_inst_cd, 1600000, 1, NULL)) inst4
+					FROM tbzledge D
+					WHERE
+					1=1
+					AND TO_DATE(d.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND EXISTS (
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = d.dmg_inst_cd
+					AND inst_cd = #{sInstCd}
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+					AND inci_no like 'CT%'
+					AND length(inci_no) <![CDATA[ < ]]> 16
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND DMG_INST_CD <![CDATA[ <> ]]> 1100000 <!--20190531 피해기관: 중앙지원센터 제외-->
+					AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+					GROUP BY accd_typ_cd ) a,
+					( SELECT com_code2, code_name
+					FROM comm_code
+					WHERE com_code1 = '3002'
+					AND code_lvl = 2 ) b
+					WHERE a.accd_typ_cd (+) = b.com_code2 )
+					GROUP BY ROLLUP(type_nm)
+					ORDER BY type_nm
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"><!--완료-->
+					--selectReportDayType
+
+					WITH type AS ( SELECT
+					COM_CODE2,
+					CASE com_code2
+					WHEN '20'
+					THEN '1비인가접근'
+					WHEN '30'
+					THEN '2서비스거부'
+					WHEN '10'
+					THEN '3악성코드'
+					WHEN '70'
+					THEN '4정보수집'
+					WHEN '90' THEN '5시스템권한획득'
+					WHEN '100' THEN '6홈페이지변조'
+					WHEN '110' THEN '7정보유출'
+					ELSE '8기 타' END AS type_nm
+					FROM COMM_CODE
+					WHERE COM_CODE1 = 3002 AND CODE_LVL = 2 AND USE_YN = 'Y' ), tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd =
+					pnt_inst_cd START WITH
+					inst_cd = #{sInstCd} ), pri AS ( SELECT
+					type_nm,
+					DECODE(type_nm,'','0',COM_CODE2) local_cd,a      AS      inst_cd,
+					DCL_INST_CD,nvl(total_cnt,0) AS      total_cnt,nvl(end_cnt,0) AS      end_cnt,
+					nvl(ing_cnt,0) AS      ing_cnt
+					FROM
+					(SELECT  --위에서 넘어온건
+					ACCD_TYP_CD AS dmg_inst_cd,
+					INCI_TRNS_RCPT_INST_CD AS a,
+					DCL_INST_CD,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM
+					TBZLEDGE d
+					WHERE
+					1 =1
+					AND
+					TO_DATE(
+					d.INCI_ACPN_DT,
+					'yyyymmddhh24miss') BETWEEN TO_DATE(
+					#{startDt},
+					'yyyymmddhh24miss') AND TO_DATE(
+					#{endDt},
+					'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.INCI_TRNS_RCPT_INST_CD = #{sInstCd}
+					AND LENGTH(D.INCI_NO)=15
+					GROUP BY
+					ACCD_TYP_CD, INCI_TRNS_RCPT_INST_CD, DCL_INST_CD
+					UNION ALL
+					SELECT ACCD_TYP_CD AS dmg_inst_cd,DCL_INST_CD AS a,DCL_INST_CD,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM
+					TBZLEDGE d
+					WHERE
+					1=1
+					AND TO_DATE(d.INCI_ACPN_DT,'yyyymmddhh24miss')
+					BETWEEN TO_DATE( #{startDt},'yyyymmddhh24miss')
+					AND TO_DATE( #{endDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN (#{sInstCd})
+					AND LENGTH(D.INCI_NO)=15
+					AND NVL(D.INCI_TRNS_RCPT_INST_CD,0)=0 --자체건은 시도이관 정보가 없음 (멀티건은 시군구코드가 들어가 조회되므로 체크)
+					GROUP BY
+					ACCD_TYP_CD,
+					DCL_INST_CD
+					) T1,
+					type T2
+					WHERE
+					T2.COM_CODE2
+					=
+					t1.dmg_inst_cd (+)
+					ORDER BY
+					TO_NUMBER(
+					COM_CODE2) ),
+					sub_pri AS ( SELECT type_nm,
+					nvl(SUM(DECODE(dcl_inst_cd,1100000,total_cnt,NULL)),0) inst1,
+					nvl(SUM(DECODE(dcl_inst_cd,1400000,total_cnt,NULL)),0) inst2,
+					nvl(SUM(DECODE(dcl_inst_cd,1500000, total_cnt,NULL)),0) inst3,
+					nvl(SUM(DECODE(dcl_inst_cd,1600000,total_cnt,NULL)),0) inst4,
+					nvl(SUM(DECODE(dcl_inst_cd,#{sInstCd},total_cnt,NULL)),0) inst5
+					FROM
+					(SELECT type_nm,inst_cd,DCL_INST_CD,
+					sum(total_cnt) AS total_cnt,
+					sum(end_cnt)   AS end_cnt,
+					sum(ing_cnt)   AS ing_cnt
+					FROM pri
+					WHERE inst_cd IN (SELECT * FROM tree)
+					GROUP BY type_nm,  inst_cd, DCL_INST_CD)
+					GROUP BY type_nm )
+					SELECT '0합계' AS type_nm,
+					nvl(sum( inst1 +inst2+inst3+inst4+inst5),0)   total_cnt,
+					nvl(sum(inst1),0)   inst1,
+					nvl(sum(inst2),0)   inst2,
+					nvl(sum(inst3),0)   inst3,
+					nvl(sum(inst4),0)   inst4,
+					nvl(sum(inst5),0)   inst5
+					FROM sub_pri
+					UNION ALL
+					SELECT t2.type_nm,
+					nvl(inst1 +inst2+inst3+inst4+inst5,0) total_cnt,
+					nvl(t1.inst1,0) inst1,nvl(t1.inst2,0) inst2,
+					nvl(t1.inst3,0) t3,
+					nvl(t1.inst4,0) inst4,
+					nvl(t1.inst5,0) inst5
+					FROM sub_pri t1, type t2
+					WHERE t2.type_nm = t1.type_nm (+)
+					ORDER BY type_nm ASC
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"><!-- 완료 -->
+					SELECT nvl(type_nm, '0합 계') type_nm, nvl(sum(total_cnt), 0) total_cnt,
+					nvl(sum(inst1), 0) inst1, nvl(sum(inst2), 0) inst2, nvl(sum(inst3), 0) inst3,
+					nvl(sum(inst4), 0) inst4
+					FROM (
+					select case com_code2 when '20' then '1비인가접근'
+					when '30' then '2서비스거부'
+					when '10' then '3악성코드'
+					when '40' then '4웹취약점'
+					when '70' then '5정보수집'
+					else '6기 타' end as type_nm,
+					total_cnt, inst1, inst2, inst3, inst4
+					from (
+					SELECT accd_typ_cd,COUNT (*) total_cnt,
+					COUNT (DECODE (dcl_inst_cd, 1100000, 1, NULL)) inst1,
+					COUNT (DECODE (dcl_inst_cd, 1400000, 1, NULL)) inst2,
+					COUNT (DECODE (dcl_inst_cd, 1500000, 1, NULL)) inst3,
+					COUNT (DECODE (dcl_inst_cd, 1600000, 1, NULL)) inst4
+					FROM tbzledge a
+					WHERE 1=1
+					AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+					AND INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					GROUP BY accd_typ_cd) b,
+					( SELECT com_code2, code_name
+					FROM comm_code
+					WHERE com_code1 = '3002'
+					AND code_lvl = 2) c
+					WHERE b.accd_typ_cd (+) = c.com_code2
+					)GROUP BY ROLLUP(type_nm)    ORDER BY type_nm
+				</when>
+			</choose>
+		</if>
+	</select>
+
+	<!-- 국정원 건수 가져오기 -->
+	<select id="selectReportNcsc" resultMap="resultReportList">
+		SELECT
+		nvl(type_nm, '0합 계')   type_nm,
+		nvl(sum(total_cnt), 0) total_cnt
+		FROM (SELECT
+		CASE com_code2
+		WHEN '10'
+		THEN '3악성코드'
+		ELSE '6기 타' END AS type_nm,
+		total_cnt
+		FROM (SELECT
+		accd_typ_cd,
+		COUNT(*)                                     total_cnt
+		FROM tbzledge D
+		WHERE 1 = 1
+		AND TO_DATE(d.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startNcscDt},'yyyymmddhh24miss')-1 AND TO_DATE(#{endNcscDt},'yyyymmddhh24miss')-1
+		AND EXISTS(SELECT inst_cd
+		FROM tsminst
+		WHERE
+		tsminst.inst_cd = d.dmg_inst_cd AND pnt_inst_cd = 1100000 AND INST_CD NOT IN (SELECT com_code2
+		FROM COMM_CODE
+		WHERE com_code1 =
+		'4002' AND
+		code_lvl =
+		'2') AND
+		INST_CD <![CDATA[ <> ]]> 1200000)
+		AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+		AND inci_no LIKE 'CT%' AND length(inci_no) <![CDATA[ < ]]> 16 AND
+		inci_ttl NOT LIKE '%훈련%' AND inci_ttl NOT LIKE '%확인%'
+		AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+		AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+		GROUP BY accd_typ_cd) a, (SELECT
+		com_code2,
+		code_name
+		FROM comm_code
+		WHERE com_code1 = '3002' AND code_lvl = 2) b
+		WHERE a.accd_typ_cd (+) = b.com_code2)
+		GROUP BY ROLLUP (type_nm)
+		ORDER BY type_nm
+	</select>
+
+	<!-- 일일 실적 사고처리 현황 조회 -->
+	<select id="selectReportDayStat" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2'"><!-- 완료 -->
+					SELECT
+					nvl(count(inci_acpn_dt), 0) total_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) end_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) ing_cnt
+					FROM TBZLEDGE a
+					WHERE 1=1
+					and TO_DATE(a.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND EXISTS(
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd= a.dmg_inst_cd
+					AND inst_cd = 1100000
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+					AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"><!--완료-->
+					WITH inst AS (
+					SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd
+					FROM tsminst
+					WHERE local_cd = (select local_cd from tsminst where inst_cd= #{sInstCd}) AND INST_CD NOT IN (SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002' AND code_lvl = '2')
+					AND INST_CD <![CDATA[ <> ]]> 1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 ),
+					tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd =  #{sInstCd} ),
+					pri AS ( SELECT NVL(inst_nm, '합계')     inst_nm,
+					DECODE(inst_nm, '', '0', local_cd) local_cd,
+					nvl(total_cnt, 0) AS     total_cnt,
+					nvl(end_cnt, 0) AS     end_cnt,
+					nvl(ing_cnt, 0) AS     ing_cnt
+					FROM (SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.INCI_TRNS_RCPT_INST_CD =  #{sInstCd}
+					AND LENGTH(D.INCI_NO)=15
+					GROUP BY INCI_TRNS_RCPT_INST_CD
+					UNION ALL
+					SELECT DCL_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN ( #{sInstCd})
+					AND LENGTH(D.INCI_NO)=15
+					AND NVL(D.INCI_TRNS_RCPT_INST_CD,0)=0
+					GROUP BY DCL_INST_CD
+					) T1, inst T2
+					WHERE T2.INST_CD=t1.dmg_inst_cd (+)
+					ORDER BY TO_NUMBER(local_cd), DECODE(inst_nm, (SELECT inst_nm FROM tsminst WHERE inst_cd  =   #{sInstCd}), 2)
+					)
+					SELECT
+					sum(total_cnt) AS total_cnt,
+					sum(end_cnt)   AS end_cnt,
+					sum(ing_cnt)   AS ing_cnt
+					FROM pri
+				</when>
+				<otherwise>
+					SELECT
+					NVL(( SUM( CASE WHEN TRANS_SIDO_PRCS_STAT > 0 THEN 1 ELSE 0 END ) ), 0 ) AS total_cnt,
+					NVL(( SUM( CASE WHEN TRANS_SIDO_PRCS_STAT IN ( 1, 2, 5, 7, 8, 9, 10, 11, 14, 16 ) THEN 1 ELSE 0 END ) ), 0 ) AS ing_cnt,
+					NVL(( SUM( CASE WHEN TRANS_SIDO_PRCS_STAT IN ( 12, 13, 15, 17 ) THEN 1 ELSE 0 END ) ), 0 ) AS end_cnt
+					FROM TBZLEDGE a
+					WHERE 1=1
+					AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+					AND INCI_ACPN_DT BETWEEN #{startDt} AND #{endDt}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+
+	<!-- 일일 사고처리 누계-->
+	<select id="selectReportSumStat" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2' or sAuthMain == 'AUTH_MAIN_1'"><!-- 완료 -->
+					SELECT nvl(count(inci_acpn_dt), 0) as total_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) as end_cnt,
+					nvl(count(decode(inci_prcs_stat, '13', null, '12', null, '15', null, '17', null, 1)), 0) as ing_cnt
+					FROM TBZLEDGE a
+					WHERE 1=1
+					and TO_DATE(INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND EXISTS(
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd= a.dmg_inst_cd
+					AND inst_cd = #{sInstCd}
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+					AND inci_no LIKE 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+					AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"> <!--완료-->
+					WITH inst AS (
+					SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd
+					FROM tsminst
+					WHERE local_cd = (select local_cd from tsminst where inst_cd= #{sInstCd}) AND INST_CD NOT IN (SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002' AND code_lvl = '2')
+					AND INST_CD <![CDATA[ <> ]]> 1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 ),
+					tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd =  #{sInstCd} ),
+					pri AS ( SELECT NVL(inst_nm, '합계')     inst_nm,
+					DECODE(inst_nm, '', '0', local_cd) local_cd,
+					nvl(total_cnt, 0) AS     total_cnt,
+					nvl(end_cnt, 0) AS     end_cnt,
+					nvl(ing_cnt, 0) AS     ing_cnt
+					FROM (SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.INCI_TRNS_RCPT_INST_CD =  #{sInstCd}
+					AND LENGTH(D.INCI_NO)=15
+					GROUP BY INCI_TRNS_RCPT_INST_CD
+					UNION ALL
+					SELECT DCL_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN ( #{sInstCd})
+					AND LENGTH(D.INCI_NO)=15
+					AND NVL(D.INCI_TRNS_RCPT_INST_CD,0)=0
+					GROUP BY DCL_INST_CD
+					) T1, inst T2
+					WHERE T2.INST_CD=t1.dmg_inst_cd (+)
+					ORDER BY TO_NUMBER(local_cd), DECODE(inst_nm, (SELECT inst_nm FROM tsminst WHERE inst_cd  =   #{sInstCd}), 2)
+					)
+					SELECT
+					sum(total_cnt) AS total_cnt,
+					sum(end_cnt)   AS end_cnt,
+					sum(ing_cnt)   AS ing_cnt
+					FROM pri
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'"> <!-- 시군구 담당자는 시에서 이관한 사고만 조회 -->
+					SELECT
+					nvl(count(TRANS_SIDO_PRCS_STAT), 0) as total_cnt,
+					nvl(count(decode(TRANS_SIDO_PRCS_STAT, '13', 1, '12', 1, '15', 1, '17', 1, null)), 0) as end_cnt,
+					nvl(count(decode(TRANS_SIDO_PRCS_STAT, '13', null, '12', null, '15', null, '17', null, 1)), 0) as ing_cnt
+					FROM TBZLEDGE a
+					WHERE 1=1
+					and TO_DATE(a.INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND a.INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</when>
+				<otherwise>
+					AND 2=2
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+
+
+	<!-- 일일 누계 -->
+	<select id="selectReportSum" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2' or sAuthMain == 'AUTH_MAIN_1'"><!-- 완료 -->
+					SELECT nvl(count(inci_upd_dt), 0) as sums
+					FROM TBZLEDGE
+					WHERE 1=1
+					AND TO_DATE(inci_upd_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND inci_prcs_stat in ('12', '13', '15', '17')
+					AND EXISTS (
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd= tbzledge.dmg_inst_cd
+					AND inst_cd =  #{sInstCd}
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd  <![CDATA[ <> ]]> 1200000)
+					AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+					AND inci_no like 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND DMG_INST_CD <![CDATA[ <> ]]> 1100000<!--20190531 피해기관: 중앙지원센터 제외-->
+					AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"><!-- 완료 -->
+					WITH inst AS (
+					SELECT inst_cd, inst_nm, NVL(REPLACE(local_cd, 170, 75), '0') local_cd
+					FROM tsminst
+					WHERE local_cd = (select local_cd from tsminst where inst_cd= #{sInstCd}) AND INST_CD NOT IN (SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002' AND code_lvl = '2')
+					AND INST_CD <![CDATA[ <> ]]> 1200000 AND INST_CD <![CDATA[ <> ]]> 1100000 ),
+					tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd =  #{sInstCd} ),
+					pri AS ( SELECT NVL(inst_nm, '합계')     inst_nm,
+					DECODE(inst_nm, '', '0', local_cd) local_cd,
+					nvl(total_cnt, 0) AS     total_cnt,
+					nvl(end_cnt, 0) AS     end_cnt,
+					nvl(ing_cnt, 0) AS     ing_cnt
+					FROM (SELECT INCI_TRNS_RCPT_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_UPD_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.INCI_TRNS_RCPT_INST_CD =  #{sInstCd}
+					AND LENGTH(D.INCI_NO)=15
+					GROUP BY INCI_TRNS_RCPT_INST_CD
+					UNION ALL
+					SELECT DCL_INST_CD AS dmg_inst_cd,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_UPD_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{startDt},'yyyymmddhh24miss') AND TO_DATE(#{endDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN ( #{sInstCd})
+					AND LENGTH(D.INCI_NO)=15
+					AND NVL(D.INCI_TRNS_RCPT_INST_CD,0)=0
+					GROUP BY DCL_INST_CD
+					) T1, inst T2
+					WHERE T2.INST_CD=t1.dmg_inst_cd (+)
+					ORDER BY TO_NUMBER(local_cd), DECODE(inst_nm, (SELECT inst_nm FROM tsminst WHERE inst_cd  =   #{sInstCd}), 2)
+					)
+					SELECT
+					sum(total_cnt) AS sums
+					FROM pri
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					SELECT nvl(count(inci_upd_dt), 0) as sums
+					FROM TBZLEDGE
+					WHERE 1=1
+					AND TO_DATE(inci_upd_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND INCI_UPD_DT LIKE '%' || #{sYear} ||'%'
+					AND TRANS_SIDO_PRCS_STAT in ('12', '13', '15', '17')
+					AND INCI_TRNS_RCPT_SIDO_INST_CD = #{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</when>
+			</choose>
+		</if>
+	</select>
+
+	<!-- 일일 타입 누계 -->
+	<select id="selectReportTypeSum" resultMap="resultReportList">
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_2' or sAuthMain == 'AUTH_MAIN_1'"><!-- 완료 -->
+					SELECT nvl(type_nm, '0.합계') type_nm, nvl(sum(total_cnt), 0) sums
+					FROM ( SELECT case com_code2 when '20' then '1.비인가접근'
+					when '30' then '2.서비스거부'
+					when '10' then '3.악성코드'
+					when '70' then '4.정보수집'
+					WHEN '90' THEN '5.시스템권한획득'
+					WHEN '100' THEN '6.홈페이지변조'
+					WHEN '110' THEN '7.정보유출'
+					else '8.기타' end as type_nm,
+					total_cnt
+					FROM ( SELECT accd_typ_cd,
+					count(*) total_cnt
+					FROM tbzledge
+					WHERE 1=1
+					AND TO_DATE(INCI_ACPN_DT,'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND EXISTS (
+					SELECT sub_cd
+					FROM tsminst_leaf tsminst
+					WHERE tsminst.sub_cd = tbzledge.dmg_inst_cd
+					AND inst_cd =  #{sInstCd}
+					AND sub_cd NOT IN (
+					SELECT com_code2
+					FROM COMM_CODE
+					WHERE com_code1 = '4002'
+					AND code_lvl = '2')
+					AND sub_cd <![CDATA[ <> ]]> 1200000)
+					AND INCI_PRCS_STAT <![CDATA[ <> ]]> 0
+					AND inci_no like 'CT%'
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+					AND DMG_INST_CD <![CDATA[ <> ]]> 1100000
+					AND DMG_INST_CD <![CDATA[ <> ]]> 200605<!--20200709 피해기관: 보안통신부 제외-->
+					GROUP BY accd_typ_cd ) a,
+					( SELECT com_code2, code_name
+					FROM comm_code
+					WHERE com_code1 = '3002'
+					AND code_lvl = 2 ) b
+					WHERE a.accd_typ_cd (+) = b.com_code2 )
+					GROUP BY ROLLUP(type_nm)
+					ORDER BY type_nm
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_3'"><!-- 완료 -->
+					WITH type as (
+					select COM_CODE2, case com_code2 when '20' then '1비인가접근'
+					when '30' then '2서비스거부'
+					when '10' then '3악성코드'
+					when '70' then '4정보수집'
+					WHEN '90' THEN '5.시스템권한획득'
+					WHEN '100' THEN '6.홈페이지변조'
+					WHEN '110' THEN '7.정보유출'
+					else '8기 타' end as type_nm from COMM_CODE where COM_CODE1=3002 and CODE_LVL=2 and USE_YN='Y'
+					),
+					tree AS ( SELECT inst_cd
+					FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd} ),
+					pri AS   (
+					SELECT 	    type_nm ,
+					DECODE(type_nm, '', '0', COM_CODE2) local_cd, a AS inst_cd,DCL_INST_CD,
+					nvl(total_cnt, 0) AS     total_cnt,
+					nvl(end_cnt, 0) AS     end_cnt,
+					nvl(ing_cnt, 0) AS     ing_cnt
+					FROM (
+					SELECT ACCD_TYP_CD AS dmg_inst_cd,
+					INCI_TRNS_RCPT_INST_CD AS a,
+					DCL_INST_CD,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.INCI_TRNS_RCPT_INST_CD = #{sInstCd}
+					AND LENGTH(D.INCI_NO)=15
+					GROUP BY ACCD_TYP_CD, INCI_TRNS_RCPT_INST_CD,DCL_INST_CD
+					UNION ALL
+					SELECT ACCD_TYP_CD AS dmg_inst_cd,
+					DCL_INST_CD AS a,
+					DCL_INST_CD,
+					SUM( DECODE(NVL(TRANS_INCI_PRCS_STAT,0),'0',0,1)) total_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 1, '12', 1, '15', 1, '17', 1, 0 ))end_cnt,
+					SUM( DECODE( NVL(TRANS_INCI_PRCS_STAT,0), '13', 0, '12', 0, '15', 0, '17', 0, 1 )) ing_cnt
+					FROM TBZLEDGE d
+					WHERE 1=1
+					AND TO_DATE( d.INCI_ACPN_DT, 'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND inci_ttl NOT LIKE '%훈련%'
+					AND inci_ttl NOT LIKE '%확인%'
+					AND d.DCL_INST_CD IN (#{sInstCd})
+					AND LENGTH(D.INCI_NO)=15
+					AND NVL(D.INCI_TRNS_RCPT_INST_CD,0)=0
+					GROUP BY ACCD_TYP_CD, DCL_INST_CD
+
+					) T1, type T2
+					WHERE T2.COM_CODE2=t1.dmg_inst_cd (+)
+					ORDER BY TO_NUMBER(COM_CODE2)
+					),
+					sub_pri as (
+					SELECT
+					aaa.type_nm,
+					aaa.local_cd,
+					aaa.inst_cd,
+					DCL_INST_CD,
+					SUM( aaa.total_cnt ) AS total_cnt,
+					SUM( aaa.end_cnt ) AS end_cnt,
+					SUM( aaa.ing_cnt ) AS ing_cnt
+					FROM
+					pri aaa , tree bbb
+					WHERE aaa.inst_cd=bbb.inst_cd (+)
+					GROUP BY
+					aaa.type_nm,
+					aaa.local_cd,
+					aaa.inst_cd,
+					aaa.DCL_INST_CD
+					)
+					select '0합계' as type_nm, sum(total_cnt) sums
+					from sub_pri
+					UNION ALL
+					select type_nm, sum(total_cnt) from sub_pri
+					GROUP BY type_nm
+					order by type_nm
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					SELECT nvl(count(inci_upd_dt), 0) as sums
+					FROM TBZLEDGE
+					WHERE 1=1
+					AND TO_DATE(inci_upd_dt,'yyyymmddhh24miss') BETWEEN TO_DATE(#{sumDay},'yyyymmddhh24miss') AND TO_DATE(#{sumEndDt},'yyyymmddhh24miss')
+					AND inci_acpn_dt LIKE '%' || #{sYear} ||'%'
+					AND TRANS_SIDO_PRCS_STAT in ('12', '13', '15', '17')
+					AND INCI_TRNS_RCPT_SIDO_INST_CD =#{sInstCd}
+					AND inci_ttl not like '%훈련%'
+					AND inci_ttl not like '%확인%'
+				</when>
+			</choose>
+		</if>
+	</select>
+</mapper>

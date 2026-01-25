@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.user.gpki.persistence.GpkiMapper">
+    <select id="selectGpkiSerialNoByUserIdAndIpAddr" resultType="string">
+        SELECT GPKI_SERIAL_NO
+        FROM COMM_USER
+        WHERE USE_YN = 'Y'
+          AND USER_ID = #{userId}
+    </select>
+
+    <update id="updateGpkiSerialNoByUserIdAndIpAddr">
+        UPDATE COMM_USER
+        SET GPKI_SERIAL_NO = #{gpkiSerialNo}
+        WHERE USE_YN = 'Y'
+          AND USER_ID = #{userId}
+          AND IP_ADDR = #{ipAddr}
+    </update>
+
+    <update id="updateGpkiSerialNoByUserNameAndOfficeNumberAndPhoneNumber">
+        UPDATE COMM_USER
+        SET GPKI_SERIAL_NO = #{gpkiSerialNo}
+        WHERE USE_YN = 'Y'
+          AND USER_NAME = #{userName}
+          AND OFFC_TEL_NO = #{officeNumber}
+          AND MOBL_PHN_NO = #{phoneNumber}
+    </update>
+</mapper>

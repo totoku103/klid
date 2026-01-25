@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sec.noticeBoard.persistence.NoticeBoardMapper">
+
+	<resultMap type="com.klid.webapp.main.sec.noticeBoard.dto.NoticeBoardDto" id="getNoticeBoardResultMap">
+		<result property="bultnNo"				column="BULTN_NO"/>
+		<result property="bultnType"			column="BULTN_TYPE"/>
+		<result property="bultnTitle"			column="BULTN_TITLE"/>
+		<result property="bultnCont"			column="BULTN_CONT"/>
+		<result property="readCnt"				column="READ_CNT"/>
+		<result property="rcmdCnt"				column="RCMD_CNT"/>
+		<result property="regDate"				column="REG_DATE"/>
+		<result property="userId"				column="USER_ID"/>
+		<result property="organCode"			column="ORGAN_CODE"/>
+		<result property="pntOrganCode"			column="PNT_ORGAN_CODE"/>
+		<result property="startDt"				column="START_DT"/>
+		<result property="endDt"					column="END_DT"/>
+		<result property="groupNo"				column="GROUP_NO"/>
+		<result property="levelNo"				column="LEVEL_NO"/>
+		<result property="orderNo"				column="ORDER_NO"/>
+		<result property="cateNo"				column="CATE_NO"/>
+		<result property="openScope"			column="OPEN_SCOPE"/>
+		<result property="existFile"			column="EXIST_FILE"/>
+		<result property="totalReplyCnt"		column="TOTAL_REPLY_CNT"/>
+		<result property="totalRcmdCnt"			column="TOTAL_RCMD_CNT"/>
+		<result property="isSecret"				column="IS_SECRET"/>
+		<result property="useYn"					column="USE_YN"/>
+		<result property="pntUserId"			column="PNT_USER_ID"/>
+		<result property="htmlYn"				column="HTML_YN"/>
+		<result property="groupItemNo"			column="GROUP_ITEM_NO"/>
+		<result property="control"				column="CONTROL"/>
+		<result property="controlStr"			column="CONTROL_STR"/>
+		<result property="userName"				column="USER_NAME"/>
+		<result property="fileCount"			column="FILECOUNT"/>
+		<result property="noticeType"			column="noticeType"/>
+		<result property="groupType"			column="groupType"/>
+		<result property="surveyTypeCode"		column="SURVEY_TYPE_CODE"/>
+		<result property="surveyExamType"		column="surveyExamType"/>
+		<result property="instNm"				column="INST_NM"/>
+	</resultMap>
+
+	<!--  게시판 타입으로 리스트 받아오기-->
+	<select id="getBoardList" resultMap="getNoticeBoardResultMap">
+		SELECT
+		A.BULTN_NO			,
+		A.BULTN_TYPE		,
+		A.BULTN_TITLE	    ,
+		A.BULTN_CONT,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') 	AS REG_DATE, -->
+		A.READ_CNT	    	,
+		A.RCMD_CNT	    	,
+		A.USER_ID	        ,
+		A.ORGAN_CODE	    ,
+		A.PNT_ORGAN_CODE	,
+		A.START_DT	    	,
+		A.END_DT	        ,
+		A.GROUP_NO	    	,
+		A.LEVEL_NO	    	,
+		A.ORDER_NO	    	,
+		A.CATE_NO	        ,
+		A.OPEN_SCOPE	    ,
+		A.EXIST_FILE	    ,
+		A.TOTAL_REPLY_CNT	,
+		A.TOTAL_RCMD_CNT	,
+		A.IS_SECRET	    	,
+		A.USE_YN	        ,
+		A.PNT_USER_ID	    ,
+		A.HTML_YN	        ,
+		A.GROUP_ITEM_NO		,
+		A.CONTROL,
+		NVL((SELECT CODE_NAME FROM comm_code WHERE com_code1 = '4021' AND COM_CODE2 = A.CONTROL), '없음') AS CONTROL_STR,
+		B.INST_NM			,
+		(
+		SELECT	COUNT(*)
+		FROM	BULTN_FILE B
+		WHERE	A.BULTN_NO =B.BULTN_NO
+		) AS FILECOUNT,
+		NVL(USER_NAME,
+		(SELECT
+		B.USER_NAME
+		FROM COMM_USER B
+		WHERE B.USER_ID = A.USER_ID)
+		)                           AS	USER_NAME ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c1
+		WHERE A.CATE_NO = c1.CATE_NO
+		AND c1.cate_group = 'notice'
+		)                           AS	noticeType ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c2
+		WHERE A.GROUP_ITEM_NO = c2.CATE_NO
+		AND c2.cate_group = 'group'
+		)                           AS groupType
+		FROM
+		BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+		1=1
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'notice'
+		<if test="startDate != null and endDate != null">
+			AND REG_DATE BETWEEN #{startDate} AND #{endDate}
+		</if>
+		<!--<if test="sAuthMain != null and sAuthMain != ''">
+            <choose>
+                <when test="sAuthMain == 'AUTH_MAIN_2'">
+                    AND A.OPEN_SCOPE LIKE '%2%'
+                </when>
+                <when test="sAuthMain == 'AUTH_MAIN_3'">
+                    AND A.OPEN_SCOPE LIKE '%3%'
+                </when>
+                <when test="sAuthMain == 'AUTH_MAIN_4'">
+                    AND A.OPEN_SCOPE LIKE '%4%'
+                </when>
+                <otherwise>
+
+                </otherwise>
+            </choose>
+        </if>-->
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000
+					)
+					AND  A.OPEN_SCOPE LIKE '%3%'
+					<!-- AND A.ORGAN_CODE = 1100000 -->
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000 OR A.ORGAN_CODE = #{sPntInstCd}
+					)
+					AND A.OPEN_SCOPE LIKE '%4%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND  A.OPEN_SCOPE LIKE '%2%'
+				</when>
+				<otherwise>
+					AND 1=1
+				</otherwise>
+			</choose>
+		</if>
+
+		<if test="groupType != null and groupType != ''">
+			AND A.GROUP_ITEM_NO = #{groupType}
+		</if>
+		<if test="noticeType != null and noticeType != ''">
+			AND A.CATE_NO = #{noticeType}
+		</if>
+		<if test="title != null and title != ''">
+			AND UPPER(A.BULTN_TITLE) LIKE '%' || UPPER(#{title}) || '%'
+		</if>
+		<if test="bultnCont != null and bultnCont != ''">
+			AND UPPER(A.BULTN_CONT) LIKE '%' || UPPER(#{bultnCont}) || '%'
+		</if>
+		<if test="instNm != null and instNm != ''">
+			AND B.INST_NM LIKE '%' || UPPER(#{instNm}) || '%'
+		</if>
+		<if test="sControl != null and sControl != ''">
+			AND A.CONTROL LIKE '%' || UPPER(#{sControl}) || '%'
+		</if>
+		<if test="popupYn != null and popupYn != ''">	<!-- 2022.01.10 실시간 팝업 공지사항 구분값(당일이면서 긴급일경우)	-->
+			AND A.CATE_NO = 2
+			AND A.REG_DATE
+				BETWEEN concat(TO_CHAR(sysdate, 'YYYYMMDD' ), '000000') AND concat(TO_CHAR(sysdate, 'YYYYMMDD' ), '235959')
+		</if>
+		ORDER BY A.BULTN_NO DESC
+	</select>
+
+	<select id="getPeriodBoardList" resultMap="getNoticeBoardResultMap">
+		SELECT
+		A.BULTN_NO			,
+		A.BULTN_TYPE		,
+		A.BULTN_TITLE	    ,
+		A.BULTN_CONT,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') 	AS REG_DATE, -->
+		A.READ_CNT	    	,
+		A.RCMD_CNT	    	,
+		A.USER_ID	        ,
+		A.ORGAN_CODE	    ,
+		A.PNT_ORGAN_CODE	,
+		A.START_DT	    	,
+		A.END_DT	        ,
+		A.GROUP_NO	    	,
+		A.LEVEL_NO	    	,
+		A.ORDER_NO	    	,
+		A.CATE_NO	        ,
+		A.OPEN_SCOPE	    ,
+		A.EXIST_FILE	    ,
+		A.TOTAL_REPLY_CNT	,
+		A.TOTAL_RCMD_CNT	,
+		A.IS_SECRET	    	,
+		A.USE_YN	        ,
+		A.PNT_USER_ID	    ,
+		A.HTML_YN	        ,
+		A.GROUP_ITEM_NO		,
+		A.CONTROL			,
+		B.INST_NM			,
+		(
+		SELECT	COUNT(*)
+		FROM	BULTN_FILE B
+		WHERE	A.BULTN_NO =B.BULTN_NO
+		) AS FILECOUNT,
+		NVL(USER_NAME,
+		(SELECT
+		B.USER_NAME
+		FROM COMM_USER B
+		WHERE B.USER_ID = A.USER_ID)
+		)                           AS	USER_NAME ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c1
+		WHERE A.CATE_NO = c1.CATE_NO
+		AND c1.cate_group = 'notice'
+		)                           AS	noticeType ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c2
+		WHERE A.GROUP_ITEM_NO = c2.CATE_NO
+		AND c2.cate_group = 'group'
+		)                           AS groupType
+		FROM
+		BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+		1=1
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'notice'
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000
+					)
+					AND  A.OPEN_SCOPE LIKE '%3%'
+					<!-- AND A.ORGAN_CODE = 1100000 -->
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000 OR A.ORGAN_CODE = #{sPntInstCd}
+					)
+					AND A.OPEN_SCOPE LIKE '%4%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND  A.OPEN_SCOPE LIKE '%2%'
+				</when>
+				<otherwise>
+					AND 1=1
+				</otherwise>
+			</choose>
+		</if>
+		AND A.REG_DATE BETWEEN #{startDt} AND #{endDt}
+		ORDER BY A.BULTN_NO DESC
+	</select>
+
+	<!-- 게시판 조회수 증가 -->
+	<update id="hitsUpBoard" >
+	UPDATE BULTN
+	SET
+			READ_CNT = NVL(READ_CNT, 0) + 1
+	WHERE
+			BULTN_NO = #{boardNo}
+</update>
+
+	<!-- 게시판 번호로 컨텐츠 보기-->
+	<select id="getBoardContents" resultMap="getNoticeBoardResultMap" >
+		SELECT
+		A.BULTN_NO		,
+		A.BULTN_TYPE	,
+		A.BULTN_TITLE	,
+		A.BULTN_CONT,
+		A.READ_CNT	    ,
+		A.RCMD_CNT	    ,
+		A.REG_DATE,
+		<!-- TO_DATE(A.REG_DATE,'YYYY-MM-DD HH24:MI:SS') AS REG_DATE , -->
+		A.USER_ID	    ,
+		A.ORGAN_CODE	,
+		A.PNT_ORGAN_CODE,
+		A.START_DT	    ,
+		A.END_DT	    ,
+		A.GROUP_NO	    ,
+		A.LEVEL_NO	    ,
+		A.ORDER_NO	    ,
+		A.CATE_NO	    ,
+		A.OPEN_SCOPE	,
+		A.EXIST_FILE	,
+		A.TOTAL_REPLY_CNT,
+		A.TOTAL_RCMD_CNT,
+		A.IS_SECRET	    ,
+		A.USE_YN	    ,
+		A.PNT_USER_ID	,
+		A.HTML_YN	    ,
+		A.GROUP_ITEM_NO	,
+		A.CONTROL,
+		NVL((SELECT CODE_NAME FROM comm_code WHERE com_code1 = '4021' AND COM_CODE2 = A.CONTROL), '없음') AS CONTROL_STR,
+		A.SURVEY_TYPE_CODE,
+		A.OPEN_SCOPE,
+		B.INST_NM,
+		NVL(USER_NAME,
+		(SELECT
+		B.USER_NAME
+		FROM COMM_USER B
+		WHERE B.USER_ID = A.USER_ID)
+		)                           AS	USER_NAME ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c1
+		WHERE A.CATE_NO = c1.CATE_NO
+		AND c1.cate_group = 'notice'
+		)                           AS	noticeType ,
+		(
+		SELECT
+		CATE_NAME
+		FROM BULTN_CATE c2
+		WHERE A.GROUP_ITEM_NO = c2.CATE_NO
+		AND c2.cate_group = 'group'
+		)                           AS groupType,
+		(
+		SELECT flag2 FROM comm_code WHERE com_code1 = '4007' AND code_lvl = 2 AND A.survey_type_code = com_code2
+		)							AS surveyExamType
+		FROM
+		BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+		1=1
+		AND BULTN_NO = #{boardNo}
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'notice'
+		<if test="groupType != null and groupType != ''">
+			AND 3=3
+		</if>
+	</select>
+
+	<resultMap type="com.klid.webapp.common.file.dto.AttachfileDto" id="resultAttachfile">
+		<result property="fileNo" 			column="FILE_NO"/>
+		<result property="fileName" 		column="FILE_NAME"/>
+		<result property="originalFileName" column="ORIGINAL_FILE_NAME"/>
+	</resultMap>
+
+	<!-- 게시판 번호로 첨부파일 보기-->
+	<select id="selectAttachFileList" resultMap="resultAttachfile">
+		<!-- SELECT
+                FILE_NO,
+                ORIGINAL_FILE_NAME
+        FROM
+                CM_ATTACHFILE
+        WHERE
+                BOARD_NO = ${boardNo} -->
+		SELECT
+		FILE_NO,
+		FILE_NAME,
+		ORIGIN_NAME		AS ORIGINAL_FILE_NAME
+		FROM BULTN_FILE
+		WHERE BULTN_NO = ${boardNo}
+	</select>
+
+	<!-- 게시판 글쓰고 작성한 글 번호 받아오기 -->
+	<insert id="addBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_NO), 0) + 1 FROM BULTN
+		</selectKey>
+		INSERT INTO
+		BULTN		(
+		BULTN_NO	,
+		BULTN_TYPE	,
+		BULTN_TITLE	,
+		BULTN_CONT,
+		READ_CNT	,
+		RCMD_CNT	,
+		REG_DATE	,
+		USER_ID	,
+		GROUP_NO	,
+		LEVEL_NO	,
+		ORDER_NO	,
+		USE_YN	,
+		END_DT ,
+		ORGAN_CODE,
+		CATE_NO,
+		GROUP_ITEM_NO,
+		OPEN_SCOPE,
+		SURVEY_TYPE_CODE,
+		USER_NAME,
+		CONTROL
+		)
+		VALUES		(
+		#{boardNo},
+		'notice',
+		#{boardTitle},
+		#{boardContent},
+		0,
+		0,
+		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+		#{userId},
+		0,
+		1,
+		1,
+		'Y',
+		#{endDt},
+		#{organCode},
+		#{cateNo},
+		#{groupItemNo},
+		#{noticeScope},
+		#{surveyTypeCode},
+		#{userName},
+		#{control}
+		)
+	</insert>
+
+	<!-- 게시판 글 수정하기 -->
+	<update id="editBoard">
+	UPDATE BULTN
+	SET
+		BULTN_TITLE = #{boardTitle},
+		BULTN_CONT  = #{boardContent} ,
+		OPEN_SCOPE  = #{noticeScope},
+		CONTROL = #{control},
+		CATE_NO = #{cateNo},
+		GROUP_ITEM_NO = #{groupItemNo}
+	WHERE
+		BULTN_NO = #{boardNo}
+	</update>
+
+	<!-- 게시판 글 삭제하기 -->
+	<delete id="delBoard">
+    BEGIN
+        UPDATE BULTN SET
+            USE_YN = 'N'
+        WHERE BULTN_NO = #{boardNo};
+
+        delete from notice_confirm
+        where BULTN_NO = #{boardNo};
+    END;
+	</delete>
+
+	<resultMap type="com.klid.webapp.main.sec.noticeBoard.dto.NoticeBoardDto" id="getGroupTypeResultMap">
+		<result property="cateNo"				column="CATE_NO"/>
+		<result property="cateName"			    column="CATE_NAME"/>
+	</resultMap>
+	<select id="getBoardTypeList" resultMap="getGroupTypeResultMap">
+  SELECT
+    CATE_NO,
+    CATE_NAME
+  FROM BULTN_CATE
+  WHERE
+    CATE_GROUP = #{groupType}
+
+</select>
+
+	<insert id="addNoticeSurvey">
+		<selectKey keyProperty="noticeSurveySeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(NOTICE_SURVEY_SEQ), 0) + 1 FROM NOTICE_SURVEY
+		</selectKey>
+		INSERT INTO NOTICE_SURVEY(
+		NOTICE_SURVEY_SEQ,
+		BULTN_NO,
+		USER_ID,
+		SURVEY_ANSWER,
+		REG_DTIME,
+		USER_NAME
+		)
+		VALUES(
+		#{noticeSurveySeq},
+		#{bultnNo},
+		#{userId},
+		#{surveyAnswer},
+		TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ),
+		#{userName}
+		)
+	</insert>
+
+	<select id="selectSurveyAnsweCnt" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM NOTICE_SURVEY
+		WHERE
+			BULTN_NO = #{bultnNo}
+		AND USER_ID = #{userId}
+	</select>
+
+	<resultMap type="com.klid.webapp.main.sec.noticeBoard.dto.NoticeBoardDto" id="resultSurveyChart">
+		<result property="answerName" column="answerName"/>
+		<result property="answerCnt"  column="answerCnt"/>
+	</resultMap>
+
+	<select id="selectSurveyChart" resultMap="resultSurveyChart">
+		SELECT
+			code_name				 AS answerName	,
+			COUNT(SUB.survey_answer) AS answerCnt
+		FROM comm_code
+		LEFT JOIN (
+			SELECT
+				b.survey_answer
+			FROM bultn a
+			INNER JOIN NOTICE_SURVEY b ON a.bultn_no = b.bultn_no
+			WHERE a.USE_YN = 'Y'
+			AND a.BULTN_NO = #{bultnNo}
+		)SUB
+		ON com_code3 = SUB.survey_answer
+		WHERE
+			com_code1 = '4007'
+		AND code_lvl = 3
+		AND com_code2 = #{surveyTypeCode}
+		GROUP BY
+			com_code2, code_name
+	</select>
+
+	<resultMap type="com.klid.webapp.main.sec.noticeBoard.dto.NoticeBoardDto" id="resultSurveyGrid">
+		<result property="surveyAnswer" column="survey_answer"/>
+		<result property="userId"  		column="user_id"/>
+		<result property="userNm"  		column="user_name"/>
+		<result property="instNm"  		column="inst_nm"/>
+		<result property="regDtime"  	column="reg_dtime"/>
+	</resultMap>
+
+	<select id="selectSurveyGrid" resultMap="resultSurveyGrid">
+		SELECT
+			b.survey_answer,
+			b.user_id,
+			b.reg_dtime,
+			NVL(b.USER_NAME,
+			 (SELECT USER_NAME
+			 FROM COMM_USER d
+			 WHERE d.USER_ID=b.USER_ID)
+			) AS USER_NAME,
+			e.inst_nm
+		FROM bultn a
+		INNER JOIN NOTICE_SURVEY b ON a.bultn_no = b.bultn_no
+		INNER JOIN comm_code c ON a.survey_type_code = c.com_code2 and  c.com_code1 = '4007' and c.code_lvl = 2
+    	INNER JOIN TSMINST e ON a.ORGAN_CODE = e.INST_CD
+		WHERE a.bultn_no = #{bultnNo}
+		ORDER BY b.REG_DTIME DESC
+	</select>
+
+	<resultMap type="com.klid.webapp.main.sec.noticeBoard.dto.NoticeBoardDto" id="resultMainNoticeList">
+		<result property="bultnNo" 			column="BULTN_NO"/>
+		<result property="bultnTitle" 		column="BULTN_TITLE"/>
+		<result property="regDate"			column="REG_DATE"/>
+		<result property="bultnCont"		column="BULTN_CONT"/>
+	</resultMap>
+
+	<select id="getMainNoticeList" resultMap="resultMainNoticeList">
+		SELECT
+		*
+		FROM (
+		SELECT
+		A.BULTN_NO,
+		NVL(A.BULTN_TITLE,' ') AS BULTN_TITLE,
+		NVL(TO_CHAR(TO_DATE(A.REG_DATE, 'yyyymmdd HH24MISS'),'YYYY-MM-DD'),' ') AS REG_DATE,
+		A.BULTN_CONT
+		FROM
+		BULTN A
+		LEFT JOIN TSMINST B ON A.ORGAN_CODE = B.INST_CD
+		WHERE
+		1 = 1
+		AND A.USE_YN = 'Y'
+		AND A.BULTN_TYPE = 'notice'
+		<if test="sAuthMain != null and sAuthMain != ''">
+			<choose>
+				<when test="sAuthMain == 'AUTH_MAIN_3'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000
+					)
+					AND  A.OPEN_SCOPE LIKE '%3%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_4'">
+					AND
+					(
+					A.ORGAN_CODE IN (
+					SELECT inst_cd FROM tsminst
+					CONNECT BY PRIOR inst_cd = pnt_inst_cd
+					START WITH inst_cd = #{sInstCd}
+					)
+					OR A.ORGAN_CODE = 1100000 OR A.ORGAN_CODE = #{sPntInstCd}
+					)
+					AND A.OPEN_SCOPE LIKE '%4%'
+				</when>
+				<when test="sAuthMain == 'AUTH_MAIN_2'">
+					AND  A.OPEN_SCOPE LIKE '%2%'
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+		</if>
+		ORDER BY
+		A.BULTN_NO DESC
+		)WHERE
+		ROWNUM <![CDATA[ <= ]]>  #{listSize}
+	</select>
+
+	<select id="getInstNmByInstCd" resultType="String">
+		select inst_nm from TSMINST where INST_CD=#{instCd}
+	</select>
+
+	<insert id="addNoticeConfirm">
+		<selectKey keyProperty="confirmSeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(CONFIRM_SEQ), 0) + 1 FROM NOTICE_CONFIRM
+		</selectKey>
+		INSERT INTO NOTICE_CONFIRM(
+			CONFIRM_SEQ,
+			BULTN_NO,
+			USER_ID,
+			CONTENT,
+			CHECK_DATE
+		)
+		VALUES(
+			#{confirmSeq},
+			#{bultnNo},
+			#{userId},
+			#{confirmContent},
+			TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+		)
+	</insert>
+
+    <resultMap type="java.util.HashMap" id="getConfirmResultMap">
+        <result property="content"			column="content"/>
+        <result property="regDate"			column="reg_date"/>
+        <result property="userName"			column="user_name"/>
+		<result property="userId"			column="user_id"/>
+        <result property="instNm"			column="inst_nm"/>
+		<result property="checkReplyDate"	column="check_reply_date"/>
+    </resultMap>
+
+	<select id="selectConfirmList" resultMap="getConfirmResultMap">
+		SELECT
+			a.content,
+			a.check_reply_date,
+			b.user_id,
+			b.user_name,
+			c.inst_nm
+		FROM notice_confirm a
+		INNER JOIN COMM_USER b ON a.user_id = b.user_id
+		INNER JOIN tsminst c on b.inst_cd = c.inst_cd
+		WHERE a.bultn_no = #{bultnNo}
+		and a.check_reply_date is not null
+		AND check_reply_date is not null
+	</select>
+
+    <select id="selectConfirmCheck" resultType="int">
+        select
+          count(1)
+        from notice_confirm
+        where bultn_no = #{bultnNo} and user_id = #{sUserId}
+    </select>
+
+	<select id="selectConfirmReplyCheck" resultType="int">
+        select
+          count(1)
+        from notice_confirm
+        where bultn_no = #{bultnNo} and user_id = #{sUserId}
+        and check_reply_date is not null
+    </select>
+
+	<update id="deleteNoticeConfirm">
+		update notice_confirm
+		set
+			check_reply_date = null,
+			content = null
+		where bultn_no = #{bultnNo}
+		and user_id = #{sUserId}
+	</update>
+
+	<update id="editNoticeConfirm">
+		<selectKey keyProperty="confirmSeq" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(CONFIRM_SEQ), 0) + 1 FROM NOTICE_CONFIRM
+		</selectKey>
+		BEGIN
+			MERGE INTO NOTICE_CONFIRM
+			    USING DUAL
+			    ON(BULTN_NO = #{bultnNo} AND user_id = #{sUserId}  )
+		        WHEN MATCHED THEN
+					 UPDATE SET
+					 CONTENT = #{confirmContent},
+					 CHECK_REPLY_DATE = TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+				WHEN NOT MATCHED THEN
+					INSERT(CONFIRM_SEQ, BULTN_NO, USER_ID, CONTENT, CHECK_DATE, CHECK_REPLY_DATE) VALUES (#{confirmSeq}, #{bultnNo}, #{userId} , #{confirmContent}, TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ), TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' ))
+			        ;
+		END;
+	</update>
+
+	<select id="selectCreateCnt" resultType="int">
+        select
+          count(1)
+        from bultn
+        where
+        use_yn = 'Y' and bultn_type = #{boardType}
+        and user_id = #{userId}
+		and reg_date
+		BETWEEN TO_CHAR(SYSDATE -1/24, 'YYYYMMDDHH24MISS') AND TO_CHAR(sysdate, 'YYYYMMDDHH24MISS' )
+    </select>
+
+</mapper>

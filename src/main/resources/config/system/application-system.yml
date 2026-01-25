@@ -1,0 +1,36 @@
+# System Configuration (Common)
+app:
+  system:
+    sitename: Klid
+    web-sitename: Klid
+    topo:
+      auth-use: true
+      auth-table: topo
+    dash:
+      ip: 127.0.0.1
+      port: 8081
+      url: /main.do
+      default: false
+    pwd-encrypt: false
+    netis-popup: true
+    upload-size: 1048576000
+    db: oracle
+    delegate:
+      eng-ip: 127.0.0.1
+      eng-port: 8500
+      eng-os: lin
+      eng-lang-type: c
+    starcell-use: false
+    avf:
+      upload-ip: 10.1.3.210
+      upload-port: 8080
+    conf:
+      incident-type-cd: "0010"
+      incident-no: CT
+      local-cd: "-1"
+      inst-cd: "1100000"
+      organ-code: "6260000"
+    ncsc-url: http://10.46.126.53:8080
+
+  oracle-db-version: standard
+  itmon-svc-url: http://10.1.1.75:28080

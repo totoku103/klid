@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.sec.takeOverBoard.persistence.TakeOverBoardMapper">
+
+	<resultMap type="com.klid.webapp.main.sec.takeOverBoard.dto.TakeOverBoardDto" id="resultBoard">
+		<result property="bultnTakeSeq"			column="BULTN_TAKE_SEQ"/>
+		<result property="bultnTakeTitle"		column="BULTN_TAKE_TITLE"/>
+		<result property="bultnTakeCont"		column="BULTN_TAKE_CONT"/>
+		<result property="regDate"				column="REG_DATE"/>
+		<result property="regUserId"			column="REG_USER_ID"/>
+		<result property="regUserName"			column="REG_USER_NAME"/>
+		<result property="mdfDate"				column="MDF_DATE"/>
+		<result property="mdfUserId"			column="MDF_USER_ID"/>
+		<result property="mdfUserName"			column="MDF_USER_NAME"/>
+		<result property="alarmDate"			column="ALARM_DATE"/>
+		<result property="alarmUnit"			column="ALARM_UNIT"/>
+		<result property="alarmWeek"			column="ALARM_WEEK"/>
+		<result property="alarmMonth"			column="ALARM_MONTH"/>
+		<result property="alarmMonthLastYn"		column="ALARM_MONTH_LAST_YN"/>
+		<result property="readFlag"				column="READ_FLAG"/>
+		<result property="isClose"				column="IS_CLOSE"/>
+		<result property="confirmDate"			column="CONFIRM_DATE"/>
+		<result property="confirmWeek"			column="CONFIRM_WEEK"/>
+		<result property="confirmMoneth"		column="CONFIRM_MONETH"/>
+        <result property="instCd"		        column="INST_CD"/>
+	</resultMap>
+		
+	<resultMap type="com.klid.webapp.main.sec.takeOverBoard.dto.TakeOverReplyBoardDto"  id="resultTakeReply">
+		<result property="bultnTakeReplySeq"	column="BULTN_TAKE_REPLY_SEQ"/>
+		<result property="bultnTakeSeq"			column="BULTN_TAKE_SEQ"/>
+		<result property="bultnTakeReplyCont"	column="BULTN_TAKE_REPLY_CONT"/>
+		<result property="regDate"				column="REG_DATE"/>
+		<result property="regUserId"			column="REG_USER_ID"/>
+		<result property="regUserName"			column="REG_USER_NAME"/>
+	</resultMap>
+	
+	<!-- 인수인계 리스트 조회 -->
+	<select id="selectBoardList" resultMap="resultBoard">
+		SELECT *
+		FROM (
+			SELECT	BULTN_TAKE_SEQ, BULTN_TAKE_TITLE, BULTN_TAKE_CONT
+						, TO_CHAR(TO_DATE(REG_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') REG_DATE, REG_USER_ID, REG_USER_NAME
+						, TO_CHAR(TO_DATE(MDF_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') MDF_DATE, MDF_USER_ID, MDF_USER_NAME
+						, TO_CHAR(TO_DATE(ALARM_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') ALARM_DATE
+						, ALARM_UNIT
+						, ALARM_WEEK
+						, ALARM_MONTH
+						, ALARM_MONTH_LAST_YN
+						, IS_CLOSE
+						, CASE
+<!-- 					     ALARM_UNIT:0, 기간없음. 확인일시만 존재 확인 -->
+					    WHEN ALARM_UNIT='0' THEN
+					        NVL2((SELECT BULTN_TAKE_CONFIRM_SEQ FROM	BULTN_TAKE_CONFIRM B
+												WHERE	CONFIRM_USER_ID = #{userId}
+												AND		A.BULTN_TAKE_SEQ = B.BULTN_TAKE_SEQ
+												AND     CONFIRM_DATE IS NOT NULL
+												AND		ROWNUM= 1
+								), 1, 0)
+<!-- 					     ALARM_UNIT:1, 주차별 -->
+					    WHEN ALARM_UNIT='1' THEN
+					        NVL2((SELECT BULTN_TAKE_CONFIRM_SEQ FROM	BULTN_TAKE_CONFIRM B
+												WHERE	CONFIRM_USER_ID = #{userId}
+												AND		A.BULTN_TAKE_SEQ = B.BULTN_TAKE_SEQ
+												AND		CONFIRM_WEEK IS NOT NULL
+												AND     CONFIRM_WEEK <![CDATA[ <= ]]> TO_CHAR(SYSDATE, 'WW')
+												AND     TO_CHAR(TO_DATE(CONFIRM_DATE,'YYYYMMDDHH24MISS'),'d') <![CDATA[ >= ]]> ALARM_WEEK
+												AND		ROWNUM= 1
+								), 1, 0)
+<!-- 					     ALARM_UNIT:2, 월별 -->
+					    WHEN ALARM_UNIT='2' THEN
+					        NVL2((SELECT BULTN_TAKE_CONFIRM_SEQ FROM	BULTN_TAKE_CONFIRM B
+												WHERE	CONFIRM_USER_ID = #{userId}
+												AND		A.BULTN_TAKE_SEQ = B.BULTN_TAKE_SEQ
+												AND		CONFIRM_MONETH IS NOT NULL
+												AND     CONFIRM_MONETH <![CDATA[ <= ]]> TO_CHAR(SYSDATE, 'YYYYMM') 
+												AND     TO_CHAR(TO_DATE(CONFIRM_DATE,'YYYYMMDDHH24MISS'),'dd')  <![CDATA[ >= ]]> ALARM_MONTH
+												AND		ROWNUM= 1
+					        ), 1, 0)
+					    ELSE
+					        0
+					    END AS READ_FLAG
+                        ,INST_CD
+		    FROM	BULTN_TAKE A
+		    WHERE	1=1
+			AND		REG_DATE BETWEEN '${date1}000000' AND '${date2}235959'
+			<if test="title != null and title != ''">
+				AND UPPER(BULTN_TAKE_TITLE) LIKE '%' || UPPER(#{title}) || '%'
+			</if>
+			<if test="bultnCont != null and bultnCont != ''">
+				AND UPPER(BULTN_TAKE_CONT) LIKE '%' || UPPER(#{bultnCont}) || '%'
+			</if>
+			<if test='isClose != null and isClose != -1'>
+				AND IS_CLOSE = #{isClose}
+			</if>
+			<if test="sAuthMain != null and sAuthMain != ''">
+				<choose>
+					<when test="sAuthMain == 'AUTH_MAIN_3'">
+						AND A.INST_CD = #{sInstCd}
+					</when>
+					<when test="sAuthMain == 'AUTH_MAIN_4'">
+						AND A.INST_CD = #{sInstCd}
+					</when>
+					<when test="sAuthMain == 'AUTH_MAIN_2'">
+						AND A.INST_CD = 1100000
+					</when>
+					<otherwise>
+						AND 1=1
+					</otherwise>
+				</choose>
+			</if>
+		) A
+		WHERE	1=1
+		<if test='readFlag != null and readFlag != -1'>
+			AND READ_FLAG = #{readFlag}
+		</if>
+	    ORDER BY A.BULTN_TAKE_SEQ DESC
+	</select>
+
+	<!-- 게시판 번호로 컨텐츠 보기-->
+	<select id="selectBoardInfo" resultMap="resultBoard" >
+		SELECT
+					BULTN_TAKE_SEQ, BULTN_TAKE_TITLE, BULTN_TAKE_CONT
+					, TO_CHAR(TO_DATE(REG_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') REG_DATE
+					, REG_USER_ID
+					, REG_USER_NAME
+					, TO_CHAR(TO_DATE(ALARM_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') ALARM_DATE
+					, ALARM_UNIT
+					, ALARM_WEEK
+					, ALARM_MONTH
+					, ALARM_MONTH_LAST_YN
+					, IS_CLOSE
+	    FROM	BULTN_TAKE A
+	    WHERE	1=1
+		AND		BULTN_TAKE_SEQ = #{boardNo}
+	</select>
+
+
+	<!-- 게시판 글쓰고 작성한 글 번호 받아오기 -->
+	<insert id="insertBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_TAKE_SEQ), 0) + 1 FROM BULTN_TAKE
+		</selectKey>
+		INSERT INTO BULTN_TAKE (
+			BULTN_TAKE_SEQ, BULTN_TAKE_TITLE, BULTN_TAKE_CONT, 
+			REG_DATE, REG_USER_ID, REG_USER_NAME,
+			ALARM_DATE, ALARM_UNIT, ALARM_WEEK, ALARM_MONTH, ALARM_MONTH_LAST_YN, IS_CLOSE, INST_CD
+		) VALUES (
+			#{boardNo}, #{boardTitle}, #{boardContent}, 
+			TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{userId}, (SELECT USER_NAME FROM COMM_USER WHERE USER_ID=#{userId}),
+			TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{alarmUnit}, TO_CHAR(SYSDATE, 'd'), TO_CHAR(SYSDATE, 'DD')
+			, CASE WHEN TO_CHAR(LAST_DAY(SYSDATE),'dd')=TO_CHAR(SYSDATE,'dd') THEN 'Y' ELSE 'N' END
+			, 0, #{instCd}
+		)
+	</insert>
+
+	<!-- 인수인계 수정 -->
+	<update id="updateBoard">
+		UPDATE BULTN_TAKE
+		SET
+			BULTN_TAKE_TITLE = #{boardTitle},
+			BULTN_TAKE_CONT  = #{boardContent},
+			ALARM_UNIT = #{alarmUnit}, 
+			MDF_DATE = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+			MDF_USER_ID = #{userId},
+			MDF_USER_NAME = (SELECT USER_NAME FROM COMM_USER WHERE USER_ID=#{userId}),
+			INST_CD =  #{instCd}
+		WHERE
+			BULTN_TAKE_SEQ = #{boardNo}
+	</update>
+
+	<!-- 인수인계 - 확인상태로 변경-->
+	<insert id="insertBoardConfirm" >
+		<selectKey keyProperty="seqNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_TAKE_CONFIRM_SEQ), 0) + 1 FROM BULTN_TAKE_CONFIRM
+		</selectKey>
+		INSERT INTO BULTN_TAKE_CONFIRM (
+			BULTN_TAKE_CONFIRM_SEQ, BULTN_TAKE_SEQ, CONFIRM_USER_ID, CONFIRM_WEEK, CONFIRM_MONETH, CONFIRM_DATE
+		) 
+		VALUES (
+			#{seqNo}, #{boardNo}, #{userId}
+			<choose>
+				<when test='alarmUnit != null and alarmUnit == "1"'>
+					, TO_CHAR(SYSDATE, 'WW'), NULL
+				</when>
+				<when test='alarmUnit != null and alarmUnit == "2"'>
+					, NULL, TO_CHAR(SYSDATE, 'YYYYMM')
+				</when>
+				<otherwise>
+					, NULL, NULL
+				</otherwise>
+			</choose> 
+			, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+	<!-- 인수인계 - 종결상태로 변경 -->
+	<update id="updateBoard_finish" >
+		UPDATE	BULTN_TAKE
+		SET		IS_CLOSE = 1
+		WHERE	BULTN_TAKE_SEQ = #{boardNo}
+	</update>
+
+	<!-- 인수인계 답글 리스트 조회 -->
+	<select id="selectAnsBoardList" resultMap="resultTakeReply">
+		SELECT	BULTN_TAKE_REPLY_SEQ, BULTN_TAKE_SEQ, BULTN_TAKE_REPLY_CONT, REG_USER_ID, REG_USER_NAME
+					, TO_CHAR(TO_DATE(REG_DATE, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') REG_DATE
+	    FROM	BULTN_TAKE_REPLY A
+	    WHERE	1=1
+		AND		BULTN_TAKE_SEQ = #{boardNo}
+    	ORDER BY REG_DATE DESC
+	</select>
+	
+	<!-- 인수인계 답글 추가  -->
+	<insert id="insertAnsBoard">
+		<selectKey keyProperty="seqNo" resultType="int" order="BEFORE">
+			SELECT	NVL(MAX(BULTN_TAKE_REPLY_SEQ), 0) + 1 FROM BULTN_TAKE_REPLY
+		</selectKey>
+		INSERT INTO BULTN_TAKE_REPLY (
+			BULTN_TAKE_REPLY_SEQ, BULTN_TAKE_SEQ, BULTN_TAKE_REPLY_CONT, REG_DATE, REG_USER_ID, REG_USER_NAME
+		) VALUES (
+			#{seqNo}, #{boardNo}, #{boardContent}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS' ), #{userId}, (SELECT USER_NAME FROM COMM_USER WHERE USER_ID=#{userId})
+		)
+	</insert>
+	
+</mapper>

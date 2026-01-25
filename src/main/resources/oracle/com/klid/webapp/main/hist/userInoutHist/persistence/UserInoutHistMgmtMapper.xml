@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.klid.webapp.main.hist.userInoutHist.persistence.UserInoutHistMgmtMapper">
+	<resultMap id="resultUserDto" type="com.klid.webapp.main.hist.userInoutHist.dto.UserInoutHistMgmtDto">
+		<result property="label" 		column="LABEL"/>
+		<result property="value" 		column="VALUE"/>
+	</resultMap>
+	<resultMap id="resultHist" type="com.klid.webapp.main.hist.userInoutHist.dto.UserInoutHistMgmtDto">
+		<result property="no" 			column="ROWNUM"/>
+		<result property="usrId" 		column="USR_ID"/>
+		<result property="usrName" 		column="USER_NAME"/>
+		<result property="logDt" 		column="LOG_DT" />
+		<result property="logCd" 		column="LOG_CD"/>
+		<result property="remark" 		column="REMARK"/>
+		<result property="usrIp" 		column="USR_IP" />
+		<result property="instNm"	 	column="INST_NM" />
+	</resultMap>
+
+	<select id="selectLogUserList" resultMap="resultUserDto">
+		SELECT	'전체' AS LABEL, '' AS VALUE
+		FROM	DUAL
+		UNION ALL
+		SELECT USR_ID AS LABEL, USR_ID AS VALUE
+		FROM (
+            SELECT	DISTINCT B.USR_ID USR_ID
+            FROM	COMM_USER A, USR_LOGINFO B
+            WHERE	A.USER_ID = B.USR_ID
+            AND		B.LOG_CD IN ('IN','OUT')
+            ORDER BY USR_ID ASC
+		) A
+	</select>
+
+	<select id="selectUserInoutHist" resultMap="resultHist">
+		SELECT ROWNUM, USR_ID, TO_CHAR(TO_DATE(LOG_DT, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') AS LOG_DT
+				, LOG_CD, USR_IP, REMARK, USER_NAME, INST_NM
+		FROM (  
+		    SELECT  USR_ID, LOG_DT, LOG_CD, USR_IP, REMARK, USER_NAME, INST_NM
+		    FROM    (
+		        SELECT  B.USR_ID, A.USER_NAME,
+		                B.LOG_DT, B.LOG_CD, B.USR_IP, B.REMARK, C.INST_NM
+		        FROM    COMM_USER A, USR_LOGINFO B, TSMINST C
+		        WHERE   A.USER_ID = B.USR_ID
+				AND A.INST_CD = C.INST_CD
+		        AND     B.LOG_CD IN ('IN','OUT')
+		        <if test="_parameter.containsKey('sLogCd') and sLogCd != ''">
+		        	AND B.LOG_CD = #{sLogCd}
+		        </if>
+		        <if test="_parameter.containsKey('sUsrId') and sUsrId != ''">
+		        	AND B.USR_ID = #{sUsrId}
+		        </if>
+		        <if test="_parameter.containsKey('date1') and date1 != ''">
+		        	<if test="_parameter.containsKey('date2') and date2 != ''">
+						AND 	LOG_DT BETWEEN '${date1}${time1}00' AND '${date2}${time2}59'
+		        	</if>
+		        </if>
+		    ) A
+			ORDER BY LOG_DT DESC
+		) A
+	</select>
+
+</mapper>
