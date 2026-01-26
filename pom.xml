@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.1</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>com.klid</groupId>
@@ -243,29 +244,6 @@
             <groupId>me.totoku103</groupId>
             <artifactId>crypto</artifactId>
             <version>1.0.0</version>
-        </dependency>
-
-        <!-- GPKI (System Scope - Keep for compatibility) -->
-        <dependency>
-            <groupId>com.gpki</groupId>
-            <artifactId>gpkisecureweb</artifactId>
-            <version>1.0.6.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/tomcat/lib/gpkisecureweb-1.0.6.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.gpki</groupId>
-            <artifactId>gpkisecurewebkeyboard</artifactId>
-            <version>1.0.0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/tomcat/lib/gpkisecurewebkeyboard-1.0.0.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.gpki</groupId>
-            <artifactId>libgpkiapi_jni</artifactId>
-            <version>0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/GPKI/dll/libgpkiapi_jni.jar</systemPath>
         </dependency>
 
         <!-- Test -->
