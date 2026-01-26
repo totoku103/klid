@@ -39,23 +39,26 @@ export function Header({ className, onUserClick }: HeaderProps) {
               className="h-10"
             />
           )}
-          <span className="text-lg font-bold">사이버 침해대응시스템</span>
+          <span className="text-lg font-bold text-[#005e9e]">사이버 침해대응시스템</span>
         </a>
 
         <ul className="flex items-center gap-4 text-sm text-gray-900">
           <li>
             <button
               onClick={handleLogout}
-              className="hover:underline"
+              className="font-bold cursor-pointer"
               type="button"
             >
               Logout
             </button>
           </li>
           <li>
+            |
+          </li>
+          <li>
             <button
               onClick={onUserClick}
-              className="hover:underline"
+              className="font-bold cursor-pointer"
               type="button"
             >
               {user?.userName || '사용자'}

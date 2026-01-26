@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { HistoryPolicy202502 } from './HistoryPolicy202502'
-import { HistoryPolicy202403 } from './HistoryPolicy202403'
-import { HistoryPolicy201901 } from './HistoryPolicy201901'
+import { HistoryPolicy202502 } from '../HistoryPolicy202502'
+import { HistoryPolicy202403 } from '../HistoryPolicy202403'
+import { HistoryPolicy201901 } from '../HistoryPolicy201901'
 
 const POLICY_MAP: Record<string, { title: string; component: React.ReactNode }> = {
   '2025-02': { title: '2025. 2. 16 ~ 2025. 6. 30 적용지침', component: <HistoryPolicy202502 /> },

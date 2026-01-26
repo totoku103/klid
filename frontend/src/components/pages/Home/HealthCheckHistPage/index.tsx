@@ -143,7 +143,7 @@ export function HealthCheckHistPage() {
             const period = e.target.value
             setSearchParams((prev) => ({ ...prev, period }))
             const today = new Date()
-            let date1 = new Date()
+            const date1 = new Date()
             switch (period) {
               case 'today':
                 break

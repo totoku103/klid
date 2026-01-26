@@ -61,8 +61,7 @@ export function DataGrid({
   sortable = true,
   filterable = false,
   selectionMode = 'singlerow',
-  onRowSelect: _onRowSelect,
-  onRowDoubleClick: _onRowDoubleClick,
+  // TODO: Implement onRowSelect, onRowDoubleClick handlers
   className,
   style,
 }: DataGridProps) {

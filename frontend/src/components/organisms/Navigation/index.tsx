@@ -11,12 +11,12 @@ export interface NavigationProps {
   className?: string
 }
 
-interface MegaMenuDropdownProps {
+interface MenuDropdownProps {
   groups: MenuItem[]
   onMenuClick: (menuItem: MenuItem) => void
 }
 
-function MegaMenuDropdown({ groups, onMenuClick }: MegaMenuDropdownProps) {
+function MenuDropdown({ groups, onMenuClick }: MenuDropdownProps) {
   return (
     <div className="absolute left-0 top-full z-50 bg-white shadow-lg border border-gray-200">
       <div className="flex">
@@ -68,7 +68,7 @@ function NavMenuItem({ item, onSelect }: NavMenuItemProps) {
   )
 
   const hasChildren = item.children && item.children.length > 0
-  const IconComponent = getMenuIcon(item.icon)
+  const iconPath = getMenuIcon(item.icon)
 
   return (
     <li
@@ -79,16 +79,16 @@ function NavMenuItem({ item, onSelect }: NavMenuItemProps) {
       <button
         onClick={() => onSelect(item.id)}
         className={cn(
-          'flex h-[40px] cursor-pointer items-center gap-2 px-5 text-sm font-medium text-white transition-colors hover:bg-[#036ca5]'
+          'flex h-[55px] cursor-pointer items-center gap-2 px-5 text-lg font-bold text-white transition-colors hover:bg-[#036ca5]'
         )}
         type="button"
       >
-        {IconComponent && <IconComponent className="size-4" />}
+        {iconPath && <img src={iconPath} alt={item.name} className="size-4" />}
         {item.name}
       </button>
 
       {hasChildren && isHovered && (
-        <MegaMenuDropdown
+        <MenuDropdown
           groups={item.children!}
           onMenuClick={handleMenuClick}
         />
@@ -110,7 +110,7 @@ export function Navigation({ className }: NavigationProps) {
   return (
     <nav
       className={cn(
-        'flex h-[40px] min-w-[1280px] items-center justify-between bg-[#133b52] px-4',
+        'flex h-[55px] min-w-[1280px] items-center justify-between bg-[#133b52] px-4',
         className
       )}
     >

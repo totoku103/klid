@@ -6,9 +6,9 @@ import { useUserStore } from '@/stores/userStore'
 import { accApi } from '@/services/api/accApi'
 import type { Incident, IncidentSearchParams, CodeItem } from '@/types'
 import { cn } from '@/lib/utils'
-import { AccidentAddModal } from './components/AccidentAddModal'
-import { AccidentDetailModal } from './components/AccidentDetailModal'
-import { AccidentEditModal } from './components/AccidentEditModal'
+import { AccidentAddModal } from '../components/AccidentAddModal'
+import { AccidentDetailModal } from '../components/AccidentDetailModal'
+import { AccidentEditModal } from '../components/AccidentEditModal'
 
 const DATE_TYPE_OPTIONS = [
   { label: '접수일시', value: 'inciAcpnDt' },

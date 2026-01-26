@@ -34,7 +34,7 @@ function SystemLinkItem({ link }: SystemLinkItemProps) {
   return (
     <button
       onClick={handleClick}
-      className="flex h-[40px] cursor-pointer items-center gap-2 px-5 text-sm font-medium text-white transition-colors hover:bg-[#036ca5]"
+      className="flex h-[55px] cursor-pointer items-center gap-2 px-5 text-sm font-medium text-white transition-colors hover:bg-[#036ca5]"
       type="button"
     >
       <span className="text-center text-xs leading-tight">

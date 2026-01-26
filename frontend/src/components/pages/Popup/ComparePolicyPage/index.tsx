@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { ComparePolicy202502 } from './ComparePolicy202502'
-import { ComparePolicy202403 } from './ComparePolicy202403'
+import { ComparePolicy202502 } from '../ComparePolicy202502'
+import { ComparePolicy202403 } from '../ComparePolicy202403'
 
 const COMPARE_MAP: Record<string, React.ReactNode> = {
   '2025-02': <ComparePolicy202502 />,
