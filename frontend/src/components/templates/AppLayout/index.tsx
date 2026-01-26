@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router'
-import { Header, Navigation } from '@/components/organisms'
+import { Header, MenuBar } from '@/components/organisms'
 import { useUserStore } from '@/stores/userStore'
 import { useMenuStore } from '@/stores/menuStore'
 import { userApi } from '@/services/api/userApi'
@@ -73,8 +73,8 @@ export function AppLayout() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <Header />
-      <Navigation />
-      <div className="flex-1 overflow-auto">
+      <MenuBar />
+      <div className="flex-1 overflow-auto min-w-[1500px]">
         <Outlet />
       </div>
     </div>

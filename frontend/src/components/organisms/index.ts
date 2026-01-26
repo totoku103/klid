@@ -15,5 +15,5 @@ export { ErrorBoundary } from './ErrorBoundary'
 export { Header } from './Header'
 export type { HeaderProps } from './Header'
 
-export { Navigation } from './Navigation'
-export type { NavigationProps } from './Navigation'
+export { MenuBar } from './MenuBar'
+export type { MenuBarProps } from './MenuBar'

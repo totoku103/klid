@@ -7,7 +7,7 @@ import type { MenuItem } from '@/types'
 import { cn } from '@/lib/utils'
 import { SystemLinks } from '@/components/molecules/SystemLinks'
 
-export interface NavigationProps {
+export interface MenuBarProps {
   className?: string
 }
 
@@ -48,12 +48,12 @@ function MenuDropdown({ groups, onMenuClick }: MenuDropdownProps) {
   )
 }
 
-interface NavMenuItemProps {
+interface MenuBarItemProps {
   item: MenuItem
   onSelect: (id: string) => void
 }
 
-function NavMenuItem({ item, onSelect }: NavMenuItemProps) {
+function MenuBarItem({ item, onSelect }: MenuBarItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const navigate = useNavigate()
 
@@ -97,7 +97,7 @@ function NavMenuItem({ item, onSelect }: NavMenuItemProps) {
   )
 }
 
-export function Navigation({ className }: NavigationProps) {
+export function MenuBar({ className }: MenuBarProps) {
   const { menus, setActiveMenu } = useMenuStore()
 
   const handleSelect = useCallback(
@@ -110,13 +110,13 @@ export function Navigation({ className }: NavigationProps) {
   return (
     <nav
       className={cn(
-        'flex h-[55px] min-w-[1280px] items-center justify-between bg-[#133b52] px-4',
+        'flex h-[55px] min-w-[1500px] items-center justify-between bg-[#133b52] px-4',
         className
       )}
     >
       <ul className="flex">
         {menus.map((item) => (
-          <NavMenuItem
+          <MenuBarItem
             key={item.id}
             item={item}
             onSelect={handleSelect}
