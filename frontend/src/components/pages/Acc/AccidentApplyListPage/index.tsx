@@ -5,7 +5,7 @@ import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/template
 import { useUserStore } from '@/stores/userStore'
 import { accApi } from '@/services/api/accApi'
 import type { Incident, IncidentSearchParams, CodeItem } from '@/types'
-import { cn } from '@/lib/utils'
+import { DataGrid, useDataGrid, type GridColumn } from '@/components/organisms/DataGrid'
 import { AccidentAddModal } from '../components/AccidentAddModal'
 import { AccidentDetailModal } from '../components/AccidentDetailModal'
 import { AccidentEditModal } from '../components/AccidentEditModal'
@@ -28,18 +28,52 @@ const EXCEPTION_OPTIONS = [
   { label: '예외제외', value: '1' },
 ]
 
-function getProcessStatusImage(value: string): string {
-  const code = value || '0'
-  return `/img/codeImg/code_${code}.png`
-}
+const PERIOD_OPTIONS = [
+  { label: '선택', value: '' },
+  { label: '오늘', value: 'today' },
+  { label: '최근 7일', value: 'week' },
+  { label: '최근 1개월', value: 'month' },
+  { label: '최근 3개월', value: '3months' },
+  { label: '최근 6개월', value: '6months' },
+  { label: '최근 1년', value: 'year' },
+]
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return ''
-  if (dateStr.length === 8) {
-    return `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`
-  }
-  return dateStr
-}
+const gridColumns: GridColumn[] = [
+  { text: 'NO', datafield: 'rowNum', width: 50, cellsrenderer: (_row, _col, _val, data) => {
+    return `<div style="text-align:center">${data.rowNum || ''}</div>`
+  }},
+  { text: '사고일자', datafield: 'inciDt', width: 90, cellsrenderer: (_row, _col, val) => {
+    const dateStr = String(val || '')
+    const formatted = dateStr.length === 8
+      ? `${dateStr.slice(0,4)}-${dateStr.slice(4,6)}-${dateStr.slice(6,8)}`
+      : dateStr
+    return `<div style="text-align:center">${formatted}</div>`
+  }},
+  { text: '접수날짜', datafield: 'inciAcpnDt', width: 130, align: 'center', cellsalign: 'center' },
+  { text: '접수번호', datafield: 'inciNo', width: 130, align: 'center', cellsalign: 'center' },
+  { text: '망구분', datafield: 'netDivName', width: 60, align: 'center', cellsalign: 'center' },
+  { text: '신고기관', datafield: 'dclInstName', width: 100, align: 'center', cellsalign: 'center' },
+  { text: '접수기관', datafield: 'dmgInstName', width: 100, align: 'center', cellsalign: 'center' },
+  { text: '제목(탐지명)', datafield: 'inciTtl', width: 200, cellsrenderer: (_row, _col, _val, data) => {
+    return `<div style="text-align:left">${data.inciTtlDtt || data.inciTtl || ''}</div>`
+  }},
+  { text: '사고유형', datafield: 'accdTypName', width: 80, align: 'center', cellsalign: 'center' },
+  { text: '접수방법', datafield: 'acpnMthdName', width: 70, align: 'center', cellsalign: 'center' },
+  { text: '지원센터', datafield: 'inciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+  }},
+  { text: '시도', datafield: 'transInciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+  }},
+  { text: '시군구', datafield: 'transSidoPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+  }},
+  { text: '담당자', datafield: 'dclCrgr', width: 80, align: 'center', cellsalign: 'center' },
+  { text: '우선순위', datafield: 'inciPrty', width: 60, cellsrenderer: (_row, _col, val) => {
+    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+  }},
+  { text: '이관기관', datafield: 'tranSigunName', width: 100, align: 'center', cellsalign: 'center' },
+]
 
 function getDefaultDateRange(): { date1: string; date2: string } {
   const today = new Date()
@@ -54,11 +88,14 @@ export function AccidentApplyListPage() {
   const { user } = useUserStore()
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('')
+  const [selectedAcpnMthds, setSelectedAcpnMthds] = useState<string[]>([])
+
+  const { exportToExcel } = useDataGrid('accidentApplyGrid')
 
   const defaultDates = useMemo(() => getDefaultDateRange(), [])
   const [searchParams, setSearchParams] = useState<IncidentSearchParams>({
@@ -102,7 +139,6 @@ export function AccidentApplyListPage() {
   }, [])
 
   const loadIncidents = useCallback(async () => {
-    setIsLoading(true)
     try {
       const params: IncidentSearchParams = {
         ...searchParams,
@@ -113,8 +149,6 @@ export function AccidentApplyListPage() {
       setIncidents(data)
     } catch (err) {
       console.error('Failed to load incidents:', err)
-    } finally {
-      setIsLoading(false)
     }
   }, [searchParams, user])
 
@@ -126,15 +160,112 @@ export function AccidentApplyListPage() {
     loadIncidents()
   }, [loadIncidents])
 
+  // Reset search fields when toggling between basic and advanced search
+  useEffect(() => {
+    if (showAdvancedSearch) {
+      // Switching TO advanced search - clear totalTitle
+      setSearchParams(prev => ({ ...prev, totalTitle: '' }))
+    } else {
+      // Switching TO basic search - clear all advanced fields
+      setSearchParams(prev => ({
+        ...prev,
+        inciTtl: '',
+        inciNo: '',
+        dclInstName: '',
+        dmgInstName: '',
+        accdTypCd: '',
+        inciPrtyCd: '',
+        netDiv: '',
+        attIp: '',
+        dmgIp: '',
+        srchException: '',
+        inciPrcsStatCd: '',
+        transInciPrcsStatCd: '',
+        transSidoPrcsStatCd: '',
+        inciDclCont: '',
+        inciInvsCont: '',
+        inciBelowCont: '',
+        srchAcpnMthd: undefined,
+      }))
+      setSelectedAcpnMthds([])
+    }
+  }, [showAdvancedSearch])
+
+  const handlePeriodChange = useCallback((period: string) => {
+    setSelectedPeriod(period)
+    const today = new Date()
+    const format = (d: Date) => d.toISOString().slice(0, 10)
+
+    let newDate1 = dateInputs.date1
+    const newDate2 = format(today)
+
+    switch (period) {
+      case 'today':
+        newDate1 = format(today)
+        break
+      case 'week': {
+        const weekAgo = new Date()
+        weekAgo.setDate(today.getDate() - 7)
+        newDate1 = format(weekAgo)
+        break
+      }
+      case 'month': {
+        const monthAgo = new Date()
+        monthAgo.setMonth(today.getMonth() - 1)
+        newDate1 = format(monthAgo)
+        break
+      }
+      case '3months': {
+        const threeMonthsAgo = new Date()
+        threeMonthsAgo.setMonth(today.getMonth() - 3)
+        newDate1 = format(threeMonthsAgo)
+        break
+      }
+      case '6months': {
+        const sixMonthsAgo = new Date()
+        sixMonthsAgo.setMonth(today.getMonth() - 6)
+        newDate1 = format(sixMonthsAgo)
+        break
+      }
+      case 'year': {
+        const yearAgo = new Date()
+        yearAgo.setFullYear(today.getFullYear() - 1)
+        newDate1 = format(yearAgo)
+        break
+      }
+    }
+
+    if (period) {
+      setDateInputs(prev => ({ ...prev, date1: newDate1, date2: newDate2 }))
+    }
+  }, [dateInputs.date1])
+
   const handleSearch = useCallback(() => {
     const d1 = dateInputs.date1.replace(/-/g, '')
     const d2 = dateInputs.date2.replace(/-/g, '')
+    const time = parseInt(dateInputs.time, 10)
+
+    // Start time: date1 + time + 0000
+    const startDt = d1 + dateInputs.time + '0000'
+
+    // End time: date2 + (time-1) + 5959, rolling to next day if needed
+    let endTime = time - 1
+    const endDate = d2
+
+    if (endTime < 0) {
+      endTime = 23
+      // date2 stays the same (effectively ends at 23:59:59 of date2)
+    }
+
+    const endDt = endDate + String(endTime).padStart(2, '0') + '5959'
+
     setSearchParams((prev) => ({
       ...prev,
-      date1: d1 + dateInputs.time + '0000',
-      date2: d2 + '235959',
+      date1: startDt,
+      date2: endDt,
+      srchAcpnMthd: selectedAcpnMthds.length > 0 ? selectedAcpnMthds.join(',') : undefined,
     }))
-  }, [dateInputs])
+  }, [dateInputs, selectedAcpnMthds])
 
   const handleAdd = useCallback(() => {
     setIsAddModalOpen(true)
@@ -177,8 +308,8 @@ export function AccidentApplyListPage() {
   }, [selectedIncident, loadIncidents])
 
   const handleExportExcel = useCallback(() => {
-    globalAlert.info('엑셀 내보내기 기능은 추후 구현 예정입니다.')
-  }, [])
+    exportToExcel('침해사고접수목록')
+  }, [exportToExcel])
 
   const handleCopy = useCallback(() => {
     if (!selectedIncident) {
@@ -208,6 +339,18 @@ export function AccidentApplyListPage() {
             }
           >
             {DATE_TYPE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="rounded border border-gray-300 px-2 py-1 text-sm"
+            value={selectedPeriod}
+            onChange={(e) => handlePeriodChange(e.target.value)}
+          >
+            {PERIOD_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -398,6 +541,23 @@ export function AccidentApplyListPage() {
                   </option>
                 ))}
               </select>
+
+              <label className="text-sm">접수방법:</label>
+              <select
+                multiple
+                className="h-16 w-28 rounded border border-gray-300 px-1 py-1 text-sm"
+                value={selectedAcpnMthds}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, opt => opt.value)
+                  setSelectedAcpnMthds(selected)
+                }}
+              >
+                {codes.receptionMethod.map((code) => (
+                  <option key={code.comCode2} value={code.comCode2}>
+                    {code.codeName}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -512,123 +672,44 @@ export function AccidentApplyListPage() {
         {canCopy && <ToolbarButton icon="refresh" onClick={handleCopy} title="복사" />}
       </PageToolbar>
 
-      <div className="h-[calc(100%-180px)] overflow-auto rounded border border-gray-300">
-        <table className="w-full border-collapse text-xs">
-          <thead className="sticky top-0 bg-gray-100">
-            <tr>
-              <th className="border-b border-gray-300 p-1 text-center">NO</th>
-              <th className="border-b border-gray-300 p-1 text-center">사고일자</th>
-              <th className="border-b border-gray-300 p-1 text-center">접수날짜</th>
-              <th className="border-b border-gray-300 p-1 text-center">접수번호</th>
-              <th className="border-b border-gray-300 p-1 text-center">망구분</th>
-              <th className="border-b border-gray-300 p-1 text-center">신고기관</th>
-              <th className="border-b border-gray-300 p-1 text-center">접수기관</th>
-              <th className="min-w-[200px] border-b border-gray-300 p-1 text-center">
-                제목(탐지명)
-              </th>
-              <th className="border-b border-gray-300 p-1 text-center">사고유형</th>
-              <th className="border-b border-gray-300 p-1 text-center">접수방법</th>
-              <th className="border-b border-gray-300 p-1 text-center">지원센터</th>
-              <th className="border-b border-gray-300 p-1 text-center">시도</th>
-              <th className="border-b border-gray-300 p-1 text-center">시군구</th>
-              <th className="border-b border-gray-300 p-1 text-center">담당자</th>
-              <th className="border-b border-gray-300 p-1 text-center">우선순위</th>
-              <th className="border-b border-gray-300 p-1 text-center">이관기관</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={16} className="p-4 text-center text-gray-500">
-                  로딩 중...
-                </td>
-              </tr>
-            ) : incidents.length === 0 ? (
-              <tr>
-                <td colSpan={16} className="p-4 text-center text-gray-500">
-                  데이터가 없습니다
-                </td>
-              </tr>
-            ) : (
-              incidents.map((incident, idx) => (
-                <tr
-                  key={incident.inciNo}
-                  onClick={() => setSelectedIncident(incident)}
-                  onDoubleClick={() => handleRowDoubleClick(incident)}
-                  className={cn(
-                    'cursor-pointer hover:bg-gray-50',
-                    selectedIncident?.inciNo === incident.inciNo && 'bg-blue-100'
-                  )}
-                >
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incidents.length - idx}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {formatDate(incident.inciDt)}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.inciAcpnDt}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.inciNo}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.netDivName}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.dclInstName}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.dmgInstName}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-left">
-                    {incident.inciTtlDtt || incident.inciTtl}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.accdTypName}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.acpnMthdName}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    <img
-                      src={getProcessStatusImage(incident.inciPrcsStat)}
-                      alt={incident.inciPrcsStatName}
-                      className="mx-auto h-[18px] w-[52px]"
-                    />
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    <img
-                      src={getProcessStatusImage(incident.transInciPrcsStat)}
-                      alt={incident.transInciPrcsStatName}
-                      className="mx-auto h-[18px] w-[52px]"
-                    />
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    <img
-                      src={getProcessStatusImage(incident.transSidoPrcsStat)}
-                      alt={incident.transSidoPrcsStatName}
-                      className="mx-auto h-[18px] w-[52px]"
-                    />
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.dclCrgr}
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    <img
-                      src={getProcessStatusImage(incident.inciPrty)}
-                      alt={incident.inciPrtyName}
-                      className="mx-auto h-[18px] w-[52px]"
-                    />
-                  </td>
-                  <td className="border-b border-gray-200 p-1 text-center">
-                    {incident.tranSigunName}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="h-[calc(100%-180px)]">
+        <DataGrid
+          id="accidentApplyGrid"
+          columns={gridColumns}
+          source={{
+            datatype: 'json',
+            datafields: [
+              { name: 'inciNo', type: 'string' },
+              { name: 'inciDt', type: 'string' },
+              { name: 'inciAcpnDt', type: 'string' },
+              { name: 'netDivName', type: 'string' },
+              { name: 'dclInstName', type: 'string' },
+              { name: 'dmgInstName', type: 'string' },
+              { name: 'inciTtl', type: 'string' },
+              { name: 'inciTtlDtt', type: 'string' },
+              { name: 'accdTypName', type: 'string' },
+              { name: 'acpnMthdName', type: 'string' },
+              { name: 'inciPrcsStat', type: 'string' },
+              { name: 'transInciPrcsStat', type: 'string' },
+              { name: 'transSidoPrcsStat', type: 'string' },
+              { name: 'dclCrgr', type: 'string' },
+              { name: 'inciPrty', type: 'string' },
+              { name: 'tranSigunName', type: 'string' },
+              { name: 'rowNum', type: 'number' },
+            ],
+            localdata: incidents.map((item, idx) => ({ ...item, rowNum: incidents.length - idx })),
+            id: 'inciNo',
+          }}
+          width="100%"
+          height="100%"
+          pageable={true}
+          pageSize={50}
+          pageSizeOptions={[50, 100, 500, 1000]}
+          sortable={true}
+          selectionMode="singlerow"
+          onRowSelect={(rowData) => setSelectedIncident(rowData as unknown as Incident)}
+          onRowDoubleClick={(rowData) => handleRowDoubleClick(rowData as unknown as Incident)}
+        />
       </div>
 
       <AccidentAddModal

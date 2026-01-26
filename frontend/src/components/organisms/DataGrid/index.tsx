@@ -40,6 +40,8 @@ export interface DataGridProps {
   sortable?: boolean
   filterable?: boolean
   selectionMode?: 'singlerow' | 'multiplerows' | 'checkbox'
+  columnsReorder?: boolean
+  enableTooltips?: boolean
   onRowSelect?: (rowData: Record<string, unknown>, rowIndex: number) => void
   onRowDoubleClick?: (
     rowData: Record<string, unknown>,
@@ -61,7 +63,10 @@ export function DataGrid({
   sortable = true,
   filterable = false,
   selectionMode = 'singlerow',
-  // TODO: Implement onRowSelect, onRowDoubleClick handlers
+  columnsReorder = true,
+  enableTooltips = true,
+  onRowSelect,
+  onRowDoubleClick,
   className,
   style,
 }: DataGridProps) {
@@ -81,10 +86,24 @@ export function DataGrid({
       await import('jqwidgets-framework/jqwidgets/jqxgrid.pager')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.sort')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.filter')
+      // @ts-expect-error - jqwidgets-framework has no type declarations
+      await import('jqwidgets-framework/jqwidgets/jqxgrid.export')
+
+      interface JqxGridElement {
+        jqxGrid: (options: unknown) => void
+        on: (event: string, handler: (event: JqxGridEvent) => void) => void
+      }
+
+      interface JqxGridEvent {
+        args: {
+          rowindex: number
+          [key: string]: unknown
+        }
+      }
 
       const $ = (window as unknown as { $: unknown }).$ as (
         el: HTMLElement
-      ) => { jqxGrid: (options: unknown) => void }
+      ) => JqxGridElement
       const jqx = (window as unknown as { jqx: { dataAdapter: new (source: unknown) => unknown } }).jqx
 
       const gridOptions = {
@@ -102,7 +121,8 @@ export function DataGrid({
         filterable,
         selectionmode: selectionMode,
         columnsresize: true,
-        enabletooltips: true,
+        columnsreorder: columnsReorder,
+        enabletooltips: enableTooltips,
         columnsheight: 26,
         rowsheight: 22,
         altrows: false,
@@ -111,7 +131,34 @@ export function DataGrid({
         showsortcolumnbackground: false,
       }
 
-      $(gridRef.current).jqxGrid(gridOptions)
+      const $grid = $(gridRef.current)
+      $grid.jqxGrid(gridOptions)
+
+      // Bind row select event
+      if (onRowSelect) {
+        $grid.on('rowselect', (event) => {
+          const rowIndex = event.args.rowindex
+          const rowData = (
+            $grid as unknown as {
+              jqxGrid: (method: string, ...args: unknown[]) => unknown
+            }
+          ).jqxGrid('getrowdata', rowIndex) as Record<string, unknown>
+          onRowSelect(rowData, rowIndex)
+        })
+      }
+
+      // Bind cell double click event
+      if (onRowDoubleClick) {
+        $grid.on('celldoubleclick', (event) => {
+          const rowIndex = event.args.rowindex
+          const rowData = (
+            $grid as unknown as {
+              jqxGrid: (method: string, ...args: unknown[]) => unknown
+            }
+          ).jqxGrid('getrowdata', rowIndex) as Record<string, unknown>
+          onRowDoubleClick(rowData, rowIndex)
+        })
+      }
     } catch (error) {
       console.error('Failed to initialize jqxGrid:', error)
     }
@@ -126,6 +173,10 @@ export function DataGrid({
     sortable,
     filterable,
     selectionMode,
+    columnsReorder,
+    enableTooltips,
+    onRowSelect,
+    onRowDoubleClick,
   ])
 
   useEffect(() => {
@@ -190,11 +241,47 @@ export function useDataGrid(gridId: string) {
     [getGrid]
   )
 
+  const exportToExcel = useCallback(
+    (filename: string) => {
+      getGrid()?.jqxGrid('exportdata', 'xls', filename)
+    },
+    [getGrid]
+  )
+
+  const showColumn = useCallback(
+    (datafield: string) => {
+      getGrid()?.jqxGrid('showcolumn', datafield)
+    },
+    [getGrid]
+  )
+
+  const hideColumn = useCallback(
+    (datafield: string) => {
+      getGrid()?.jqxGrid('hidecolumn', datafield)
+    },
+    [getGrid]
+  )
+
+  const getVisibleColumns = useCallback((): string[] => {
+    const grid = getGrid()
+    if (!grid) return []
+    const columns = grid.jqxGrid('columns') as {
+      records: Array<{ datafield: string; hidden: boolean }>
+    }
+    return columns.records
+      .filter((col) => !col.hidden)
+      .map((col) => col.datafield)
+  }, [getGrid])
+
   return {
     refresh,
     getSelectedRow,
     getSelectedRows,
     clearSelection,
     setLocalData,
+    exportToExcel,
+    showColumn,
+    hideColumn,
+    getVisibleColumns,
   }
 }
