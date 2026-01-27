@@ -16,7 +16,11 @@ import {
 import { useUserStore } from '@/stores/userStore'
 import { accApi } from '@/services/api/accApi'
 import type { Incident, IncidentSearchParams, CodeItem } from '@/types'
-import { DataGrid, useDataGrid, type GridColumn } from '@/components/organisms/DataGrid'
+import {
+  DataGrid,
+  useDataGrid,
+  type GridColumn,
+} from '@/components/atoms'
 import { AccidentAddModal } from '../components/AccidentAddModal'
 import { AccidentDetailModal } from '../components/AccidentDetailModal'
 import { AccidentEditModal } from '../components/AccidentEditModal'
@@ -467,7 +471,6 @@ export function AccidentApplyListPage() {
                 <SearchField label="접수번호:">
                   <SearchInput
                     type="text"
-                    inputSize="sm"
                     value={searchParams.inciNo ?? ''}
                     onChange={(e) =>
                       setSearchParams((prev) => ({ ...prev, inciNo: e.target.value }))
@@ -478,7 +481,6 @@ export function AccidentApplyListPage() {
                 <SearchField label="신고기관명:">
                   <SearchInput
                     type="text"
-                    inputSize="sm"
                     value={searchParams.dclInstName ?? ''}
                     onChange={(e) =>
                       setSearchParams((prev) => ({ ...prev, dclInstName: e.target.value }))
@@ -489,7 +491,6 @@ export function AccidentApplyListPage() {
                 <SearchField label="피해기관명:">
                   <SearchInput
                     type="text"
-                    inputSize="sm"
                     value={searchParams.dmgInstName ?? ''}
                     onChange={(e) =>
                       setSearchParams((prev) => ({ ...prev, dmgInstName: e.target.value }))
@@ -534,7 +535,6 @@ export function AccidentApplyListPage() {
                 <SearchField label="공격IP:">
                   <SearchInput
                     type="text"
-                    inputSize="sm"
                     value={searchParams.attIp ?? ''}
                     onChange={(e) =>
                       setSearchParams((prev) => ({ ...prev, attIp: e.target.value }))
@@ -545,7 +545,6 @@ export function AccidentApplyListPage() {
                 <SearchField label="사고IP:">
                   <SearchInput
                     type="text"
-                    inputSize="sm"
                     value={searchParams.dmgIp ?? ''}
                     onChange={(e) =>
                       setSearchParams((prev) => ({ ...prev, dmgIp: e.target.value }))
@@ -567,14 +566,15 @@ export function AccidentApplyListPage() {
                 </SearchField>
 
                 <SearchField label="접수방법:">
-                  <SearchMultiSelect
-                    className="w-28"
-                    options={receptionMethodOptions}
-                    value={selectedAcpnMthds}
-                    onChange={(e) => {
-                      const selected = Array.from(e.target.selectedOptions, (opt) => opt.value)
-                      setSelectedAcpnMthds(selected)
-                    }}
+                  <SearchSelect
+                    options={EXCEPTION_OPTIONS}
+                    value={searchParams.srchException ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        srchException: e.target.value,
+                      }))
+                    }
                   />
                 </SearchField>
               </SearchRow>
@@ -710,7 +710,7 @@ export function AccidentApplyListPage() {
             id: 'inciNo',
           }}
           width="100%"
-          height="100%"
+          height={500}
           pageable={true}
           pageSize={50}
           pageSizeOptions={[50, 100, 500, 1000]}

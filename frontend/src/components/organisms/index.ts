@@ -1,5 +1,6 @@
-export { DataGrid, useDataGrid } from './DataGrid'
-export type { DataGridProps, GridColumn, GridDataSource } from './DataGrid'
+// Re-export from atoms/Grid for backward compatibility
+export { DataGrid, useDataGrid } from '@/components/atoms/Grid'
+export type { DataGridProps, GridColumn, GridDataSource } from '@/components/atoms/Grid'
 
 export { Chart, LineChart, PieChart, BarChart, Highcharts } from './Chart'
 export type { ChartProps, LineChartProps, PieChartProps, BarChartProps } from './Chart'

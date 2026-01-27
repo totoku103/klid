@@ -80,12 +80,16 @@ export function DataGrid({
       await import('jqwidgets-framework/jqwidgets/jqxdata')
       await import('jqwidgets-framework/jqwidgets/jqxbuttons')
       await import('jqwidgets-framework/jqwidgets/jqxscrollbar')
+      await import('jqwidgets-framework/jqwidgets/jqxlistbox')
+      await import('jqwidgets-framework/jqwidgets/jqxdropdownlist')
       await import('jqwidgets-framework/jqwidgets/jqxmenu')
       await import('jqwidgets-framework/jqwidgets/jqxgrid')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.selection')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.pager')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.sort')
       await import('jqwidgets-framework/jqwidgets/jqxgrid.filter')
+      await import('jqwidgets-framework/jqwidgets/jqxgrid.columnsresize')
+      await import('jqwidgets-framework/jqwidgets/jqxgrid.columnsreorder')
       // @ts-expect-error - jqwidgets-framework has no type declarations
       await import('jqwidgets-framework/jqwidgets/jqxgrid.export')
 
@@ -104,7 +108,11 @@ export function DataGrid({
       const $ = (window as unknown as { $: unknown }).$ as (
         el: HTMLElement
       ) => JqxGridElement
-      const jqx = (window as unknown as { jqx: { dataAdapter: new (source: unknown) => unknown } }).jqx
+      const jqx = (
+        window as unknown as {
+          jqx: { dataAdapter: new (source: unknown) => unknown }
+        }
+      ).jqx
 
       const gridOptions = {
         width,
@@ -134,7 +142,6 @@ export function DataGrid({
       const $grid = $(gridRef.current)
       $grid.jqxGrid(gridOptions)
 
-      // Bind row select event
       if (onRowSelect) {
         $grid.on('rowselect', (event) => {
           const rowIndex = event.args.rowindex
@@ -147,7 +154,6 @@ export function DataGrid({
         })
       }
 
-      // Bind cell double click event
       if (onRowDoubleClick) {
         $grid.on('celldoubleclick', (event) => {
           const rowIndex = event.args.rowindex
@@ -160,7 +166,8 @@ export function DataGrid({
         })
       }
     } catch (error) {
-      console.error('Failed to initialize jqxGrid:', error)
+      console.error('Failed to initialize jqxGrid:', error instanceof Error ? error.message : error)
+      console.error('Stack:', error instanceof Error ? error.stack : 'No stack')
     }
   }, [
     columns,
@@ -188,7 +195,11 @@ export function DataGrid({
       id={id}
       ref={gridRef}
       className={cn('jqx-grid-container', className)}
-      style={style}
+      style={{
+        width: typeof width === 'number' ? `${width}px` : width,
+        height: typeof height === 'number' ? `${height}px` : height,
+        ...style,
+      }}
     />
   )
 }
@@ -234,7 +245,9 @@ export function useDataGrid(gridId: string) {
     (data: unknown[]) => {
       const grid = getGrid()
       if (!grid) return
-      const source = grid.jqxGrid('source') as { _source: { localdata: unknown[] } }
+      const source = grid.jqxGrid('source') as {
+        _source: { localdata: unknown[] }
+      }
       source._source.localdata = data
       grid.jqxGrid('updatebounddata')
     },
