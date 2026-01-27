@@ -20,11 +20,13 @@ export function PageNav({ title, breadcrumb, className }: PageNavProps) {
       <div className="flex items-center justify-between px-4 py-2">
         {/* 좌측: 페이지 이름 */}
         <div className="flex items-center">
+          <img src="/img/navi/pagename-prefix.png" alt="" className="mr-2" />
           <h1 className="text-lg font-bold text-gray-900">{title}</h1>
         </div>
 
         {/* 우측: 브레드크럼브 경로 */}
         <div className="flex items-center text-sm text-gray-600">
+          <img src="/img/navi/breadcrumb.gif" alt="" className="mr-2" />
           {breadcrumb.map((item, index) => (
             <span key={index} className="flex items-center">
               <span
