@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/atoms/Button'
 import {
   Search,
@@ -16,11 +17,19 @@ import {
 
 export interface PageToolbarProps {
   children: ReactNode
+  className?: string
+  minWidth?: number
 }
 
-export function PageToolbar({ children }: PageToolbarProps) {
+export function PageToolbar({ children, className, minWidth = 600 }: PageToolbarProps) {
   return (
-    <div className="mb-2 flex items-center justify-end gap-1 rounded border border-gray-300 bg-gray-50 p-2">
+    <div
+      className={cn(
+        'flex items-center justify-end gap-1 rounded border border-gray-300 bg-gray-50 p-2',
+        className
+      )}
+      style={{ minWidth }}
+    >
       {children}
     </div>
   )

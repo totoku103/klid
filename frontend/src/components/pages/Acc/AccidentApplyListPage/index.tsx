@@ -1,7 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import {
+  PageToolbar,
+  ToolbarButton,
+  SearchPanel,
+  SearchRow,
+  SearchSelect,
+  SearchMultiSelect,
+  SearchInput,
+  SearchDateRange,
+  SearchCheckbox,
+  SearchField,
+} from '@/components/organisms'
 import { useUserStore } from '@/stores/userStore'
 import { accApi } from '@/services/api/accApi'
 import type { Incident, IncidentSearchParams, CodeItem } from '@/types'
@@ -39,39 +50,53 @@ const PERIOD_OPTIONS = [
 ]
 
 const gridColumns: GridColumn[] = [
-  { text: 'NO', datafield: 'rowNum', width: 50, cellsrenderer: (_row, _col, _val, data) => {
-    return `<div style="text-align:center">${data.rowNum || ''}</div>`
-  }},
-  { text: '사고일자', datafield: 'inciDt', width: 90, cellsrenderer: (_row, _col, val) => {
-    const dateStr = String(val || '')
-    const formatted = dateStr.length === 8
-      ? `${dateStr.slice(0,4)}-${dateStr.slice(4,6)}-${dateStr.slice(6,8)}`
-      : dateStr
-    return `<div style="text-align:center">${formatted}</div>`
-  }},
+  {
+    text: 'NO', datafield: 'rowNum', width: 50, cellsrenderer: (_row, _col, _val, data) => {
+      return `<div style="text-align:center">${data.rowNum || ''}</div>`
+    }
+  },
+  {
+    text: '사고일자', datafield: 'inciDt', width: 90, cellsrenderer: (_row, _col, val) => {
+      const dateStr = String(val || '')
+      const formatted = dateStr.length === 8
+        ? `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`
+        : dateStr
+      return `<div style="text-align:center">${formatted}</div>`
+    }
+  },
   { text: '접수날짜', datafield: 'inciAcpnDt', width: 130, align: 'center', cellsalign: 'center' },
   { text: '접수번호', datafield: 'inciNo', width: 130, align: 'center', cellsalign: 'center' },
   { text: '망구분', datafield: 'netDivName', width: 60, align: 'center', cellsalign: 'center' },
   { text: '신고기관', datafield: 'dclInstName', width: 100, align: 'center', cellsalign: 'center' },
   { text: '접수기관', datafield: 'dmgInstName', width: 100, align: 'center', cellsalign: 'center' },
-  { text: '제목(탐지명)', datafield: 'inciTtl', width: 200, cellsrenderer: (_row, _col, _val, data) => {
-    return `<div style="text-align:left">${data.inciTtlDtt || data.inciTtl || ''}</div>`
-  }},
+  {
+    text: '제목(탐지명)', datafield: 'inciTtl', width: 200, cellsrenderer: (_row, _col, _val, data) => {
+      return `<div style="text-align:left">${data.inciTtlDtt || data.inciTtl || ''}</div>`
+    }
+  },
   { text: '사고유형', datafield: 'accdTypName', width: 80, align: 'center', cellsalign: 'center' },
   { text: '접수방법', datafield: 'acpnMthdName', width: 70, align: 'center', cellsalign: 'center' },
-  { text: '지원센터', datafield: 'inciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
-    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
-  }},
-  { text: '시도', datafield: 'transInciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
-    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
-  }},
-  { text: '시군구', datafield: 'transSidoPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
-    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
-  }},
+  {
+    text: '지원센터', datafield: 'inciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+      return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+    }
+  },
+  {
+    text: '시도', datafield: 'transInciPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+      return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+    }
+  },
+  {
+    text: '시군구', datafield: 'transSidoPrcsStat', width: 60, cellsrenderer: (_row, _col, val) => {
+      return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+    }
+  },
   { text: '담당자', datafield: 'dclCrgr', width: 80, align: 'center', cellsalign: 'center' },
-  { text: '우선순위', datafield: 'inciPrty', width: 60, cellsrenderer: (_row, _col, val) => {
-    return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
-  }},
+  {
+    text: '우선순위', datafield: 'inciPrty', width: 60, cellsrenderer: (_row, _col, val) => {
+      return `<div style="text-align:center"><img src="/img/codeImg/code_${val || '0'}.png" style="width:52px;height:18px" /></div>`
+    }
+  },
   { text: '이관기관', datafield: 'tranSigunName', width: 100, align: 'center', cellsalign: 'center' },
 ]
 
@@ -327,350 +352,341 @@ export function AccidentApplyListPage() {
   const canAdd = user?.authMain !== 'AUTH_MAIN_1'
   const canCopy = user?.authMain !== 'AUTH_MAIN_1'
 
+  const timeOptions = useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, i) => ({
+        label: String(i).padStart(2, '0'),
+        value: String(i).padStart(2, '0'),
+      })),
+    []
+  )
+
+  const accidentTypeOptions = useMemo(
+    () =>
+      codes.accidentType.map((code) => ({
+        label: code.codeName,
+        value: code.comCode2,
+      })),
+    [codes.accidentType]
+  )
+
+  const priorityOptions = useMemo(
+    () =>
+      codes.priority.map((code) => ({
+        label: code.codeName,
+        value: `00${code.comCode2}`,
+      })),
+    [codes.priority]
+  )
+
+  const processStatusOptions = useMemo(
+    () =>
+      codes.processStatus.map((code) => ({
+        label: code.codeName,
+        value: code.comCode2,
+      })),
+    [codes.processStatus]
+  )
+
+  const receptionMethodOptions = useMemo(
+    () =>
+      codes.receptionMethod.map((code) => ({
+        label: code.codeName,
+        value: code.comCode2,
+      })),
+    [codes.receptionMethod]
+  )
+
   return (
-    <SubPageLayout locationPath={['침해사고', '침해사고접수']}>
-      <div className="mb-2 space-y-2 rounded border border-gray-300 bg-gray-50 p-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
+    <>
+      <div className="mb-2 flex items-start gap-2">
+        <SearchPanel>
+        <SearchRow>
+          <SearchSelect
+            options={DATE_TYPE_OPTIONS}
             value={searchParams.srchDateType}
             onChange={(e) =>
               setSearchParams((prev) => ({ ...prev, srchDateType: e.target.value }))
             }
-          >
-            {DATE_TYPE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          />
 
-          <select
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
+          <SearchSelect
+            options={PERIOD_OPTIONS}
             value={selectedPeriod}
             onChange={(e) => handlePeriodChange(e.target.value)}
-          >
-            {PERIOD_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
-            value={dateInputs.date1}
-            onChange={(e) =>
-              setDateInputs((prev) => ({ ...prev, date1: e.target.value }))
-            }
           />
-          <span className="text-sm">~</span>
-          <input
-            type="date"
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
-            value={dateInputs.date2}
-            onChange={(e) =>
-              setDateInputs((prev) => ({ ...prev, date2: e.target.value }))
+
+          <SearchDateRange
+            startDate={dateInputs.date1}
+            endDate={dateInputs.date2}
+            onStartDateChange={(value) =>
+              setDateInputs((prev) => ({ ...prev, date1: value }))
+            }
+            onEndDateChange={(value) =>
+              setDateInputs((prev) => ({ ...prev, date2: value }))
             }
           />
 
-          <label className="text-sm">기준시간:</label>
-          <select
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
-            value={dateInputs.time}
-            onChange={(e) =>
-              setDateInputs((prev) => ({ ...prev, time: e.target.value }))
-            }
-          >
-            {Array.from({ length: 24 }, (_, i) => (
-              <option key={i} value={String(i).padStart(2, '0')}>
-                {String(i).padStart(2, '0')}
-              </option>
-            ))}
-          </select>
-
-          <label className="text-sm">통합:</label>
-          <input
-            type="text"
-            className="w-32 rounded border border-gray-300 px-2 py-1 text-sm"
-            placeholder="통합검색"
-            disabled={showAdvancedSearch}
-            value={searchParams.totalTitle ?? ''}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, totalTitle: e.target.value }))
-            }
-          />
-
-          <label className="flex items-center gap-1 text-sm">
-            <input
-              type="checkbox"
-              checked={showAdvancedSearch}
-              onChange={(e) => setShowAdvancedSearch(e.target.checked)}
+          <SearchField label="기준시간:">
+            <SearchSelect
+              options={timeOptions}
+              value={dateInputs.time}
+              onChange={(e) =>
+                setDateInputs((prev) => ({ ...prev, time: e.target.value }))
+              }
             />
-            상세검색
-          </label>
-        </div>
+          </SearchField>
+
+          <SearchField label="통합:">
+            <SearchInput
+              type="text"
+              placeholder="통합검색"
+              disabled={showAdvancedSearch}
+              value={searchParams.totalTitle ?? ''}
+              onChange={(e) =>
+                setSearchParams((prev) => ({ ...prev, totalTitle: e.target.value }))
+              }
+            />
+          </SearchField>
+
+          <SearchCheckbox
+            label="상세검색"
+            checked={showAdvancedSearch}
+            onChange={(e) => setShowAdvancedSearch(e.target.checked)}
+          />
+        </SearchRow>
 
         {showAdvancedSearch && (
           <>
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="text-sm">제목:</label>
-              <input
-                type="text"
-                className="w-32 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciTtl ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, inciTtl: e.target.value }))
-                }
-              />
+            <SearchRow>
+              <SearchField label="제목:">
+                <SearchInput
+                  type="text"
+                  value={searchParams.inciTtl ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, inciTtl: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">접수번호:</label>
-              <input
-                type="text"
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciNo ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, inciNo: e.target.value }))
-                }
-              />
+              <SearchField label="접수번호:">
+                <SearchInput
+                  type="text"
+                  inputSize="sm"
+                  value={searchParams.inciNo ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, inciNo: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">신고기관명:</label>
-              <input
-                type="text"
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.dclInstName ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, dclInstName: e.target.value }))
-                }
-              />
+              <SearchField label="신고기관명:">
+                <SearchInput
+                  type="text"
+                  inputSize="sm"
+                  value={searchParams.dclInstName ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, dclInstName: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">피해기관명:</label>
-              <input
-                type="text"
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.dmgInstName ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, dmgInstName: e.target.value }))
-                }
-              />
-            </div>
+              <SearchField label="피해기관명:">
+                <SearchInput
+                  type="text"
+                  inputSize="sm"
+                  value={searchParams.dmgInstName ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, dmgInstName: e.target.value }))
+                  }
+                />
+              </SearchField>
+            </SearchRow>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="text-sm">사고유형:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.accdTypCd ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, accdTypCd: e.target.value }))
-                }
-              >
-                <option value="">전체</option>
-                {codes.accidentType.map((code) => (
-                  <option key={code.comCode2} value={code.comCode2}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
+            <SearchRow>
+              <SearchField label="사고유형:">
+                <SearchSelect
+                  options={accidentTypeOptions}
+                  placeholder="전체"
+                  value={searchParams.accdTypCd ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, accdTypCd: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">우선순위:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciPrtyCd ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, inciPrtyCd: e.target.value }))
-                }
-              >
-                <option value="">전체</option>
-                {codes.priority.map((code) => (
-                  <option key={code.comCode2} value={`00${code.comCode2}`}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
+              <SearchField label="우선순위:">
+                <SearchSelect
+                  options={priorityOptions}
+                  placeholder="전체"
+                  value={searchParams.inciPrtyCd ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, inciPrtyCd: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">망구분:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.netDiv ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, netDiv: e.target.value }))
-                }
-              >
-                {NET_DIV_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <SearchField label="망구분:">
+                <SearchSelect
+                  options={NET_DIV_OPTIONS}
+                  value={searchParams.netDiv ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, netDiv: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">공격IP:</label>
-              <input
-                type="text"
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.attIp ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, attIp: e.target.value }))
-                }
-              />
+              <SearchField label="공격IP:">
+                <SearchInput
+                  type="text"
+                  inputSize="sm"
+                  value={searchParams.attIp ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, attIp: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">사고IP:</label>
-              <input
-                type="text"
-                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.dmgIp ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, dmgIp: e.target.value }))
-                }
-              />
+              <SearchField label="사고IP:">
+                <SearchInput
+                  type="text"
+                  inputSize="sm"
+                  value={searchParams.dmgIp ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({ ...prev, dmgIp: e.target.value }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">예외처리:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.srchException ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    srchException: e.target.value,
-                  }))
-                }
-              >
-                {EXCEPTION_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <SearchField label="예외처리:">
+                <SearchSelect
+                  options={EXCEPTION_OPTIONS}
+                  value={searchParams.srchException ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      srchException: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">접수방법:</label>
-              <select
-                multiple
-                className="h-16 w-28 rounded border border-gray-300 px-1 py-1 text-sm"
-                value={selectedAcpnMthds}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, opt => opt.value)
-                  setSelectedAcpnMthds(selected)
-                }}
-              >
-                {codes.receptionMethod.map((code) => (
-                  <option key={code.comCode2} value={code.comCode2}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <SearchField label="접수방법:">
+                <SearchMultiSelect
+                  className="w-28"
+                  options={receptionMethodOptions}
+                  value={selectedAcpnMthds}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, (opt) => opt.value)
+                    setSelectedAcpnMthds(selected)
+                  }}
+                />
+              </SearchField>
+            </SearchRow>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="text-sm">지원센터처리상태:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciPrcsStatCd ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    inciPrcsStatCd: e.target.value,
-                  }))
-                }
-              >
-                <option value="">전체</option>
-                {codes.processStatus.map((code) => (
-                  <option key={code.comCode2} value={code.comCode2}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
+            <SearchRow>
+              <SearchField label="지원센터처리상태:">
+                <SearchSelect
+                  options={processStatusOptions}
+                  placeholder="전체"
+                  value={searchParams.inciPrcsStatCd ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      inciPrcsStatCd: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">시도처리상태:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.transInciPrcsStatCd ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    transInciPrcsStatCd: e.target.value,
-                  }))
-                }
-              >
-                <option value="">전체</option>
-                {codes.processStatus.map((code) => (
-                  <option key={code.comCode2} value={code.comCode2}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
+              <SearchField label="시도처리상태:">
+                <SearchSelect
+                  options={processStatusOptions}
+                  placeholder="전체"
+                  value={searchParams.transInciPrcsStatCd ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      transInciPrcsStatCd: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">시군구처리상태:</label>
-              <select
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.transSidoPrcsStatCd ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    transSidoPrcsStatCd: e.target.value,
-                  }))
-                }
-              >
-                <option value="">전체</option>
-                {codes.processStatus.map((code) => (
-                  <option key={code.comCode2} value={code.comCode2}>
-                    {code.codeName}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <SearchField label="시군구처리상태:">
+                <SearchSelect
+                  options={processStatusOptions}
+                  placeholder="전체"
+                  value={searchParams.transSidoPrcsStatCd ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      transSidoPrcsStatCd: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
+            </SearchRow>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="text-sm">사고내용:</label>
-              <input
-                type="text"
-                className="w-40 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciDclCont ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    inciDclCont: e.target.value,
-                  }))
-                }
-              />
+            <SearchRow>
+              <SearchField label="사고내용:">
+                <SearchInput
+                  type="text"
+                  inputSize="lg"
+                  value={searchParams.inciDclCont ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      inciDclCont: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">조사내용:</label>
-              <input
-                type="text"
-                className="w-40 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciInvsCont ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    inciInvsCont: e.target.value,
-                  }))
-                }
-              />
+              <SearchField label="조사내용:">
+                <SearchInput
+                  type="text"
+                  inputSize="lg"
+                  value={searchParams.inciInvsCont ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      inciInvsCont: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
 
-              <label className="text-sm">시도의견:</label>
-              <input
-                type="text"
-                className="w-40 rounded border border-gray-300 px-2 py-1 text-sm"
-                value={searchParams.inciBelowCont ?? ''}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({
-                    ...prev,
-                    inciBelowCont: e.target.value,
-                  }))
-                }
-              />
-            </div>
+              <SearchField label="시도의견:">
+                <SearchInput
+                  type="text"
+                  inputSize="lg"
+                  value={searchParams.inciBelowCont ?? ''}
+                  onChange={(e) =>
+                    setSearchParams((prev) => ({
+                      ...prev,
+                      inciBelowCont: e.target.value,
+                    }))
+                  }
+                />
+              </SearchField>
+            </SearchRow>
           </>
         )}
-      </div>
+        </SearchPanel>
 
-      <PageToolbar>
-        <ToolbarButton icon="search" onClick={handleSearch} title="검색" />
-        {canAdd && <ToolbarButton icon="add" onClick={handleAdd} title="등록" />}
-        <ToolbarButton icon="edit" onClick={handleEdit} title="수정" />
-        <ToolbarButton icon="delete" onClick={handleDelete} title="삭제" />
-        <ToolbarButton icon="excel" onClick={handleExportExcel} title="엑셀" />
-        {canCopy && <ToolbarButton icon="refresh" onClick={handleCopy} title="복사" />}
-      </PageToolbar>
+        <PageToolbar>
+          <ToolbarButton icon="search" onClick={handleSearch} title="조회" />
+          {/* {canAdd && <ToolbarButton icon="add" onClick={handleAdd} title="사고신고" />} */}
+          <ToolbarButton icon="add" onClick={handleAdd} title="사고신고" />
+          <ToolbarButton icon="edit" onClick={handleEdit} title="사고수정" />
+          <ToolbarButton icon="delete" onClick={handleDelete} title="삭제" />
+          <ToolbarButton icon="change" onClick={handleExportExcel} title="변경" />
+          <ToolbarButton icon="excel" onClick={handleExportExcel} title="엑셀" />
+          {/* {canCopy && <ToolbarButton icon="refresh" onClick={handleCopy} title="사고복사" />} */}
+          <ToolbarButton icon="refresh" onClick={handleCopy} title="사고복사" />
+        </PageToolbar>
+      </div>
 
       <div className="h-[calc(100%-180px)]">
         <DataGrid
@@ -734,6 +750,6 @@ export function AccidentApplyListPage() {
           />
         </>
       )}
-    </SubPageLayout>
+    </>
   )
 }
