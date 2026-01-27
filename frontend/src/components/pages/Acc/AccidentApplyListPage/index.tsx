@@ -9,7 +9,7 @@ import {
   SearchSelect,
   SearchMultiSelect,
   SearchInput,
-  SearchDateRange,
+  SearchPeriodRange,
   SearchCheckbox,
   SearchField,
 } from '@/components/organisms'
@@ -40,13 +40,11 @@ const EXCEPTION_OPTIONS = [
 ]
 
 const PERIOD_OPTIONS = [
-  { label: '선택', value: '' },
-  { label: '오늘', value: 'today' },
-  { label: '최근 7일', value: 'week' },
-  { label: '최근 1개월', value: 'month' },
-  { label: '최근 3개월', value: '3months' },
-  { label: '최근 6개월', value: '6months' },
-  { label: '최근 1년', value: 'year' },
+  { label: '최근 24시간', value: '1' },
+  { label: '최근 1주일', value: '7' },
+  { label: '최근 1개월', value: '30' },
+  { label: '최근 1년', value: '365' },
+  { label: '사용자 설정', value: '-1' },
 ]
 
 const gridColumns: GridColumn[] = [
@@ -410,13 +408,10 @@ export function AccidentApplyListPage() {
               }
             />
 
-            <SearchSelect
-              options={PERIOD_OPTIONS}
-              value={selectedPeriod}
-              onChange={(e) => handlePeriodChange(e.target.value)}
-            />
-
-            <SearchDateRange
+            <SearchPeriodRange
+              periodOptions={PERIOD_OPTIONS}
+              periodValue={selectedPeriod}
+              onPeriodChange={handlePeriodChange}
               startDate={dateInputs.date1}
               endDate={dateInputs.date2}
               onStartDateChange={(value) =>

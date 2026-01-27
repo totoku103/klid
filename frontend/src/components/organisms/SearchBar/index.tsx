@@ -213,6 +213,50 @@ export function SearchDateRange({
 }
 
 /**
+ * SearchPeriodRange - 기간 선택 + 날짜 범위 통합 컴포넌트
+ */
+export interface SearchPeriodRangeProps {
+  periodOptions: SearchSelectOption[]
+  periodValue: string
+  onPeriodChange: (value: string) => void
+  startDate: string
+  endDate: string
+  onStartDateChange: (value: string) => void
+  onEndDateChange: (value: string) => void
+  className?: string
+}
+
+export function SearchPeriodRange({
+  periodOptions,
+  periodValue,
+  onPeriodChange,
+  startDate,
+  endDate,
+  onStartDateChange,
+  onEndDateChange,
+  className,
+}: SearchPeriodRangeProps) {
+  return (
+    <div className={cn('shrink-0 flex items-center gap-2', className)}>
+      <SearchSelect
+        options={periodOptions}
+        value={periodValue}
+        onChange={(e) => onPeriodChange(e.target.value)}
+      />
+      <SearchDateInput
+        value={startDate}
+        onChange={(e) => onStartDateChange(e.target.value)}
+      />
+      <span className="shrink-0 text-sm">~</span>
+      <SearchDateInput
+        value={endDate}
+        onChange={(e) => onEndDateChange(e.target.value)}
+      />
+    </div>
+  )
+}
+
+/**
  * SearchCheckbox - 검색 조건용 체크박스
  */
 export interface SearchCheckboxProps

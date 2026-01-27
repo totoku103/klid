@@ -30,6 +30,7 @@ export {
   SearchInput,
   SearchDateInput,
   SearchDateRange,
+  SearchPeriodRange,
   SearchCheckbox,
   SearchField,
 } from './SearchBar'
@@ -42,6 +43,7 @@ export type {
   SearchMultiSelectProps,
   SearchInputProps,
   SearchDateRangeProps,
+  SearchPeriodRangeProps,
   SearchCheckboxProps,
   SearchFieldProps,
 } from './SearchBar'
