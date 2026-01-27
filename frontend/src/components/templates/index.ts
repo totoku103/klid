@@ -15,9 +15,9 @@ export type { PopupLayoutProps } from './PopupLayout'
 
 // Re-export from organisms for backward compatibility
 export {
-  PageToolbar,
-  ToolbarButton,
-  SearchPanel,
+  ActionBar,
+  ActionButton,
+  SearchBar,
   SearchRow,
   SearchLabel,
   SearchSelect,
@@ -27,11 +27,15 @@ export {
   SearchDateRange,
   SearchCheckbox,
   SearchField,
+  // Backward compatibility aliases
+  PageToolbar,
+  ToolbarButton,
+  SearchPanel,
 } from '@/components/organisms'
 export type {
-  PageToolbarProps,
-  ToolbarButtonProps,
-  SearchPanelProps,
+  ActionBarProps,
+  ActionButtonProps,
+  SearchBarProps,
   SearchRowProps,
   SearchLabelProps,
   SearchSelectOption,
@@ -41,4 +45,8 @@ export type {
   SearchDateRangeProps,
   SearchCheckboxProps,
   SearchFieldProps,
+  // Backward compatibility aliases
+  PageToolbarProps,
+  ToolbarButtonProps,
+  SearchPanelProps,
 } from '@/components/organisms'

@@ -15,13 +15,13 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-export interface PageToolbarProps {
+export interface ActionBarProps {
   children: ReactNode
   className?: string
   minWidth?: number
 }
 
-export function PageToolbar({ children, className, minWidth = 600 }: PageToolbarProps) {
+export function ActionBar({ children, className, minWidth = 600 }: ActionBarProps) {
   return (
     <div
       className={cn(
@@ -35,7 +35,7 @@ export function PageToolbar({ children, className, minWidth = 600 }: PageToolbar
   )
 }
 
-export interface ToolbarButtonProps {
+export interface ActionButtonProps {
   icon: string
   onClick: () => void
   title: string
@@ -55,7 +55,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   print: Printer,
 }
 
-export function ToolbarButton({ icon, onClick, title, disabled = false }: ToolbarButtonProps) {
+export function ActionButton({ icon, onClick, title, disabled = false }: ActionButtonProps) {
   const IconComponent = ICON_MAP[icon]
 
   return (

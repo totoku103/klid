@@ -7,14 +7,14 @@ import {
 import { cn } from '@/lib/utils'
 
 /**
- * SearchPanel - 검색 조건 영역 컨테이너
+ * SearchBar - 검색 조건 영역 컨테이너
  */
-export interface SearchPanelProps {
+export interface SearchBarProps {
   children: ReactNode
   className?: string
 }
 
-export function SearchPanel({ children, className }: SearchPanelProps) {
+export function SearchBar({ children, className }: SearchBarProps) {
   return (
     <div
       className={cn(

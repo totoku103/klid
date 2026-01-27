@@ -18,11 +18,11 @@ export type { HeaderProps } from './Header'
 export { MenuBar } from './MenuBar'
 export type { MenuBarProps } from './MenuBar'
 
-export { PageToolbar, ToolbarButton } from './PageToolbar'
-export type { PageToolbarProps, ToolbarButtonProps } from './PageToolbar'
+export { ActionBar, ActionButton } from './ActionBar'
+export type { ActionBarProps, ActionButtonProps } from './ActionBar'
 
 export {
-  SearchPanel,
+  SearchBar,
   SearchRow,
   SearchLabel,
   SearchSelect,
@@ -32,9 +32,9 @@ export {
   SearchDateRange,
   SearchCheckbox,
   SearchField,
-} from './SearchPanel'
+} from './SearchBar'
 export type {
-  SearchPanelProps,
+  SearchBarProps,
   SearchRowProps,
   SearchLabelProps,
   SearchSelectOption,
@@ -44,4 +44,10 @@ export type {
   SearchDateRangeProps,
   SearchCheckboxProps,
   SearchFieldProps,
-} from './SearchPanel'
+} from './SearchBar'
+
+// Backward compatibility aliases
+export { ActionBar as PageToolbar, ActionButton as ToolbarButton } from './ActionBar'
+export type { ActionBarProps as PageToolbarProps, ActionButtonProps as ToolbarButtonProps } from './ActionBar'
+export { SearchBar as SearchPanel } from './SearchBar'
+export type { SearchBarProps as SearchPanelProps } from './SearchBar'

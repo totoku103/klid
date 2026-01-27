@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import {
-  PageToolbar,
-  ToolbarButton,
-  SearchPanel,
+  ActionBar,
+  ActionButton,
+  SearchBar,
   SearchRow,
   SearchSelect,
   SearchMultiSelect,
@@ -400,7 +400,7 @@ export function AccidentApplyListPage() {
   return (
     <>
       <div className="mb-2 flex items-start gap-2">
-        <SearchPanel>
+        <SearchBar>
         <SearchRow>
           <SearchSelect
             options={DATE_TYPE_OPTIONS}
@@ -673,19 +673,19 @@ export function AccidentApplyListPage() {
             </SearchRow>
           </>
         )}
-        </SearchPanel>
+        </SearchBar>
 
-        <PageToolbar>
-          <ToolbarButton icon="search" onClick={handleSearch} title="조회" />
-          {/* {canAdd && <ToolbarButton icon="add" onClick={handleAdd} title="사고신고" />} */}
-          <ToolbarButton icon="add" onClick={handleAdd} title="사고신고" />
-          <ToolbarButton icon="edit" onClick={handleEdit} title="사고수정" />
-          <ToolbarButton icon="delete" onClick={handleDelete} title="삭제" />
-          <ToolbarButton icon="change" onClick={handleExportExcel} title="변경" />
-          <ToolbarButton icon="excel" onClick={handleExportExcel} title="엑셀" />
-          {/* {canCopy && <ToolbarButton icon="refresh" onClick={handleCopy} title="사고복사" />} */}
-          <ToolbarButton icon="refresh" onClick={handleCopy} title="사고복사" />
-        </PageToolbar>
+        <ActionBar>
+          <ActionButton icon="search" onClick={handleSearch} title="조회" />
+          {/* {canAdd && <ActionButton icon="add" onClick={handleAdd} title="사고신고" />} */}
+          <ActionButton icon="add" onClick={handleAdd} title="사고신고" />
+          <ActionButton icon="edit" onClick={handleEdit} title="사고수정" />
+          <ActionButton icon="delete" onClick={handleDelete} title="삭제" />
+          <ActionButton icon="change" onClick={handleExportExcel} title="변경" />
+          <ActionButton icon="excel" onClick={handleExportExcel} title="엑셀" />
+          {/* {canCopy && <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />} */}
+          <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />
+        </ActionBar>
       </div>
 
       <div className="h-[calc(100%-180px)]">
