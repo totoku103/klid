@@ -25,7 +25,7 @@ export function PageToolbar({ children, className, minWidth = 600 }: PageToolbar
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-1 rounded border border-gray-300 bg-gray-50 p-2',
+        'my-[5px] mr-[5px] flex items-center justify-end gap-1 rounded border border-gray-300 bg-gray-50 p-2',
         className
       )}
       style={{ minWidth }}

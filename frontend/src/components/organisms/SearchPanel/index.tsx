@@ -18,7 +18,7 @@ export function SearchPanel({ children, className }: SearchPanelProps) {
   return (
     <div
       className={cn(
-        'w-full space-y-2 rounded border border-gray-300 bg-gray-50 p-2',
+        'my-[5px] ml-[5px] w-full space-y-2 rounded border border-gray-300 bg-gray-50 p-2',
         className
       )}
     >
