@@ -1,8 +1,5 @@
 import { type ReactNode } from 'react'
-import { useNavigate, useLocation } from 'react-router'
 import { cn } from '@/lib/utils'
-import { useNavigationStore, type NavigationHistoryItem } from '@/stores/navigationStore'
-import { X } from 'lucide-react'
 
 export interface BreadcrumbItem {
   label: string
@@ -17,76 +14,34 @@ export interface PageNavProps {
   actions?: ReactNode
 }
 
-export function PageNav({ title, className }: PageNavProps) {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { history, removeFromHistory } = useNavigationStore()
-
-  const handleTabClick = (item: NavigationHistoryItem) => {
-    if (item.path !== location.pathname) {
-      navigate(item.path)
-    }
-  }
-
-  const handleTabClose = (e: React.MouseEvent, path: string) => {
-    e.stopPropagation()
-    const currentIndex = history.findIndex((h) => h.path === path)
-    const isCurrentTab = path === location.pathname
-
-    removeFromHistory(path)
-
-    // 현재 탭을 닫는 경우 다른 탭으로 이동
-    if (isCurrentTab && history.length > 1) {
-      const remainingHistory = history.filter((h) => h.path !== path)
-      if (remainingHistory.length > 0) {
-        // 다음 탭이 있으면 다음 탭으로, 없으면 이전 탭으로
-        const nextIndex = Math.min(currentIndex, remainingHistory.length - 1)
-        navigate(remainingHistory[nextIndex].path)
-      }
-    }
-  }
-
+export function PageNav({ title, breadcrumb, className }: PageNavProps) {
   return (
-    <div className={cn('border-b border-gray-200 bg-white', className)}>
+    <nav aria-label="페이지 경로" className={cn('border-b border-gray-200 bg-white', className)}>
       <div className="flex items-center justify-between px-4 py-2">
         {/* 좌측: 페이지 이름 */}
         <div className="flex items-center">
           <h1 className="text-lg font-bold text-gray-900">{title}</h1>
         </div>
 
-        {/* 우측: 네비게이션 히스토리 탭 */}
-        <div className="flex items-center gap-1 overflow-x-auto max-w-[70%]">
-          {history.map((item) => {
-            const isActive = item.path === location.pathname
-            return (
-              <div
-                key={item.path}
-                onClick={() => handleTabClick(item)}
+        {/* 우측: 브레드크럼브 경로 */}
+        <div className="flex items-center text-sm text-gray-600">
+          {breadcrumb.map((item, index) => (
+            <span key={index} className="flex items-center">
+              <span
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer transition-colors text-sm whitespace-nowrap',
-                  isActive
-                    ? 'bg-[#036ca5] text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  item.isCurrent ? 'text-gray-900 font-medium' : 'text-gray-500'
                 )}
               >
-                <span className="max-w-[120px] truncate">{item.title}</span>
-                <button
-                  onClick={(e) => handleTabClose(e, item.path)}
-                  className={cn(
-                    'flex items-center justify-center w-4 h-4 rounded-full transition-colors',
-                    isActive
-                      ? 'hover:bg-white/20 text-white'
-                      : 'hover:bg-gray-300 text-gray-500'
-                  )}
-                >
-                  <X size={12} />
-                </button>
-              </div>
-            )
-          })}
+                {item.label}
+              </span>
+              {index < breadcrumb.length - 1 && (
+                <span className="mx-2 text-gray-400">&gt;</span>
+              )}
+            </span>
+          ))}
         </div>
       </div>
-    </div>
+    </nav>
   )
 }
 
