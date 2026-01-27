@@ -4,6 +4,7 @@ import { Header, MenuBar } from '@/components/organisms'
 import { useUserStore } from '@/stores/userStore'
 import { useMenuStore } from '@/stores/menuStore'
 import { userApi } from '@/services/api/userApi'
+import { LAYOUT_MIN_WIDTH_CLASS } from '@/constants/layout'
 import type { SessionInfo } from '@/types'
 
 const MOCK_SESSION_INFO: SessionInfo = {
@@ -74,7 +75,7 @@ export function AppLayout() {
     <div className="flex h-screen flex-col overflow-hidden">
       <Header />
       <MenuBar />
-      <div className="flex-1 overflow-auto min-w-[1500px]">
+      <div className={`flex-1 overflow-auto ${LAYOUT_MIN_WIDTH_CLASS}`}>
         <Outlet />
       </div>
     </div>

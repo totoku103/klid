@@ -6,6 +6,7 @@ import { getMenuIcon } from '@/utils/menuIconMap'
 import type { MenuItem } from '@/types'
 import { cn } from '@/lib/utils'
 import { SystemLinks } from '@/components/molecules/SystemLinks'
+import { LAYOUT_MIN_WIDTH_CLASS } from '@/constants/layout'
 
 export interface MenuBarProps {
   className?: string
@@ -110,7 +111,8 @@ export function MenuBar({ className }: MenuBarProps) {
   return (
     <nav
       className={cn(
-        'flex h-[55px] min-w-[1500px] items-center justify-between bg-[#133b52] px-4',
+        'flex h-[55px] items-center justify-between bg-[#133b52] px-4',
+        LAYOUT_MIN_WIDTH_CLASS,
         className
       )}
     >

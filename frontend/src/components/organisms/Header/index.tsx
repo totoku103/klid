@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { userApi } from '@/services/api/userApi'
 import { cn } from '@/lib/utils'
+import { LAYOUT_MIN_WIDTH_CLASS } from '@/constants/layout'
 
 export interface HeaderProps {
   className?: string
@@ -26,7 +27,7 @@ export function Header({ className, onUserClick }: HeaderProps) {
     user?.authMain === 'AUTH_MAIN_3'
 
   return (
-    <div className={cn('w-full min-w-[1500px]', className)}>
+    <div className={cn('w-full', LAYOUT_MIN_WIDTH_CLASS, className)}>
       <div className="flex h-[60px] items-center justify-between bg-white px-4">
         <a
           href="/main"
