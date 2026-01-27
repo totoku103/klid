@@ -401,290 +401,288 @@ export function AccidentApplyListPage() {
     <>
       <div className="mb-2 flex items-start gap-2">
         <SearchBar>
-        <SearchRow>
-          <SearchSelect
-            options={DATE_TYPE_OPTIONS}
-            value={searchParams.srchDateType}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, srchDateType: e.target.value }))
-            }
-          />
-
-          <SearchSelect
-            options={PERIOD_OPTIONS}
-            value={selectedPeriod}
-            onChange={(e) => handlePeriodChange(e.target.value)}
-          />
-
-          <SearchDateRange
-            startDate={dateInputs.date1}
-            endDate={dateInputs.date2}
-            onStartDateChange={(value) =>
-              setDateInputs((prev) => ({ ...prev, date1: value }))
-            }
-            onEndDateChange={(value) =>
-              setDateInputs((prev) => ({ ...prev, date2: value }))
-            }
-          />
-
-          <SearchField label="기준시간:">
+          <SearchRow>
             <SearchSelect
-              options={timeOptions}
-              value={dateInputs.time}
+              options={DATE_TYPE_OPTIONS}
+              value={searchParams.srchDateType}
               onChange={(e) =>
-                setDateInputs((prev) => ({ ...prev, time: e.target.value }))
+                setSearchParams((prev) => ({ ...prev, srchDateType: e.target.value }))
               }
             />
-          </SearchField>
 
-          <SearchField label="통합:">
-            <SearchInput
-              type="text"
-              placeholder="통합검색"
-              disabled={showAdvancedSearch}
-              value={searchParams.totalTitle ?? ''}
-              onChange={(e) =>
-                setSearchParams((prev) => ({ ...prev, totalTitle: e.target.value }))
+            <SearchSelect
+              options={PERIOD_OPTIONS}
+              value={selectedPeriod}
+              onChange={(e) => handlePeriodChange(e.target.value)}
+            />
+
+            <SearchDateRange
+              startDate={dateInputs.date1}
+              endDate={dateInputs.date2}
+              onStartDateChange={(value) =>
+                setDateInputs((prev) => ({ ...prev, date1: value }))
+              }
+              onEndDateChange={(value) =>
+                setDateInputs((prev) => ({ ...prev, date2: value }))
               }
             />
-          </SearchField>
 
-          <SearchCheckbox
-            label="상세검색"
-            checked={showAdvancedSearch}
-            onChange={(e) => setShowAdvancedSearch(e.target.checked)}
-          />
-        </SearchRow>
+            <SearchField label="기준시간:">
+              <SearchSelect
+                options={timeOptions}
+                value={dateInputs.time}
+                onChange={(e) =>
+                  setDateInputs((prev) => ({ ...prev, time: e.target.value }))
+                }
+              />
+            </SearchField>
 
-        {showAdvancedSearch && (
-          <>
-            <SearchRow>
-              <SearchField label="제목:">
-                <SearchInput
-                  type="text"
-                  value={searchParams.inciTtl ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, inciTtl: e.target.value }))
-                  }
-                />
-              </SearchField>
+            <SearchField label="통합:">
+              <SearchInput
+                type="text"
+                placeholder="통합검색"
+                disabled={showAdvancedSearch}
+                value={searchParams.totalTitle ?? ''}
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, totalTitle: e.target.value }))
+                }
+              />
+            </SearchField>
 
-              <SearchField label="접수번호:">
-                <SearchInput
-                  type="text"
-                  inputSize="sm"
-                  value={searchParams.inciNo ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, inciNo: e.target.value }))
-                  }
-                />
-              </SearchField>
+            <SearchCheckbox
+              label="상세검색"
+              checked={showAdvancedSearch}
+              onChange={(e) => setShowAdvancedSearch(e.target.checked)}
+            />
+          </SearchRow>
 
-              <SearchField label="신고기관명:">
-                <SearchInput
-                  type="text"
-                  inputSize="sm"
-                  value={searchParams.dclInstName ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, dclInstName: e.target.value }))
-                  }
-                />
-              </SearchField>
+          {showAdvancedSearch && (
+            <>
+              <SearchRow>
+                <SearchField label="제목:">
+                  <SearchInput
+                    type="text"
+                    value={searchParams.inciTtl ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, inciTtl: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="피해기관명:">
-                <SearchInput
-                  type="text"
-                  inputSize="sm"
-                  value={searchParams.dmgInstName ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, dmgInstName: e.target.value }))
-                  }
-                />
-              </SearchField>
-            </SearchRow>
+                <SearchField label="접수번호:">
+                  <SearchInput
+                    type="text"
+                    inputSize="sm"
+                    value={searchParams.inciNo ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, inciNo: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-            <SearchRow>
-              <SearchField label="사고유형:">
-                <SearchSelect
-                  options={accidentTypeOptions}
-                  placeholder="전체"
-                  value={searchParams.accdTypCd ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, accdTypCd: e.target.value }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="신고기관명:">
+                  <SearchInput
+                    type="text"
+                    inputSize="sm"
+                    value={searchParams.dclInstName ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, dclInstName: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="우선순위:">
-                <SearchSelect
-                  options={priorityOptions}
-                  placeholder="전체"
-                  value={searchParams.inciPrtyCd ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, inciPrtyCd: e.target.value }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="피해기관명:">
+                  <SearchInput
+                    type="text"
+                    inputSize="sm"
+                    value={searchParams.dmgInstName ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, dmgInstName: e.target.value }))
+                    }
+                  />
+                </SearchField>
+              </SearchRow>
 
-              <SearchField label="망구분:">
-                <SearchSelect
-                  options={NET_DIV_OPTIONS}
-                  value={searchParams.netDiv ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, netDiv: e.target.value }))
-                  }
-                />
-              </SearchField>
+              <SearchRow>
+                <SearchField label="사고유형:">
+                  <SearchSelect
+                    options={accidentTypeOptions}
+                    placeholder="전체"
+                    value={searchParams.accdTypCd ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, accdTypCd: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="공격IP:">
-                <SearchInput
-                  type="text"
-                  inputSize="sm"
-                  value={searchParams.attIp ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, attIp: e.target.value }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="우선순위:">
+                  <SearchSelect
+                    options={priorityOptions}
+                    placeholder="전체"
+                    value={searchParams.inciPrtyCd ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, inciPrtyCd: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="사고IP:">
-                <SearchInput
-                  type="text"
-                  inputSize="sm"
-                  value={searchParams.dmgIp ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({ ...prev, dmgIp: e.target.value }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="망구분:">
+                  <SearchSelect
+                    options={NET_DIV_OPTIONS}
+                    value={searchParams.netDiv ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, netDiv: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="예외처리:">
-                <SearchSelect
-                  options={EXCEPTION_OPTIONS}
-                  value={searchParams.srchException ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      srchException: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="공격IP:">
+                  <SearchInput
+                    type="text"
+                    inputSize="sm"
+                    value={searchParams.attIp ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, attIp: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="접수방법:">
-                <SearchMultiSelect
-                  className="w-28"
-                  options={receptionMethodOptions}
-                  value={selectedAcpnMthds}
-                  onChange={(e) => {
-                    const selected = Array.from(e.target.selectedOptions, (opt) => opt.value)
-                    setSelectedAcpnMthds(selected)
-                  }}
-                />
-              </SearchField>
-            </SearchRow>
+                <SearchField label="사고IP:">
+                  <SearchInput
+                    type="text"
+                    inputSize="sm"
+                    value={searchParams.dmgIp ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({ ...prev, dmgIp: e.target.value }))
+                    }
+                  />
+                </SearchField>
 
-            <SearchRow>
-              <SearchField label="지원센터처리상태:">
-                <SearchSelect
-                  options={processStatusOptions}
-                  placeholder="전체"
-                  value={searchParams.inciPrcsStatCd ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      inciPrcsStatCd: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="예외처리:">
+                  <SearchSelect
+                    options={EXCEPTION_OPTIONS}
+                    value={searchParams.srchException ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        srchException: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="시도처리상태:">
-                <SearchSelect
-                  options={processStatusOptions}
-                  placeholder="전체"
-                  value={searchParams.transInciPrcsStatCd ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      transInciPrcsStatCd: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="접수방법:">
+                  <SearchMultiSelect
+                    className="w-28"
+                    options={receptionMethodOptions}
+                    value={selectedAcpnMthds}
+                    onChange={(e) => {
+                      const selected = Array.from(e.target.selectedOptions, (opt) => opt.value)
+                      setSelectedAcpnMthds(selected)
+                    }}
+                  />
+                </SearchField>
+              </SearchRow>
 
-              <SearchField label="시군구처리상태:">
-                <SearchSelect
-                  options={processStatusOptions}
-                  placeholder="전체"
-                  value={searchParams.transSidoPrcsStatCd ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      transSidoPrcsStatCd: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
-            </SearchRow>
+              <SearchRow>
+                <SearchField label="지원센터처리상태:">
+                  <SearchSelect
+                    options={processStatusOptions}
+                    placeholder="전체"
+                    value={searchParams.inciPrcsStatCd ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        inciPrcsStatCd: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
 
-            <SearchRow>
-              <SearchField label="사고내용:">
-                <SearchInput
-                  type="text"
-                  inputSize="lg"
-                  value={searchParams.inciDclCont ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      inciDclCont: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="시도처리상태:">
+                  <SearchSelect
+                    options={processStatusOptions}
+                    placeholder="전체"
+                    value={searchParams.transInciPrcsStatCd ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        transInciPrcsStatCd: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
 
-              <SearchField label="조사내용:">
-                <SearchInput
-                  type="text"
-                  inputSize="lg"
-                  value={searchParams.inciInvsCont ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      inciInvsCont: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
+                <SearchField label="시군구처리상태:">
+                  <SearchSelect
+                    options={processStatusOptions}
+                    placeholder="전체"
+                    value={searchParams.transSidoPrcsStatCd ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        transSidoPrcsStatCd: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
+              </SearchRow>
 
-              <SearchField label="시도의견:">
-                <SearchInput
-                  type="text"
-                  inputSize="lg"
-                  value={searchParams.inciBelowCont ?? ''}
-                  onChange={(e) =>
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      inciBelowCont: e.target.value,
-                    }))
-                  }
-                />
-              </SearchField>
-            </SearchRow>
-          </>
-        )}
+              <SearchRow>
+                <SearchField label="사고내용:">
+                  <SearchInput
+                    type="text"
+                    inputSize="lg"
+                    value={searchParams.inciDclCont ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        inciDclCont: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
+
+                <SearchField label="조사내용:">
+                  <SearchInput
+                    type="text"
+                    inputSize="lg"
+                    value={searchParams.inciInvsCont ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        inciInvsCont: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
+
+                <SearchField label="시도의견:">
+                  <SearchInput
+                    type="text"
+                    inputSize="lg"
+                    value={searchParams.inciBelowCont ?? ''}
+                    onChange={(e) =>
+                      setSearchParams((prev) => ({
+                        ...prev,
+                        inciBelowCont: e.target.value,
+                      }))
+                    }
+                  />
+                </SearchField>
+              </SearchRow>
+            </>
+          )}
         </SearchBar>
 
         <ActionBar>
           <ActionButton icon="search" onClick={handleSearch} title="조회" />
-          {/* {canAdd && <ActionButton icon="add" onClick={handleAdd} title="사고신고" />} */}
-          <ActionButton icon="add" onClick={handleAdd} title="사고신고" />
+          {canAdd && <ActionButton icon="add" onClick={handleAdd} title="사고신고" />}
           <ActionButton icon="edit" onClick={handleEdit} title="사고수정" />
           <ActionButton icon="delete" onClick={handleDelete} title="삭제" />
           <ActionButton icon="change" onClick={handleExportExcel} title="변경" />
           <ActionButton icon="excel" onClick={handleExportExcel} title="엑셀" />
-          {/* {canCopy && <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />} */}
-          <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />
+          {canCopy && <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />}
         </ActionBar>
       </div>
 
