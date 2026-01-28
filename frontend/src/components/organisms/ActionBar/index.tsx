@@ -116,7 +116,7 @@ export function ActionBar({ children, className }: ActionBarProps) {
       <div
         ref={containerRef}
         className={cn(
-          'relative my-[5px] mr-[5px] flex w-fit items-center justify-center gap-1 rounded border border-gray-300 bg-gray-50 p-2',
+          'relative my-[5px] flex h-[50px] w-fit items-center justify-center gap-1 rounded border border-gray-300 bg-gray-50 p-2',
           className
         )}
         style={{ maxWidth: MAX_WIDTH }}

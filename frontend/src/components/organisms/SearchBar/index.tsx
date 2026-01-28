@@ -42,7 +42,7 @@ export function SearchBar({ children, className }: SearchBarProps) {
   return (
     <div
       className={cn(
-        'my-[5px] ml-[5px] w-full space-y-2 rounded border border-gray-300 bg-gray-50 p-2',
+        'my-[5px] h-[50px] w-full space-y-2 rounded border border-gray-300 bg-gray-50 p-2',
         className
       )}
     >

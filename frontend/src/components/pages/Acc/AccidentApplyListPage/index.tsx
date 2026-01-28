@@ -72,7 +72,7 @@ const gridColumns: GridColumn[] = [
   { text: '신고기관', datafield: 'dclInstName', width: 100, align: 'center', cellsalign: 'center' },
   { text: '접수기관', datafield: 'dmgInstName', width: 100, align: 'center', cellsalign: 'center' },
   {
-    text: '제목(탐지명)', datafield: 'inciTtl', width: 200, cellsrenderer: (_row, _col, _val, data) => {
+    text: '제목(탐지명)', datafield: 'inciTtl', cellsrenderer: (_row, _col, _val, data) => {
       return `<div style="text-align:left">${data.inciTtlDtt || data.inciTtl || ''}</div>`
     }
   },
@@ -401,7 +401,7 @@ export function AccidentApplyListPage() {
 
   return (
     <div className="flex flex-col h-full p-4">
-      <div id="filter-panel" className="mb-4 flex items-start gap-2">
+      <div id="filter-panel" className="flex items-start gap-2">
         <SearchBar>
           <SearchRow>
             <SearchSelect
