@@ -1,6 +1,6 @@
 package com.klid.api.session.controller;
 
-import com.klid.api.session.dto.SessionResDto;
+import com.klid.api.session.dto.SessionUserSimpleInformationDTO;
 import com.klid.api.session.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +18,8 @@ public class SessionController {
     }
 
     @GetMapping
-    public ResponseEntity<SessionResDto> getCurrentUserInformation() {
-        final SessionResDto userInformation = sessionService.getCurrentUserInformation();
+    public ResponseEntity<SessionUserSimpleInformationDTO> getSessionUserSimpleInformation() {
+        final SessionUserSimpleInformationDTO userInformation = sessionService.getSessionUserSimpleInformation();
         return ResponseEntity.ok(userInformation);
     }
 }

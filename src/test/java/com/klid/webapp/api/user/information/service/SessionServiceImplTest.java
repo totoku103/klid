@@ -1,6 +1,6 @@
 package com.klid.webapp.api.user.information.service;
 
-import com.klid.api.session.dto.SessionResDto;
+import com.klid.api.session.dto.SessionUserSimpleInformationDTO;
 import com.klid.api.session.service.SessionService;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.SessionManager;
@@ -32,7 +32,7 @@ class SessionServiceImplTest {
 
                 CustomException exception = assertThrows(
                         CustomException.class,
-                        () -> service.getCurrentUserInformation()
+                        () -> service.getSessionUserSimpleInformation()
                 );
 
                 assertEquals("로그인 정보가 없습니다.", exception.getMessage());
@@ -47,7 +47,7 @@ class SessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                SessionResDto result = service.getCurrentUserInformation();
+                SessionUserSimpleInformationDTO result = service.getSessionUserSimpleInformation();
 
                 assertNotNull(result);
                 assertEquals("testUser", result.userId());
@@ -63,7 +63,7 @@ class SessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                SessionResDto result = service.getCurrentUserInformation();
+                SessionUserSimpleInformationDTO result = service.getSessionUserSimpleInformation();
 
                 assertAll(
                         () -> assertEquals("testUser", result.userId()),
@@ -83,7 +83,7 @@ class SessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                SessionResDto result = service.getCurrentUserInformation();
+                SessionUserSimpleInformationDTO result = service.getSessionUserSimpleInformation();
 
                 assertAll(
                         () -> assertEquals("10", result.roleCtrs()),
