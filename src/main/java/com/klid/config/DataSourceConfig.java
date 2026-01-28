@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan(basePackages = "com.klid.webapp.**.persistence")
+@MapperScan(basePackages = {"com.klid.webapp.**.persistence", "com.klid.api.**.persistence"})
 public class DataSourceConfig {
 
     @Value("${spring.datasource.driver-class-name}")
@@ -122,9 +122,14 @@ public class DataSourceConfig {
         sessionFactory.setDataSource(dataSource());
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sessionFactory.setMapperLocations(
-                resolver.getResources("classpath:oracle/com/klid/webapp/**/*.xml")
-        );
+        org.springframework.core.io.Resource[] webappResources = resolver.getResources("classpath:oracle/com/klid/webapp/**/*.xml");
+        org.springframework.core.io.Resource[] apiResources = resolver.getResources("classpath:sql/com/klid/api/**/*.xml");
+
+        org.springframework.core.io.Resource[] allResources = new org.springframework.core.io.Resource[webappResources.length + apiResources.length];
+        System.arraycopy(webappResources, 0, allResources, 0, webappResources.length);
+        System.arraycopy(apiResources, 0, allResources, webappResources.length, apiResources.length);
+
+        sessionFactory.setMapperLocations(allResources);
         sessionFactory.setConfigLocation(
                 resolver.getResource("classpath:config/mybatis-config.xml")
         );
