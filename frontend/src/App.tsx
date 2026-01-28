@@ -5,9 +5,9 @@ import { SimpleLayout, DefaultLayout } from '@/components/templates'
 
 // 레이아웃 없는 페이지들
 const LoginPage = lazy(() => import('@/components/pages/Login').then(m => ({ default: m.LoginPage })))
-const PrivacyPolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.PrivacyPolicyPage })))
-const HistoryPolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.HistoryPolicyPage })))
-const ComparePolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.ComparePolicyPage })))
+const PrivacyPolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicyPage })))
+const HistoryPolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.HistoryPolicyPage })))
+const ComparePolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.ComparePolicyPage })))
 
 // SimpleLayout 사용 페이지 (Header + MenuBar + Outlet)
 const MainPage = lazy(() => import('@/components/pages/Main').then(m => ({ default: m.MainPage })))
