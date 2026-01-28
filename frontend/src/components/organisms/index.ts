@@ -25,6 +25,9 @@ export type { ActionBarProps, ActionButtonProps } from './ActionBar'
 export { FilterPanel } from './FilterPanel'
 export type { FilterPanelProps } from './FilterPanel'
 
+export { DataPanel } from './DataPanel'
+export type { DataPanelProps } from './DataPanel'
+
 export {
   SearchBar,
   SearchRow,

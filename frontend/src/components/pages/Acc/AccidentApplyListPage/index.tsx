@@ -5,6 +5,7 @@ import {
   ActionBar,
   ActionButton,
   FilterPanel,
+  DataPanel,
   SearchBar,
   SearchRow,
   SearchSelect,
@@ -682,7 +683,7 @@ export function AccidentApplyListPage() {
         </ActionBar>
       </FilterPanel>
 
-      <div id="data-panel" className="flex-1 min-h-0">
+      <DataPanel>
         <DataGrid
           id="accidentApplyGrid"
           columns={gridColumns}
@@ -720,7 +721,7 @@ export function AccidentApplyListPage() {
           onRowSelect={(rowData) => setSelectedIncident(rowData as unknown as Incident)}
           onRowDoubleClick={(rowData) => handleRowDoubleClick(rowData as unknown as Incident)}
         />
-      </div>
+      </DataPanel>
 
       <AccidentAddModal
         open={isAddModalOpen}
