@@ -1,27 +1,10 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import { authApi } from '@/services/api/authApi'
+import api from '@/services/api/axios'
 import { SYSTEM_TYPE, type SystemType, type AuthMethod } from '@/utils/constants'
 import { useUserStore } from '@/stores/userStore'
-import type { SessionInfo } from '@/types'
-
-const MOCK_SESSION_INFO: SessionInfo = {
-  user: {
-    userId: 'test',
-    userName: '테스트 사용자',
-    instCd: 'TEST001',
-    instNm: '테스트 기관',
-    instLevel: '1',
-    localCd: '11',
-    pntInstCd: '',
-    roleCtrs: 'ROLE_USER',
-    authMain: 'AUTH_MAIN_1',
-    authSub: '',
-  },
-  webSiteName: '사이버 침해대응시스템',
-  ncscUrl: 'https://www.ncsc.go.kr',
-  uploadSize: 10485760,
-}
+// SessionInfo type not used in this file
 
 export type LoginStep = 'primary' | 'secondary'
 
@@ -97,17 +80,6 @@ export function useLogin(): UseLoginReturn {
       setError(null)
 
       try {
-        // [MOCK] 테스트용 Mock 인증 - id: test, pwd: test
-        if (id === 'test' && password === 'test') {
-          setOtpSecretKey(null)
-          setStep('secondary')
-          setIsInputDisabled(true)
-          return
-        }
-        // [MOCK] Mock 인증 실패
-        throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.')
-
-        /* [주석 처리됨] 실제 서버 통신 코드
         const response = await authApi.primaryAuth({
           systemType,
           id,
@@ -134,7 +106,6 @@ export function useLogin(): UseLoginReturn {
         setOtpSecretKey(secretKey || null)
         setStep('secondary')
         setIsInputDisabled(true)
-        */
       } catch (err) {
         setError(err instanceof Error ? err.message : '로그인에 실패했습니다.')
       } finally {
@@ -155,16 +126,6 @@ export function useLogin(): UseLoginReturn {
       setError(null)
 
       try {
-        // [MOCK] 테스트용 Mock OTP 인증 - otp: 860207
-        if (code === '860207') {
-          setSessionInfo(MOCK_SESSION_INFO)
-          goToMainPage()
-          return
-        }
-        // [MOCK] Mock OTP 인증 실패
-        throw new Error('OTP 코드가 올바르지 않습니다.')
-
-        /* [주석 처리됨] 실제 서버 통신 코드
         const response = await authApi.otpAuth(systemType, { userCode: code })
 
         if (response.hasError) {
@@ -174,11 +135,18 @@ export function useLogin(): UseLoginReturn {
         }
 
         if (response.resultData?.isPass) {
+          // 사용자 정보 조회
+          const userResponse = await api.get('/api/user/information')
+          setSessionInfo({
+            user: userResponse.data,
+            webSiteName: '',
+            ncscUrl: '',
+            uploadSize: 0,
+          })
           goToMainPage()
         } else {
           setError('OTP 인증에 실패했습니다.')
         }
-        */
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'OTP 인증에 실패했습니다.'
@@ -236,6 +204,14 @@ export function useLogin(): UseLoginReturn {
         }
 
         if (response.resultData?.isPass) {
+          // 사용자 정보 조회
+          const userResponse = await api.get('/api/user/information')
+          setSessionInfo({
+            user: userResponse.data,
+            webSiteName: '',
+            ncscUrl: '',
+            uploadSize: 0,
+          })
           goToMainPage()
         } else {
           setError('이메일 인증에 실패했습니다.')
@@ -248,7 +224,7 @@ export function useLogin(): UseLoginReturn {
         setIsLoading(false)
       }
     },
-    [systemType, goToMainPage]
+    [systemType, goToMainPage, setSessionInfo]
   )
 
   const handleSystemTypeChange = useCallback((type: SystemType) => {

@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
-import { useAuthStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
 import api from '@/services/api/axios'
 
 export function useAuth() {
-  const { user, isAuthenticated, isLoading, setUser, setLoading, logout } =
-    useAuthStore()
+  const { user, isAuthenticated, isLoading, setUser, setLoading, clear } =
+    useUserStore()
 
   const checkSession = useCallback(async () => {
     try {
@@ -22,10 +22,10 @@ export function useAuth() {
     try {
       await api.post('/api/auth/logout.do')
     } finally {
-      logout()
+      clear()
       window.location.href = '/login'
     }
-  }, [logout])
+  }, [clear])
 
   return {
     user,
