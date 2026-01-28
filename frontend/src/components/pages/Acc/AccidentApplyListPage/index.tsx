@@ -9,7 +9,6 @@ import {
   SearchBar,
   SearchRow,
   SearchSelect,
-  SearchMultiSelect,
   SearchInput,
   SearchPeriodRange,
   SearchCheckbox,
@@ -171,8 +170,8 @@ export function AccidentApplyListPage() {
     try {
       const params: IncidentSearchParams = {
         ...searchParams,
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const data = await accApi.getAccidentList(params)
       setIncidents(data)
@@ -353,8 +352,8 @@ export function AccidentApplyListPage() {
     setIsDetailModalOpen(true)
   }, [])
 
-  const canAdd = user?.authMain !== 'AUTH_MAIN_1'
-  const canCopy = user?.authMain !== 'AUTH_MAIN_1'
+  const canAdd = user?.authRole.main !== 'AUTH_MAIN_1'
+  const canCopy = user?.authRole.main !== 'AUTH_MAIN_1'
 
   const timeOptions = useMemo(
     () =>
@@ -392,14 +391,7 @@ export function AccidentApplyListPage() {
     [codes.processStatus]
   )
 
-  const receptionMethodOptions = useMemo(
-    () =>
-      codes.receptionMethod.map((code) => ({
-        label: code.codeName,
-        value: code.comCode2,
-      })),
-    [codes.receptionMethod]
-  )
+  // receptionMethodOptions unused - removed
 
   return (
     <div className="flex flex-col h-full">

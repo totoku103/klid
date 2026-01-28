@@ -113,7 +113,7 @@ export function AccidentAddModal({ open, onOpenChange, onSuccess }: AccidentAddM
       setFormData({
         ...initialFormData,
         dmgCrgr: user?.userName || '',
-        dmgEmail: user?.emailAddr || '',
+        dmgEmail: '', // emailAddr removed from User type
       })
     }
   }, [open, loadCodes, user])
@@ -163,7 +163,7 @@ export function AccidentAddModal({ open, onOpenChange, onSuccess }: AccidentAddM
         : ''
 
       const params = {
-        instCd: user?.instCd,
+        instCd: user?.instCd?.toString(),
         inciDt,
         inciTtl: formData.inciTtl,
         inciDttNm: formData.inciDttNm,
@@ -172,11 +172,11 @@ export function AccidentAddModal({ open, onOpenChange, onSuccess }: AccidentAddM
         acpnMthd: '00' + formData.acpnMthd,
         riskLevel: formData.riskLevel,
         inciPrcsStat: '1',
-        dclInstCd: user?.instCd,
+        dclInstCd: user?.instCd?.toString(),
         dclCrgr: user?.userName,
-        dclEmail: user?.emailAddr,
-        dclTelNo: user?.offcTelNo,
-        dmgInstCd: formData.dmgInstCd || user?.instCd,
+        dclEmail: '', // emailAddr removed from User type
+        dclTelNo: '', // offcTelNo removed from User type
+        dmgInstCd: formData.dmgInstCd || user?.instCd?.toString(),
         dmgCrgr: formData.dmgCrgr,
         dmgDept: formData.dmgDept,
         dmgNatnCd: 1,

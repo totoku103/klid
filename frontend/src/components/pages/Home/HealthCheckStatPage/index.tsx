@@ -53,8 +53,8 @@ export function HealthCheckStatPage() {
     setIsLoading(true)
     try {
       const result = await homeApi.getHealthCheckStatList({
-        instCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        instCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       })
       setData(result)
     } catch (err) {
@@ -62,7 +62,7 @@ export function HealthCheckStatPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [user?.instCd, user?.authMain])
+  }, [user?.instCd, user?.authRole.main])
 
   useEffect(() => {
     loadData()

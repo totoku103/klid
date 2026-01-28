@@ -47,7 +47,7 @@ export function HealthCheckHistPage() {
     try {
       const result = await homeApi.getHealthCheckHistList({
         ...searchParams,
-        srchInstCd: selectedInstCd ?? user?.instCd,
+        srchInstCd: selectedInstCd ?? user?.instCd?.toString(),
       })
       setData(result)
     } catch (err) {

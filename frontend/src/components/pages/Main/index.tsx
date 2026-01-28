@@ -36,7 +36,7 @@ export function MainPage() {
     (id: string) => {
       const qna = data.qnaList.find((q) => q.bultnNo === id)
       if (qna?.isSecret === 'Y') {
-        if (user?.authMain !== 'AUTH_MAIN_1' && qna.userId !== user?.userId) {
+        if (user?.authRole.main !== 'AUTH_MAIN_1' && qna.userId !== user?.userId) {
           globalAlert.info('비밀글입니다.')
           return
         }

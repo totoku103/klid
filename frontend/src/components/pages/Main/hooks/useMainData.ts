@@ -98,59 +98,59 @@ export function useMainData() {
         monitoringCountResult,
         monitoringListResult,
       ] = await Promise.allSettled([
-        mainApi.getThreatNow(user.instCd),
+        mainApi.getThreatNow(user.instCd.toString()),
         mainApi.getTodayStatus({
-          sAuthMain: user.authMain,
-          sInstCd: user.instCd,
+          sAuthMain: user.authRole.main,
+          sInstCd: user.instCd.toString(),
           atype,
         }),
         mainApi.getYearStatus({
-          sAuthMain: user.authMain,
-          sInstCd: user.instCd,
+          sAuthMain: user.authRole.main,
+          sInstCd: user.instCd.toString(),
           atype,
         }),
-        mainApi.getPeriodNow(user.instCd),
+        mainApi.getPeriodNow(user.instCd.toString()),
         mainApi.getPeriodStatus({
-          sAuthMain: user.authMain,
-          sInstCd: user.instCd,
+          sAuthMain: user.authRole.main,
+          sInstCd: user.instCd.toString(),
         }),
         mainApi.getAccdTypeTop5({
           atype,
-          sAuthMain: user.authMain,
-          instCd: user.instCd,
+          sAuthMain: user.authRole.main,
+          instCd: user.instCd.toString(),
           dateType: 'inci_acpn_dt',
           startDt,
           endDt,
         }),
         mainApi.getInstTop5({
           atype,
-          sAuthMain: user.authMain,
-          instCd: user.instCd,
+          sAuthMain: user.authRole.main,
+          instCd: user.instCd.toString(),
           dateType: 'inci_acpn_dt',
           startDt,
           endDt,
-          topInstView: user.authMain === 'AUTH_MAIN_3' ? 'main' : undefined,
+          topInstView: user.authRole.main === 'AUTH_MAIN_3' ? 'main' : undefined,
           sortType:
-            user.authMain !== 'AUTH_MAIN_3' && user.authMain !== 'AUTH_MAIN_4'
+            user.authRole.main !== 'AUTH_MAIN_3' && user.authRole.main !== 'AUTH_MAIN_4'
               ? 'main'
               : undefined,
         }),
         mainApi.getNoticeList({
           listSize: '6',
-          sAuthMain: user.authMain,
-          sInstCd: user.instCd,
-          sPntInstCd: user.pntInstCd,
+          sAuthMain: user.authRole.main,
+          sInstCd: user.instCd.toString(),
+          sPntInstCd: '', // pntInstCd removed from User type
         }),
         mainApi.getQnaList({
           listSize: '6',
-          sInstCd: user.instCd,
+          sInstCd: user.instCd.toString(),
         }),
         mainApi.getMonitoringCount({
-          sInstCd: user.instCd,
-          sAuthMain: user.authMain,
+          sInstCd: user.instCd.toString(),
+          sAuthMain: user.authRole.main,
         }),
         mainApi.getMonitoringList({
-          sInstCd: user.instCd,
+          sInstCd: user.instCd.toString(),
           time1: formatDateTime(time1Dt),
           time2: formatDateTime(time2Dt),
         }),

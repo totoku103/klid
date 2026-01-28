@@ -33,8 +33,8 @@ export function ReportDailyStatePage() {
       const params = {
         date1: dateInputs.date1.replace(/-/g, '') + dateInputs.time + '0000',
         date2: dateInputs.date2.replace(/-/g, '') + '235959',
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd.toString(),
+        sAuthMain: user?.authRole.main,
         grpNo: 1,
       }
 
@@ -66,7 +66,7 @@ export function ReportDailyStatePage() {
     globalAlert.info('HWP 내보내기 기능은 추후 구현 예정입니다.')
   }, [])
 
-  const canExport = user?.authMain !== 'AUTH_MAIN_4'
+  const canExport = user?.authRole.main !== 'AUTH_MAIN_4'
 
   return (
     <>

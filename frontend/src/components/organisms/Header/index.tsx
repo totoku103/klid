@@ -21,10 +21,8 @@ export function Header({ className, onUserClick }: HeaderProps) {
     }
   }, [])
 
-  const showCityLogo =
-    user?.localCd !== '1' &&
-    user?.localCd !== '-1' &&
-    user?.authMain === 'AUTH_MAIN_3'
+  // Note: localCd property removed from User type - city logo display disabled
+  const showCityLogo = false
 
   return (
     <div id="app-header" className={cn('w-full', LAYOUT_MIN_WIDTH_CLASS, className)}>
@@ -35,7 +33,7 @@ export function Header({ className, onUserClick }: HeaderProps) {
         >
           {showCityLogo && (
             <img
-              src={`/img/city-logo/${user.localCd}_cityLogo.png`}
+              src="/img/city-logo/default_cityLogo.png"
               alt="로고"
               className="h-10"
             />

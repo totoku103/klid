@@ -32,8 +32,8 @@ export function ReportInciLocalPage() {
       const params = {
         date1: dateInputs.date1.replace(/-/g, '') + dateInputs.time + '0000',
         date2: dateInputs.date2.replace(/-/g, '') + '235959',
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await rptApi.getInciLocalList(params)
       setData(result)

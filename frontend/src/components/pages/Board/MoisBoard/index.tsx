@@ -31,9 +31,9 @@ export function MoisBoardPage() {
     try {
       const data = await boardApi.getMoisBoardList({
         ...searchParams,
-        sInstCd: user.instCd,
-        sPntInstCd: user.pntInstCd,
-        sAuthMain: user.authMain,
+        sInstCd: user.instCd.toString(),
+        sPntInstCd: '', // pntInstCd removed from User type
+        sAuthMain: user.authRole.main,
       })
       setList(data)
     } catch (err) {

@@ -31,8 +31,8 @@ export function UserActHistPage() {
         date2: dateInputs.date2.replace(/-/g, ''),
         userId: searchUserId || undefined,
         userName: searchUserName || undefined,
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await histApi.getUserActHistList(params)
       setData(result)

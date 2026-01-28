@@ -26,8 +26,8 @@ export function ReportDailySecurityPage() {
         date1: dateInputs.date1.replace(/-/g, ''),
         date2: dateInputs.date2.replace(/-/g, ''),
         time,
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await rptApi.getDailySecurityReport(params)
       setData(result)

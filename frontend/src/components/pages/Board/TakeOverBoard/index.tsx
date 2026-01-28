@@ -46,9 +46,9 @@ export function TakeOverBoardPage() {
         ...searchParams,
         date1: dateInputs.date1.replace(/-/g, ''),
         date2: dateInputs.date2.replace(/-/g, ''),
-        sInstCd: user.instCd,
-        sPntInstCd: user.pntInstCd,
-        sAuthMain: user.authMain,
+        sInstCd: user.instCd.toString(),
+        sPntInstCd: '', // pntInstCd removed from User type
+        sAuthMain: user.authRole.main,
       })
       setList(data)
     } catch (err) {

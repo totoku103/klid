@@ -27,15 +27,15 @@ export function HealthCheckUrlPage() {
   // _setSelectedInstCd를 사용하여 기관 선택 시 상태 업데이트
   void _setSelectedInstCd
 
-  const isAdmin = user?.authMain === 'AUTH_MAIN_2'
+  const isAdmin = user?.authRole.main === 'AUTH_MAIN_2'
 
   const loadData = useCallback(async () => {
     setIsLoading(true)
     try {
       const result = await homeApi.getHealthCheckUrlList({
         ...searchParams,
-        srchInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        srchInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       })
       setData(result)
       setSelectedRows([])
@@ -44,7 +44,7 @@ export function HealthCheckUrlPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [searchParams, user?.instCd, user?.authMain])
+  }, [searchParams, user?.instCd, user?.authRole.main])
 
   useEffect(() => {
     loadData()
@@ -108,13 +108,13 @@ export function HealthCheckUrlPage() {
     if (!await globalConfirm('집중관리 등록 하시겠습니까?')) return
 
     try {
-      await homeApi.watchOnHealthCheckUrl(selectedRows, user?.authMain ?? '')
+      await homeApi.watchOnHealthCheckUrl(selectedRows, user?.authRole.main ?? '')
       globalAlert.success('등록되었습니다.')
       loadData()
     } catch {
       globalAlert.error('등록에 실패했습니다.')
     }
-  }, [selectedRows, user?.authMain, loadData])
+  }, [selectedRows, user?.authRole.main, loadData])
 
   const handleWatchOff = useCallback(async () => {
     if (selectedRows.length === 0) {
@@ -124,25 +124,25 @@ export function HealthCheckUrlPage() {
     if (!await globalConfirm('집중관리 해제 하시겠습니까?')) return
 
     try {
-      await homeApi.watchOffHealthCheckUrl(selectedRows, user?.authMain ?? '')
+      await homeApi.watchOffHealthCheckUrl(selectedRows, user?.authRole.main ?? '')
       globalAlert.success('해제되었습니다.')
       loadData()
     } catch {
       globalAlert.error('해제에 실패했습니다.')
     }
-  }, [selectedRows, user?.authMain, loadData])
+  }, [selectedRows, user?.authRole.main, loadData])
 
   const handleExcel = useCallback(async () => {
     try {
       await homeApi.exportHealthCheckUrl({
         ...searchParams,
-        srchInstCd: selectedInstCd ?? user?.instCd,
-        sAuthMain: user?.authMain,
+        srchInstCd: selectedInstCd ?? user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       })
     } catch {
       globalAlert.error('엑셀 다운로드에 실패했습니다.')
     }
-  }, [searchParams, selectedInstCd, user?.instCd, user?.authMain])
+  }, [searchParams, selectedInstCd, user?.instCd, user?.authRole.main])
 
   const getLastResText = (lastRes: number) => (lastRes === 200 ? '정상' : '장애')
   const getMoisYnText = (moisYn: string) => (moisYn === '1' ? '중앙부처' : '지자체')

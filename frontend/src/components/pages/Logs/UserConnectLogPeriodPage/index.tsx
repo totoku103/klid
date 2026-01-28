@@ -26,8 +26,8 @@ export function UserConnectLogPeriodPage() {
       const params = {
         date1: dateInputs.date1.replace(/-/g, ''),
         date2: dateInputs.date2.replace(/-/g, ''),
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await logsApi.getUserConnectLogPeriod(params)
       setData(result)

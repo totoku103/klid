@@ -24,7 +24,7 @@ export function ForgeryUrlPage() {
     try {
       const result = await homeApi.getForgeryUrlList({
         ...searchParams,
-        srchInstCd: user?.instCd,
+        srchInstCd: user?.instCd?.toString(),
       })
       setData(result)
       setSelectedRow(null)

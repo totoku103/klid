@@ -32,7 +32,7 @@ export function QnaBoardPage() {
     try {
       const data = await boardApi.getQnaList({
         ...searchParams,
-        sInstCd: user.instCd,
+        sInstCd: user.instCd.toString(),
       })
       setList(data)
     } catch (err) {
@@ -65,7 +65,7 @@ export function QnaBoardPage() {
   const handleRowDoubleClick = useCallback(
     (row: QnaItem) => {
       if (row.isSecret === 'Y') {
-        if (user?.authMain !== 'AUTH_MAIN_1' && row.userId !== user?.userId) {
+        if (user?.authRole.main !== 'AUTH_MAIN_1' && row.userId !== user?.userId) {
           globalAlert.info('비밀글입니다.')
           return
         }

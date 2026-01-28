@@ -92,7 +92,7 @@ export function UserMgmtPage() {
   }, [selectedUser, loadUsers])
 
   const isAdmin =
-    user?.authMain === 'AUTH_MAIN_2' && user?.authSub === 'AUTH_SUB_3'
+    user?.authRole.main === 'AUTH_MAIN_2' && user?.authRole.sub === 'AUTH_SUB_3'
   return (
     <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">

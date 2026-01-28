@@ -21,8 +21,8 @@ export function UserActionLogDailyPage() {
     try {
       const params = {
         date1: searchDate.replace(/-/g, ''),
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await logsApi.getUserActionLogDaily(params)
       setData(result)

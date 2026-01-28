@@ -74,9 +74,9 @@ export function NoticeBoardPage() {
       const { startDate, endDate } = getDateRange()
       const data = await boardApi.getNoticeList({
         ...searchParams,
-        sInstCd: user.instCd,
-        sPntInstCd: user.pntInstCd,
-        sAuthMain: user.authMain,
+        sInstCd: user.instCd.toString(),
+        sPntInstCd: '', // pntInstCd removed from User type
+        sAuthMain: user.authRole.main,
         startDate,
         endDate,
       })

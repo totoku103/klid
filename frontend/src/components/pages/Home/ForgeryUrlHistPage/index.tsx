@@ -29,7 +29,7 @@ export function ForgeryUrlHistPage() {
     try {
       const result = await homeApi.getForgeryUrlHistList({
         ...searchParams,
-        srchInstCd: user?.instCd,
+        srchInstCd: user?.instCd?.toString(),
       })
       setData(result)
     } catch (err) {

@@ -31,8 +31,8 @@ export function ReportWeeklyStatePage() {
       const params = {
         date1: dateInputs.date1.replace(/-/g, '') + '000000',
         date2: dateInputs.date2.replace(/-/g, '') + '235959',
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await rptApi.getWeeklyStateList(params)
       setData(result)

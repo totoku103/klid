@@ -21,8 +21,8 @@ export function UserConnectLogDailyPage() {
     try {
       const params = {
         date1: searchDate.replace(/-/g, ''),
-        sInstCd: user?.instCd,
-        sAuthMain: user?.authMain,
+        sInstCd: user?.instCd?.toString(),
+        sAuthMain: user?.authRole.main,
       }
       const result = await logsApi.getUserConnectLogDaily(params)
       setData(result)
