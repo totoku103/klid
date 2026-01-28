@@ -1,7 +1,7 @@
 package com.klid.webapp.api.user.information.service;
 
-import com.klid.user.session.dto.UserSessionResDto;
-import com.klid.user.session.service.UserSessionService;
+import com.klid.api.session.dto.SessionResDto;
+import com.klid.api.session.service.SessionService;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.dto.UserDto;
@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
-class UserSessionServiceImplTest {
+class SessionServiceImplTest {
 
-    private final UserSessionService service = new UserSessionService();
+    private final SessionService service = new SessionService();
 
     @Nested
     @DisplayName("getCurrentUserInformation()")
@@ -47,7 +47,7 @@ class UserSessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                UserSessionResDto result = service.getCurrentUserInformation();
+                SessionResDto result = service.getCurrentUserInformation();
 
                 assertNotNull(result);
                 assertEquals("testUser", result.userId());
@@ -63,7 +63,7 @@ class UserSessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                UserSessionResDto result = service.getCurrentUserInformation();
+                SessionResDto result = service.getCurrentUserInformation();
 
                 assertAll(
                         () -> assertEquals("testUser", result.userId()),
@@ -83,7 +83,7 @@ class UserSessionServiceImplTest {
             try (MockedStatic<SessionManager> sessionManager = mockStatic(SessionManager.class)) {
                 sessionManager.when(SessionManager::getUser).thenReturn(userDto);
 
-                UserSessionResDto result = service.getCurrentUserInformation();
+                SessionResDto result = service.getCurrentUserInformation();
 
                 assertAll(
                         () -> assertEquals("10", result.roleCtrs()),

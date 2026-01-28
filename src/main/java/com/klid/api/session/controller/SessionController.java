@@ -1,7 +1,7 @@
-package com.klid.user.session.controller;
+package com.klid.api.session.controller;
 
-import com.klid.user.session.dto.UserSessionResDto;
-import com.klid.user.session.service.UserSessionService;
+import com.klid.api.session.dto.SessionResDto;
+import com.klid.api.session.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user/information")
-public class UserSessionController {
+public class SessionController {
 
-    private final UserSessionService userSessionService;
+    private final SessionService sessionService;
 
-    public UserSessionController(final UserSessionService userSessionService) {
-        this.userSessionService = userSessionService;
+    public SessionController(final SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 
     @GetMapping
-    public ResponseEntity<UserSessionResDto> getCurrentUserInformation() {
-        final UserSessionResDto userInformation = userSessionService.getCurrentUserInformation();
+    public ResponseEntity<SessionResDto> getCurrentUserInformation() {
+        final SessionResDto userInformation = sessionService.getCurrentUserInformation();
         return ResponseEntity.ok(userInformation);
     }
 }

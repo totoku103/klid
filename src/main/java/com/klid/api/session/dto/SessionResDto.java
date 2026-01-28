@@ -1,4 +1,4 @@
-package com.klid.user.session.dto;
+package com.klid.api.session.dto;
 
 import com.klid.webapp.common.dto.UserDto;
 
@@ -14,7 +14,7 @@ import com.klid.webapp.common.dto.UserDto;
  * @param boardRole 게시판 권한 정보
  * @param authRole  인증/권한 그룹 정보
  */
-public record UserSessionResDto(
+public record SessionResDto(
         String userId,
         String userName,
         int instCd,
@@ -22,12 +22,12 @@ public record UserSessionResDto(
         BoardRole boardRole,
         AuthRole authRole
 ) {
-    public static UserSessionResDto from(final UserDto user) {
+    public static SessionResDto from(final UserDto user) {
         if (user == null) {
             return null;
         }
 
-        return new UserSessionResDto(
+        return new SessionResDto(
                 user.getUserId(),
                 user.getUserName(),
                 user.getInstCd(),
