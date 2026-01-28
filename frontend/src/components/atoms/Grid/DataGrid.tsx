@@ -71,9 +71,20 @@ export function DataGrid({
   style,
 }: DataGridProps) {
   const gridRef = useRef<HTMLDivElement>(null)
+  const isInitializedRef = useRef(false)
+  const sourceRef = useRef(source)
+
+  // Update sourceRef when source changes
+  sourceRef.current = source
 
   const initGrid = useCallback(async () => {
     if (!gridRef.current || typeof window === 'undefined') return
+
+    // Skip if already initialized - prevents duplicate pager elements (including StrictMode double-mount)
+    if (isInitializedRef.current) return
+
+    // Mark as initializing immediately to prevent concurrent initializations
+    isInitializedRef.current = true
 
     try {
       // jqwidgets v25 버그 우회: setTheme에서 btnUpInner 변수가 선언 없이 사용됨
@@ -125,7 +136,7 @@ export function DataGrid({
           ...col,
           align: col.align || 'center',
         })),
-        source: new jqx.dataAdapter(source),
+        source: new jqx.dataAdapter(sourceRef.current),
         pageable,
         pagesize: pageSize,
         pagesizeoptions: pageSizeOptions,
@@ -141,6 +152,11 @@ export function DataGrid({
         enablebrowserselection: true,
         showpinnedcolumnbackground: false,
         showsortcolumnbackground: false,
+      }
+
+      // Final check before creating grid - prevents duplicate if another init completed during async imports
+      if (gridRef.current.children.length > 0) {
+        return
       }
 
       const $grid = $(gridRef.current)
@@ -175,7 +191,6 @@ export function DataGrid({
     }
   }, [
     columns,
-    source,
     width,
     height,
     pageable,
@@ -190,9 +205,34 @@ export function DataGrid({
     onRowDoubleClick,
   ])
 
+  // Initialize grid once
   useEffect(() => {
     initGrid()
   }, [initGrid])
+
+  // Update data when source.localdata changes (without reinitializing)
+  useEffect(() => {
+    if (!isInitializedRef.current || !gridRef.current || typeof window === 'undefined') return
+
+    try {
+      const $ = (window as unknown as { $: (el: HTMLElement) => { jqxGrid: (method: string, ...args: unknown[]) => unknown } }).$
+      if (!$) return
+
+      const $grid = $(gridRef.current)
+
+      // Get the existing source and update its localdata
+      const existingSource = $grid.jqxGrid('source') as {
+        _source: { localdata: unknown[] }
+      } | null
+
+      if (existingSource && existingSource._source) {
+        existingSource._source.localdata = source.localdata || []
+        $grid.jqxGrid('updatebounddata')
+      }
+    } catch {
+      // Ignore errors during data update
+    }
+  }, [source.localdata])
 
   return (
     <div
