@@ -76,6 +76,10 @@ export function DataGrid({
     if (!gridRef.current || typeof window === 'undefined') return
 
     try {
+      // jqwidgets v25 버그 우회: setTheme에서 btnUpInner 변수가 선언 없이 사용됨
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).btnUpInner = null
+
       await import('jqwidgets-scripts/jqwidgets/jqxcore')
       await import('jqwidgets-scripts/jqwidgets/jqxdata')
       await import('jqwidgets-scripts/jqwidgets/jqxbuttons')
