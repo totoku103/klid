@@ -1,5 +1,6 @@
 package com.klid.webapp.api.user.information.dto;
 
+import com.klid.user.session.dto.UserSessionResDto;
 import com.klid.webapp.common.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserInformationResDtoTest {
+class UserSessionResDtoTest {
 
     @Nested
     @DisplayName("from() 팩토리 메서드")
@@ -16,7 +17,7 @@ class UserInformationResDtoTest {
         @Test
         @DisplayName("UserDto가 null이면 null을 반환한다")
         void returnsNullWhenUserDtoIsNull() {
-            UserInformationResDto result = UserInformationResDto.from(null);
+            UserSessionResDto result = UserSessionResDto.from(null);
 
             assertNull(result);
         }
@@ -26,7 +27,7 @@ class UserInformationResDtoTest {
         void mapsBasicInformationCorrectly() {
             UserDto userDto = createTestUserDto();
 
-            UserInformationResDto result = UserInformationResDto.from(userDto);
+            UserSessionResDto result = UserSessionResDto.from(userDto);
 
             assertAll(
                     () -> assertEquals("testUser", result.userId()),
@@ -43,7 +44,7 @@ class UserInformationResDtoTest {
         void mapsRoleInformationCorrectly() {
             UserDto userDto = createTestUserDto();
 
-            UserInformationResDto result = UserInformationResDto.from(userDto);
+            UserSessionResDto result = UserSessionResDto.from(userDto);
 
             assertAll(
                     () -> assertEquals("10", result.roleCtrs()),
@@ -58,7 +59,7 @@ class UserInformationResDtoTest {
         void createsBoardAuthDtoCorrectly() {
             UserDto userDto = createTestUserDto();
 
-            UserInformationResDto result = UserInformationResDto.from(userDto);
+            UserSessionResDto result = UserSessionResDto.from(userDto);
 
             assertNotNull(result.boardAuth());
             assertEquals("Y", result.boardAuth().roleTbz01());
@@ -75,8 +76,8 @@ class UserInformationResDtoTest {
         void recordsWithSameValuesAreEqual() {
             UserDto userDto = createTestUserDto();
 
-            UserInformationResDto dto1 = UserInformationResDto.from(userDto);
-            UserInformationResDto dto2 = UserInformationResDto.from(userDto);
+            UserSessionResDto dto1 = UserSessionResDto.from(userDto);
+            UserSessionResDto dto2 = UserSessionResDto.from(userDto);
 
             assertEquals(dto1, dto2);
             assertEquals(dto1.hashCode(), dto2.hashCode());

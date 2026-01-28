@@ -1,7 +1,8 @@
 package com.klid.webapp.api.user.information.controller;
 
-import com.klid.webapp.api.user.information.dto.UserInformationResDto;
-import com.klid.webapp.api.user.information.service.UserInformationService;
+import com.klid.user.session.controller.UserSessionController;
+import com.klid.user.session.dto.UserSessionResDto;
+import com.klid.user.session.service.UserSessionService;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class UserInformationControllerTest {
+class UserSessionControllerTest {
 
     @Mock
-    private UserInformationService userInformationService;
+    private UserSessionService userSessionService;
 
-    private UserInformationController controller;
+    private UserSessionController controller;
 
     @BeforeEach
     void setUp() {
-        controller = new UserInformationController(userInformationService);
+        controller = new UserSessionController(userSessionService);
     }
 
     @Nested
@@ -37,10 +38,10 @@ class UserInformationControllerTest {
         @Test
         @DisplayName("사용자 정보가 있으면 200 OK와 함께 사용자 정보를 반환한다")
         void returnsUserInformationWhenUserExists() {
-            UserInformationResDto responseDto = createTestResponseDto();
-            given(userInformationService.getCurrentUserInformation()).willReturn(responseDto);
+            UserSessionResDto responseDto = createTestResponseDto();
+            given(userSessionService.getCurrentUserInformation()).willReturn(responseDto);
 
-            ResponseEntity<UserInformationResDto> response = controller.getCurrentUserInformation();
+            ResponseEntity<UserSessionResDto> response = controller.getCurrentUserInformation();
 
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
@@ -52,10 +53,10 @@ class UserInformationControllerTest {
         @Test
         @DisplayName("반환된 응답에 권한 정보가 포함된다")
         void responseIncludesRoleInformation() {
-            UserInformationResDto responseDto = createTestResponseDto();
-            given(userInformationService.getCurrentUserInformation()).willReturn(responseDto);
+            UserSessionResDto responseDto = createTestResponseDto();
+            given(userSessionService.getCurrentUserInformation()).willReturn(responseDto);
 
-            ResponseEntity<UserInformationResDto> response = controller.getCurrentUserInformation();
+            ResponseEntity<UserSessionResDto> response = controller.getCurrentUserInformation();
 
             assertNotNull(response.getBody());
             assertEquals("10", response.getBody().roleCtrs());
@@ -65,10 +66,10 @@ class UserInformationControllerTest {
         @Test
         @DisplayName("반환된 응답에 게시판 권한 정보가 포함된다")
         void responseIncludesBoardAuthInformation() {
-            UserInformationResDto responseDto = createTestResponseDto();
-            given(userInformationService.getCurrentUserInformation()).willReturn(responseDto);
+            UserSessionResDto responseDto = createTestResponseDto();
+            given(userSessionService.getCurrentUserInformation()).willReturn(responseDto);
 
-            ResponseEntity<UserInformationResDto> response = controller.getCurrentUserInformation();
+            ResponseEntity<UserSessionResDto> response = controller.getCurrentUserInformation();
 
             assertNotNull(response.getBody());
             assertNotNull(response.getBody().boardAuth());
@@ -78,14 +79,14 @@ class UserInformationControllerTest {
         @Test
         @DisplayName("세션에 사용자 정보가 없으면 예외가 발생한다")
         void throwsExceptionWhenNoUserInSession() {
-            given(userInformationService.getCurrentUserInformation())
+            given(userSessionService.getCurrentUserInformation())
                     .willThrow(new CustomException("로그인 정보가 없습니다."));
 
             assertThrows(CustomException.class, () -> controller.getCurrentUserInformation());
         }
     }
 
-    private UserInformationResDto createTestResponseDto() {
+    private UserSessionResDto createTestResponseDto() {
         UserDto userDto = new UserDto();
         userDto.setUserId("testUser");
         userDto.setUserName("홍길동");
@@ -114,6 +115,6 @@ class UserInformationControllerTest {
         userDto.setAuthGrpName("관리자그룹");
         userDto.setRoleTbz01("Y");
         userDto.setRoleNot01("N");
-        return UserInformationResDto.from(userDto);
+        return UserSessionResDto.from(userDto);
     }
 }
