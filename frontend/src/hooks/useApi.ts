@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import api from '@/services/api/axios'
+import api from '@/config/axios'
 import type { AxiosRequestConfig, AxiosError } from 'axios'
 
 interface UseApiState<T> {

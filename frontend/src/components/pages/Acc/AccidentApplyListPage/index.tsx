@@ -15,7 +15,7 @@ import {
   SearchField,
 } from '@/components/organisms'
 import { useUserStore } from '@/stores/userStore'
-import { accApi } from '@/services/api/accApi'
+import { accApi } from '../api'
 import type { Incident, IncidentSearchParams, CodeItem } from '@/types'
 import {
   DataGrid,

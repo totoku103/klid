@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useUserStore } from '@/stores/userStore'
-import api from '@/services/api/axios'
+import { sessionApi } from '@/components/organisms/Header/api'
 
 export function useAuth() {
   const { user, isAuthenticated, isLoading, setUser, setLoading, clear } =
@@ -9,8 +9,8 @@ export function useAuth() {
   const checkSession = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await api.get('/api/user/session-info.do')
-      setUser(response.data)
+      const sessionInfo = await sessionApi.getSessionInfo()
+      setUser(sessionInfo.user)
     } catch {
       setUser(null)
     } finally {
@@ -20,7 +20,7 @@ export function useAuth() {
 
   const handleLogout = useCallback(async () => {
     try {
-      await api.post('/api/auth/logout.do')
+      await sessionApi.logout()
     } finally {
       clear()
       window.location.href = '/login'

@@ -9,9 +9,11 @@ interface UserState {
   uploadSize: number
   isLoading: boolean
   isAuthenticated: boolean
+  sessionValidated: boolean
   setSessionInfo: (info: SessionInfo) => void
   setUser: (user: User | null) => void
   setLoading: (loading: boolean) => void
+  setSessionValidated: (validated: boolean) => void
   hasAuthMain: (auth: string) => boolean
   hasAuthSub: (auth: string) => boolean
   hasBoardRole: (
@@ -30,6 +32,7 @@ export const useUserStore = create<UserState>()(
       uploadSize: 0,
       isLoading: true,
       isAuthenticated: false,
+      sessionValidated: false,
       setSessionInfo: (info) =>
         set({
           user: info.user,
@@ -38,9 +41,11 @@ export const useUserStore = create<UserState>()(
           uploadSize: info.uploadSize,
           isLoading: false,
           isAuthenticated: true,
+          sessionValidated: true,
         }),
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setLoading: (isLoading) => set({ isLoading }),
+      setSessionValidated: (validated) => set({ sessionValidated: validated }),
       hasAuthMain: (auth) => {
         const { user } = get()
         return user?.authRole.main === auth
@@ -63,10 +68,19 @@ export const useUserStore = create<UserState>()(
           ncscUrl: '',
           uploadSize: 0,
           isAuthenticated: false,
+          sessionValidated: false,
         }),
     }),
     {
       name: 'user-storage',
+      partialize: (state) => ({
+        user: state.user,
+        webSiteName: state.webSiteName,
+        ncscUrl: state.ncscUrl,
+        uploadSize: state.uploadSize,
+        isAuthenticated: state.isAuthenticated,
+        // sessionValidated는 persist에서 제외 (새로고침 시 항상 재검증)
+      }),
       storage: {
         getItem: (name) => {
           const value = sessionStorage.getItem(name)

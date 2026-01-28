@@ -1,4 +1,4 @@
-import api from './axios'
+import api from '@/config/axios'
 import type { Incident, IncidentSearchParams, IncidentAddParams, CodeItem } from '@/types'
 
 interface ListResponse<T> {

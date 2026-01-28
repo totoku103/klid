@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ChevronRight } from 'lucide-react'
 import { useMenuStore } from '@/stores/menuStore'
+import { menuApi } from './api'
 import { getMenuIcon } from '@/utils/menuIconMap'
 import type { MenuItem } from '@/types'
 import { cn } from '@/lib/utils'
@@ -99,7 +100,23 @@ function MenuBarItem({ item, onSelect }: MenuBarItemProps) {
 }
 
 export function MenuBar({ className }: MenuBarProps) {
-  const { menus, setActiveMenu } = useMenuStore()
+  const { menus, setMenus, setActiveMenu } = useMenuStore()
+
+  useEffect(() => {
+    const loadMenus = async () => {
+      // 이미 메뉴가 있으면 스킵
+      if (menus.length > 0) return
+
+      try {
+        const menuList = await menuApi.getMenuList()
+        setMenus(menuList)
+      } catch (error) {
+        console.error('Failed to load menu:', error)
+      }
+    }
+
+    loadMenus()
+  }, [menus.length, setMenus])
 
   const handleSelect = useCallback(
     (id: string) => {

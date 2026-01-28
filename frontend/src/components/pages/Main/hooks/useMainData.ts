@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useUserStore } from '@/stores/userStore'
-import { mainApi } from '@/services/api/mainApi'
+import { mainApi } from '../api'
 import type {
   ThreatLevel,
   AccidentStatus,

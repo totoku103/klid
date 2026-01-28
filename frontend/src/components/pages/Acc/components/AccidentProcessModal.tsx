@@ -3,7 +3,7 @@ import { globalAlert } from '@/utils/alert'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { accApi } from '@/services/api/accApi'
+import { accApi } from '../api'
 import type { CodeItem } from '@/types'
 
 export type ProcessType = 

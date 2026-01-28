@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router'
-import { authApi } from '@/services/api/authApi'
-import api from '@/services/api/axios'
+import { authApi } from '../api'
+import api from '@/config/axios'
 import { SYSTEM_TYPE, type SystemType, type AuthMethod } from '@/utils/constants'
 import { useUserStore } from '@/stores/userStore'
 // SessionInfo type not used in this file
