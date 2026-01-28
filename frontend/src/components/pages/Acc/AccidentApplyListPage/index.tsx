@@ -681,7 +681,7 @@ export function AccidentApplyListPage() {
         </ActionBar>
       </div>
 
-      <div className="flex-1 min-h-0">
+      <div id="data-panel" className="flex-1 min-h-0">
         <DataGrid
           id="accidentApplyGrid"
           columns={gridColumns}
