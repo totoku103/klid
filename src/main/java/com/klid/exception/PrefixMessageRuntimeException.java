@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class MessageRuntimeException extends RuntimeException {
+public class PrefixMessageRuntimeException extends RuntimeException {
     private final String prefixMessage;
 }

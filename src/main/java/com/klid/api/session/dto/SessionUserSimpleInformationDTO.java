@@ -14,7 +14,7 @@ import com.klid.webapp.common.dto.UserDto;
  * @param boardRole 게시판 권한 정보
  * @param authRole  인증/권한 그룹 정보
  */
-public record SessionUserSimpleInformation(
+public record SessionUserSimpleInformationDTO(
         String userId,
         String userName,
         int instCd,
@@ -22,12 +22,12 @@ public record SessionUserSimpleInformation(
         BoardRole boardRole,
         AuthRole authRole
 ) {
-    public static SessionUserSimpleInformation from(final UserDto user) {
+    public static SessionUserSimpleInformationDTO from(final UserDto user) {
         if (user == null) {
             return null;
         }
 
-        return new SessionUserSimpleInformation(
+        return new SessionUserSimpleInformationDTO(
                 user.getUserId(),
                 user.getUserName(),
                 user.getInstCd(),

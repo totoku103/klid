@@ -1,84 +1,35 @@
-/**
- * Program Name	: MenuController.java
- * <p>
- * Version		:  1.0
- * <p>
- * Creation Date	: 2015. 1. 6.
- * <p>
- * Programmer Name 	: Bae Jung Yeo
- * <p>
- * Copyright 2014 Hamonsoft. All rights reserved.
- * ***************************************************************
- * P R O G R A M    H I S T O R Y
- * ***************************************************************
- * DATE			: PROGRAMMER	: REASON
- */
-package com.klid.webapp.common.controller;
+package com.klid.api.menu;
 
-
-import lombok.extern.slf4j.Slf4j;
-import com.klid.webapp.common.Criterion;
-import com.klid.webapp.common.ReturnData;
+import com.klid.exception.NotFoundUserException;
 import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.dto.UserDto;
 import com.klid.webapp.common.menu.dto.PageDto;
-import com.klid.webapp.common.menu.dto.SimpleMenuDTO;
-import com.klid.webapp.common.menu.service.MenuService;
 import com.klid.webapp.common.service.PrimaryCtrsService;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @author jung
- */
-@RequestMapping("/api/common/menu")
-@Controller
+
 @Slf4j
+@RestController("ApiMenuController")
+@RequestMapping("/api/menu")
+@RequiredArgsConstructor
 public class MenuController {
-    @Resource(name = "menuService")
-    private MenuService service;
+
     private final PrimaryCtrsService primaryCtrsService;
-
-    public MenuController(final PrimaryCtrsService primaryCtrsService) {
-        this.primaryCtrsService = primaryCtrsService;
-    }
-
-    @RequestMapping(value = "getMenuTag", method = RequestMethod.POST)
-    public @ResponseBody
-    ReturnData getMenuTag() {
-        return service.getSiteMenuList(new Criterion());
-    }
-
-    @GetMapping("getSimpleMenuList")
-    public @ResponseBody
-    ReturnData getSimpleMenuList(@RequestParam(value = "targetAuthGrpNo", required = false) Object targetAuthGrpNo) {
-        Criterion criterion = new Criterion();
-        if (targetAuthGrpNo != null) {
-            criterion.addParam("targetAuthGrpNo", targetAuthGrpNo);
-        }
-        return service.getSimpleMenuList(criterion);
-    }
-
-    @PostMapping("getExcludeMenuList")
-    public @ResponseBody
-    List<SimpleMenuDTO> getExcludeMenuList(@RequestParam("authGrpNo") String authGrpNo) {
-        return service.getExcludeMenuList(authGrpNo);
-    }
-
-    @PostMapping("saveExcludeMenuList")
-    public @ResponseBody
-    void saveExcludeMenuList(@RequestParam("authGrpNo") String authGrpNo, @RequestParam(value = "guids", required = false) String[] guids) {
-        service.saveExcludeMenuList(authGrpNo, guids);
-    }
 
     @GetMapping
     public ResponseEntity<List<PageDto>> getMenu() throws PrimaryCtrsService.NotFoundDataByIdException {
         final UserDto user = SessionManager.getUser();
+        if (user == null) {
+            throw new NotFoundUserException();
+        }
         final String id = Objects.requireNonNull(user).getUserId();
         log.info("get menu id: {}", id);
 
