@@ -1,8 +1,0 @@
-export { UserConnectLogDailyPage } from './UserConnectLogDailyPage'
-export { UserConnectLogPeriodPage } from './UserConnectLogPeriodPage'
-export { UserConnectLogInstitutionPage } from './UserConnectLogInstitutionPage'
-export { UserConnectLogSummaryPage } from './UserConnectLogSummaryPage'
-export { UserActionLogDailyPage } from './UserActionLogDailyPage'
-export { UserActionLogPeriodPage } from './UserActionLogPeriodPage'
-export { UserActionLogInstitutionPage } from './UserActionLogInstitutionPage'
-export { UserActionLogSummaryPage } from './UserActionLogSummaryPage'

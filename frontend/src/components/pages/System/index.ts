@@ -1,5 +1,0 @@
-export { CustUserMgmtPage } from './CustUserMgmt'
-export { BoardMgmtPage } from './BoardMgmt'
-export { CodeMgmtPage } from './CodeMgmt'
-export { RiskMgmtPage } from './RiskMgmt'
-export { WeekMgmtPage } from './WeekMgmt'

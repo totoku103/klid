@@ -1,6 +1,0 @@
-export { UserMgmtPage } from './UserMgmtPage'
-export { InstMgmtPage } from './InstMgmtPage'
-export { InstIPMgmtPage } from './InstIPMgmtPage'
-export { NationIPMgmtPage } from './NationIPMgmtPage'
-export { UserConfPage } from './UserConfPage'
-export { UserMgmtHistoryPage } from './UserMgmtHistoryPage'

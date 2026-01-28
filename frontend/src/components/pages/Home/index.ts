@@ -1,5 +1,0 @@
-export { HealthCheckUrlPage } from './HealthCheckUrlPage'
-export { HealthCheckStatPage } from './HealthCheckStatPage'
-export { HealthCheckHistPage } from './HealthCheckHistPage'
-export { ForgeryUrlPage } from './ForgeryUrlPage'
-export { ForgeryUrlHistPage } from './ForgeryUrlHistPage'

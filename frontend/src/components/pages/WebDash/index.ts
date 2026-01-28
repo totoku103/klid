@@ -1,8 +1,0 @@
-export { AdminControlPage } from './AdminControlPage'
-export { ExternalControlPage } from './ExternalControlPage'
-export { LocalDashboardPage } from './LocalDashboardPage'
-export { Mois1DashboardPage } from './Mois1DashboardPage'
-export { Mois2DashboardPage } from './Mois2DashboardPage'
-export { Mois3DashboardPage } from './Mois3DashboardPage'
-export { Mois4DashboardPage } from './Mois4DashboardPage'
-export { DashConfigPage } from './DashConfigPage'
