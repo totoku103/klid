@@ -20,7 +20,7 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router'],
           'vendor-state': ['zustand', 'axios'],
           'vendor-charts': ['highcharts', 'highcharts-react-official'],
-          'vendor-grid': ['jqwidgets-framework'],
+          'vendor-grid': ['jqwidgets-scripts'],
           'vendor-ui': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-slot',

@@ -151,7 +151,8 @@ public record UserInformationResDto(
                 String role04,
                 String role05,
                 String role06
-        ) {}
+        ) {
+        }
     }
 
     /**
@@ -159,21 +160,15 @@ public record UserInformationResDto(
      *
      * @param main    메인 권한
      * @param sub     서브 권한
-     * @param grpNo   권한 그룹 번호
-     * @param grpName 권한 그룹 이름
      */
     public record AuthRole(
             String main,
-            String sub,
-            int grpNo,
-            String grpName
+            String sub
     ) {
         public static AuthRole from(final UserDto user) {
             return new AuthRole(
                     user.getAuthMain(),
-                    user.getAuthSub(),
-                    user.getAuthGrpNo(),
-                    user.getAuthGrpName()
+                    user.getAuthSub()
             );
         }
     }
