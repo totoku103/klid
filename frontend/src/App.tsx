@@ -1,19 +1,13 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import { GlobalAlertModal, GlobalConfirmModal, GlobalPromptModal, ErrorBoundary } from '@/components/organisms'
-import { SimpleLayout, DefaultLayout } from '@/components/templates'
+import { DynamicRoutes } from '@/router'
 
-// 레이아웃 없는 페이지들
+// 레이아웃 없는 페이지들 (로그인, 팝업 등)
 const LoginPage = lazy(() => import('@/components/pages/Login').then(m => ({ default: m.LoginPage })))
 const PrivacyPolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicyPage })))
 const HistoryPolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.HistoryPolicyPage })))
 const ComparePolicyPage = lazy(() => import('@/components/pages/Login/PrivacyPolicy').then(m => ({ default: m.ComparePolicyPage })))
-
-// SimpleLayout 사용 페이지 (Header + MenuBar + Outlet)
-const MainPage = lazy(() => import('@/components/pages/Main').then(m => ({ default: m.MainPage })))
-
-// Acc 페이지 (침해사고)
-const AccidentApplyListPage = lazy(() => import('@/components/pages/Acc').then(m => ({ default: m.AccidentApplyListPage })))
 
 function LoadingFallback() {
   return (
@@ -41,19 +35,8 @@ function App() {
             <Route path="/popup/history-policy/:version" element={<HistoryPolicyPage />} />
             <Route path="/popup/compare-policy/:version" element={<ComparePolicyPage />} />
 
-            {/* SimpleLayout: Header + MenuBar + Outlet */}
-            <Route element={<SimpleLayout />}>
-              <Route path="/main" element={<MainPage />} />
-            </Route>
-
-            {/* DefaultLayout: Header + MenuBar + PageNav + Outlet */}
-            <Route element={<DefaultLayout />}>
-              {/* 침해사고 */}
-              <Route path="/main/acc/accidentApplyList" element={<AccidentApplyListPage />} />
-            </Route>
-
-            {/* 기본 리다이렉트 */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* 동적 라우트 (인증 필요한 페이지들) */}
+            <Route path="/*" element={<DynamicRoutes />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
