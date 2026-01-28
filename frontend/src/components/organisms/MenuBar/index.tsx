@@ -110,6 +110,7 @@ export function MenuBar({ className }: MenuBarProps) {
 
   return (
     <nav
+      id="app-navbar"
       className={cn(
         'flex h-[55px] items-center justify-between bg-[#133b52] px-4',
         LAYOUT_MIN_WIDTH_CLASS,

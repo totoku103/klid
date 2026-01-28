@@ -400,8 +400,8 @@ export function AccidentApplyListPage() {
   )
 
   return (
-    <>
-      <div className="mb-2 flex items-start gap-2">
+    <div className="flex flex-col h-full p-4">
+      <div id="filter-panel" className="mb-2 flex items-start gap-2">
         <SearchBar>
           <SearchRow>
             <SearchSelect
@@ -681,7 +681,7 @@ export function AccidentApplyListPage() {
         </ActionBar>
       </div>
 
-      <div className="h-[calc(100%-180px)]">
+      <div className="flex-1 min-h-0">
         <DataGrid
           id="accidentApplyGrid"
           columns={gridColumns}
@@ -710,7 +710,7 @@ export function AccidentApplyListPage() {
             id: 'inciNo',
           }}
           width="100%"
-          height={500}
+          height="100%"
           pageable={true}
           pageSize={50}
           pageSizeOptions={[50, 100, 500, 1000]}
@@ -743,6 +743,6 @@ export function AccidentApplyListPage() {
           />
         </>
       )}
-    </>
+    </div>
   )
 }

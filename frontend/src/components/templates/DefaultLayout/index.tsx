@@ -125,7 +125,7 @@ export function DefaultLayout() {
       <Header />
       <MenuBar />
       {title && <PageNav title={title} breadcrumb={breadcrumb} />}
-      <div className="flex-1 overflow-auto min-w-[1500px]">
+      <div id="main-content" className="flex-1 overflow-auto min-w-[1500px]">
         <Outlet />
       </div>
     </div>

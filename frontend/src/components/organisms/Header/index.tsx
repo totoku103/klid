@@ -27,7 +27,7 @@ export function Header({ className, onUserClick }: HeaderProps) {
     user?.authMain === 'AUTH_MAIN_3'
 
   return (
-    <div className={cn('w-full', LAYOUT_MIN_WIDTH_CLASS, className)}>
+    <div id="app-header" className={cn('w-full', LAYOUT_MIN_WIDTH_CLASS, className)}>
       <div className="flex h-[60px] items-center justify-between bg-white px-4">
         <a
           href="/main"

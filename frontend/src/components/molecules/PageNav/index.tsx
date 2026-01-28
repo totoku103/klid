@@ -17,7 +17,7 @@ export interface PageNavProps {
 
 export function PageNav({ title, breadcrumb, className }: PageNavProps) {
   return (
-    <nav aria-label="페이지 경로" className={cn('border-b border-gray-200 bg-white', LAYOUT_MIN_WIDTH_CLASS, className)}>
+    <nav id="page-header" aria-label="페이지 경로" className={cn('border-b border-gray-200 bg-white', LAYOUT_MIN_WIDTH_CLASS, className)}>
       <div className="flex items-center justify-between px-4 py-2">
         {/* 좌측: 페이지 이름 */}
         <div className="flex items-center">
