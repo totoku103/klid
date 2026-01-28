@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.ThirdPartyRestTemplate;
 import com.klid.webapp.common.dto.ThirdPartyBaseResDto;
@@ -7,14 +8,12 @@ import com.klid.webapp.common.dto.ThirdPartyRedirectCryptoReqDto;
 import com.klid.webapp.common.dto.ThirdPartyRedirectResDto;
 import com.klid.webapp.common.enums.ThirdPartyResponseStatusCodes;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class RedirectVmsService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final ThirdPartyRestTemplate thirdPartyRestTemplate;
     private final ThirdPartyCryptoService thirdPartyCryptoService;

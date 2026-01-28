@@ -15,13 +15,13 @@
  */
 package com.klid.webapp.common;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.webapp.common.dto.UserDto;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
 import com.klid.webapp.common.login.service.LoginServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -35,9 +35,8 @@ import java.util.regex.Pattern;
  * @author jung
  *
  */
+@Slf4j
 public class SessionManager {
-
-    private final static Logger log = LoggerFactory.getLogger(SessionManager.class);
     public final static String LITE_LOGIN_INFO_KEY = "LITE_LOGIN_INFO_KEY";
 
     public static boolean getLegacyLogin() {

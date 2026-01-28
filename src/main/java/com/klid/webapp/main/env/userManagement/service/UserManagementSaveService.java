@@ -1,5 +1,7 @@
 package com.klid.webapp.main.env.userManagement.service;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.common.CustomException;
@@ -11,8 +13,6 @@ import com.klid.webapp.main.env.userManagement.dto.CommUserRequestUserInfo;
 import com.klid.webapp.main.env.userManagement.dto.CommUserRequestUserInfoDto;
 import com.klid.webapp.main.env.userManagement.persistence.UserManagementMapper;
 import com.klid.webapp.main.hist.userActHist.persistence.UserActHistMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +25,8 @@ import java.util.Set;
 
 @Service
 @Transactional
+@Slf4j
 public class UserManagementSaveService {
-    private final Logger log = LoggerFactory.getLogger(UserManagementSaveService.class);
     private final UserManagementMapper userManagementMapper;
     private final UserActHistMapper userActHistMapper;
 

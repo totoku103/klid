@@ -1,9 +1,8 @@
 package com.klid.webapp.common;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.dto.*;
 import com.klid.webapp.common.properties.ThirdPartyProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
@@ -18,8 +17,8 @@ import java.util.Map;
 @Component
 @DependsOn(value = {"thirdPartyProperty"})
 @Profile("!local")
+@Slf4j
 public class ThirdPartyRestTemplate {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ThirdPartyProperty thirdPartyProperty;
     private final RestTemplate restTemplate;
 
@@ -118,7 +117,6 @@ public class ThirdPartyRestTemplate {
 
         return post(url, request, parameterizedTypeReference);
     }
-
 
     private <T, R> ThirdPartyBaseResDto<R> post(String url, HttpEntity<T> httpEntity, ParameterizedTypeReference<ThirdPartyBaseResDto<R>> parameterizedTypeReference) {
         log.info(String.format("request url: %s, entity: %s, responseType: %s", url, httpEntity, parameterizedTypeReference.getType()));

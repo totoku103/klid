@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.webapp.common.ReturnData;
 import com.klid.webapp.common.dto.IntegrationLoginInfoDto;
@@ -7,8 +8,6 @@ import com.klid.webapp.common.dto.OtpCheckReqDto;
 import com.klid.webapp.common.security.SecurityAuthenticationService;
 import com.klid.webapp.common.service.OtpService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +18,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/login/ctss/authenticate/second")
+@Slf4j
 public class LoginCtssSecondController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final OtpService otpService;
     private final SecurityAuthenticationService securityAuthenticationService;
 

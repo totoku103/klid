@@ -15,8 +15,8 @@
  */
 package com.klid.webapp.common.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,16 +31,14 @@ import java.util.List;
  * @author jjung
  *
  */
+@Slf4j
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-
-	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationProvider.class);
-	
 	@Override
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
 		String userId = (String) authentication.getPrincipal();
 		String userPw = (String) authentication.getCredentials();
-		logger.info("Welcome authenticate! " + userId + "/" + userPw);
+		log.info("Welcome authenticate! " + userId + "/" + userPw);
 		List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
 		roles.add(new SimpleGrantedAuthority("ROLE_USER"));
 		UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(userId, userPw);

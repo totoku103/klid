@@ -1,12 +1,11 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.dto.ThirdPartyAuthOtpCheckPlainResDto;
 import com.klid.webapp.common.enums.ThirdPartyUserTypes;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +16,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Profile({"local", "dev"})
+@Slf4j
 public class OtpServiceMock implements OtpService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String MOCK_OTP_CODE = "860207";
     private static final String MOCK_SECRET_KEY = "MOCK_SECRET_KEY_FOR_LOCAL_DEV";

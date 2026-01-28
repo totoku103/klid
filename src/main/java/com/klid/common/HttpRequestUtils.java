@@ -1,16 +1,14 @@
 package com.klid.common;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+@Slf4j
 public class HttpRequestUtils {
-
-    private final static Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
 
     public static String getClientIp() {
         final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())

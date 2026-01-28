@@ -15,8 +15,7 @@
  */
 package com.klid.common.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,9 +25,8 @@ import java.nio.ByteBuffer;
  * @author jjung
  *
  */
+@Slf4j
 public class ConvertUtil {
-
-    private final Logger logger = LoggerFactory.getLogger(ConvertUtil.class);
 
 	String[] sizeUnits = { "B", "K", "M", "G", "T", "P" };
 	

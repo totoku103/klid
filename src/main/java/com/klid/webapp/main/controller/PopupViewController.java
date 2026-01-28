@@ -15,6 +15,8 @@
  */
 package com.klid.webapp.main.controller;
 
+
+import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.Resource;
 
 import com.klid.webapp.common.CustomException;
@@ -26,8 +28,6 @@ import com.klid.webapp.main.controller.env.UserManagementHistoryController;
 import com.klid.webapp.main.env.userManagementHistory.dto.LatestCommUserRequestProcessStateDto;
 import com.klid.webapp.main.env.userManagementHistory.service.UserManagementHistoryService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,9 +45,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RequestMapping("/main/popup")
 @Controller
+@Slf4j
 public class PopupViewController extends CommonController {
-
-    private final Logger log = LoggerFactory.getLogger(PopupViewController.class);
     private final UserManagementHistoryService userManagementHistoryService;
 
     public PopupViewController(final UserManagementHistoryService userManagementHistoryService) {

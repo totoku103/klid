@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.common.util.RandomUtils;
 import com.klid.webapp.common.CustomException;
@@ -10,8 +11,6 @@ import com.klid.webapp.common.service.EmailService;
 import com.klid.webapp.common.service.OtpService;
 import com.klid.webapp.common.service.SecondVmsService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +24,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/login/vms/authenticate/second")
+@Slf4j
 public class LoginVmsSecondController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final SecondVmsService secondVmsService;
     private final OtpService otpService;
@@ -136,6 +135,5 @@ public class LoginVmsSecondController {
         final boolean isPassPrimary = IntegrationSessionManager.isAuthenticatePrimary();
         if (!isPassPrimary) throw new AuthenticationCredentialsNotFoundException("1차 인증이 완료되지 않았습니다.");
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.klid.webapp.common.UserInfoNotFoundException;
 import com.klid.webapp.common.UserInfoStatusCheckException;
@@ -13,8 +14,6 @@ import com.klid.webapp.common.service.ThirdPartyCryptoService;
 import com.klid.webapp.common.service.ThirdPartyRedirectService;
 import com.klid.webapp.main.thirdparty.redirect.dto.SimpleSaveTokenInfoDto;
 import com.klid.webapp.main.thirdparty.redirect.service.TokenInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +21,9 @@ import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/api/third-party/auth")
+@Slf4j
 public class CtrsRedirectController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final TokenInfoService tokenInfoService;
     private final PrimaryCtrsService primaryCtrsService;

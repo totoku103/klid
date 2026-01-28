@@ -8,8 +8,7 @@ import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
 import com.klid.webapp.common.login.service.LoginService;
 import com.klid.webapp.common.properties.ThirdPartyProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,11 +22,10 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/login")
 public class LoginController {
-
-    private final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Resource(name = "loginService")
     private LoginService service;
@@ -60,9 +58,9 @@ public class LoginController {
     public String prcsLogout(HttpSession session, HttpServletRequest request) {
         service.logout(SessionManager.getUser(), request);
         final String redirectResult = "redirect:" + thirdPartyProperty.getCtrsUrlHost() + LoginString.getPath();
-        logger.info("prcsLogout:" + redirectResult);
+        log.info("prcsLogout:" + redirectResult);
 
-        logger.info("session invalidate call");
+        log.info("session invalidate call");
         session.invalidate();
 
         return redirectResult;

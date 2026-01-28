@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.dto.*;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
 import com.klid.webapp.common.enums.ThirdPartyUserTypes;
@@ -8,20 +9,16 @@ import me.totoku103.crypto.enums.SeedCbcTransformations;
 import me.totoku103.crypto.java.hmac.HmacSha256;
 import me.totoku103.crypto.java.seed.SeedCbc;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-
 /**
  * VMS, CTSS  시스템과 통신 시 사용하는 암복호화 서비스
  */
+@Slf4j
 public class ThirdPartyCryptoService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final int SEED_KEY_LENGTH = 16;
     private final int HMAC_KEY_LENGTH = 32;
@@ -310,7 +307,6 @@ public class ThirdPartyCryptoService {
         return hmacBase64;
     }
 
-
     public ThirdPartyAuthSecondValueCryptReqDto encryptThirdPartyAuthSecondValueCryptReqDto(ThirdPartyAuthSecondValueCryptReqDto.ApiType apiType,
                                                                                             String userName,
                                                                                             String officeNumber,
@@ -482,7 +478,6 @@ public class ThirdPartyCryptoService {
             throw new RuntimeException("요청값에 IV 값이 Null입니다.");
         }
 
-
         final boolean isMatch = checkResponseRedirectHmac(encryptDto);
         if (!isMatch) {
             log.error("CTRS 리다이렉트 요청 복호화 실패 - HMAC 검증 불일치");
@@ -535,7 +530,6 @@ public class ThirdPartyCryptoService {
         log.info("범용 복호화 완료 - 결과 문자열 길이: {}", result.length());
         return result;
     }
-
 
     private boolean checkResponseOtpInitializeHmac(ThirdPartyOtpInitializeCryptoReqDto encryptDto) {
         log.debug("OTP 초기화 요청 수신." + encryptDto);

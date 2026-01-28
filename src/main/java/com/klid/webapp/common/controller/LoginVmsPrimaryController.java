@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.HttpRequestUtils;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.common.SEED_KISA256;
@@ -15,8 +16,6 @@ import com.klid.webapp.common.service.OtpService;
 import com.klid.webapp.common.service.PrimaryVmsServiceI;
 import me.totoku103.crypto.java.sha2.Sha512;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +25,9 @@ import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/login/vms/authenticate/primary")
+@Slf4j
 public class LoginVmsPrimaryController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final PrimaryVmsServiceI primaryVmsService;
     private final OtpService otpService;
 

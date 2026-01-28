@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 // TODO: GPKI 라이브러리가 Jakarta EE와 호환되지 않아 임시 비활성화
 // GPKI 라이브러리 업그레이드 후 아래 import 주석 해제 필요
 // import com.gpki.gpkiapi.cert.X509Certificate;
@@ -28,9 +29,9 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/gpki")
+@Slf4j
 public class GpkiController {
 
-    private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GpkiController.class);
     private final GpkiService gpkiService;
 
     public GpkiController(final GpkiService gpkiService) {

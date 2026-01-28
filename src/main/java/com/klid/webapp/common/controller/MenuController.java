@@ -15,6 +15,8 @@
  */
 package com.klid.webapp.common.controller;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.common.ReturnData;
 import com.klid.webapp.common.SessionManager;
@@ -24,8 +26,6 @@ import com.klid.webapp.common.menu.dto.SimpleMenuDTO;
 import com.klid.webapp.common.menu.service.MenuService;
 import com.klid.webapp.common.service.PrimaryCtrsService;
 import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +38,8 @@ import java.util.Objects;
  */
 @RequestMapping("/api/common/menu")
 @Controller
+@Slf4j
 public class MenuController {
-
-    private static final Logger log = LoggerFactory.getLogger(MenuController.class);
     @Resource(name = "menuService")
     private MenuService service;
     private final PrimaryCtrsService primaryCtrsService;

@@ -1,6 +1,8 @@
 
 package com.klid.webapp.main.controller.env;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.ReturnData;
@@ -10,8 +12,6 @@ import com.klid.webapp.common.enums.UserManagementProcessTypes;
 import com.klid.webapp.main.env.userConf.service.UserConfService;
 import com.klid.webapp.main.env.userManagement.dto.*;
 import com.klid.webapp.main.env.userManagement.service.UserManagementSaveService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +20,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/main/env/user-management/request")
+@Slf4j
 public class UserManagementController {
-
-    private final static Logger log = LoggerFactory.getLogger(UserManagementController.class);
     private final UserManagementSaveService userManagementSaveService;
     private final UserConfService userConfService;
 

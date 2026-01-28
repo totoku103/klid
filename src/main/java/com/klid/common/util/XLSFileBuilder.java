@@ -27,8 +27,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -60,9 +59,8 @@ import com.klid.common.AppGlobal;
  * @author jjung
  *
  */
+@Slf4j
 public class XLSFileBuilder implements IXLSFileBuilder {
-
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected final Workbook workbook = new HSSFWorkbook();
 	protected Sheet sheet;
@@ -611,7 +609,7 @@ public class XLSFileBuilder implements IXLSFileBuilder {
 			picture.resize();
 			curRow += 20;
 		} catch (IOException ioe) {
-			logger.error("[XLSFileBuilder] ", ioe);
+			log.error("[XLSFileBuilder] ", ioe);
 		} finally {
 			if (os != null)
 				try {

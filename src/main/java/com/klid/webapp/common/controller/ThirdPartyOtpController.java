@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.dto.ThirdPartyOtpInitializeCryptoReqDto;
 import com.klid.webapp.common.dto.ThirdPartyOtpInitializePlainResDto;
@@ -8,8 +9,6 @@ import com.klid.webapp.common.service.ThirdPartyCryptoService;
 import com.klid.webapp.common.service.ThirdPartyRedirectService;
 import com.klid.webapp.main.env.userManagementHistory.service.UserManagementHistoryService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,9 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api/third-party/auth/otp")
+@Slf4j
 public class ThirdPartyOtpController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ThirdPartyCryptoService thirdPartyCryptoService;
     private final ThirdPartyRedirectService thirdPartyRedirectService;
     private final UserManagementHistoryService userManagementHistoryService;

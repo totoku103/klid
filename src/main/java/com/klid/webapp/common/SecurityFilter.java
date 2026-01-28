@@ -1,16 +1,14 @@
 package com.klid.webapp.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class SecurityFilter implements Filter {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
 	private FilterConfig filterConfig = null;
 
 	@Override
@@ -61,20 +59,19 @@ public class SecurityFilter implements Filter {
 			 */
 			res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
 
-
 			// CORS 설정은 SecurityConfig에서 관리
 
 			chain.doFilter(request, response);
 		} catch (IOException e) {
-			logger.error("IOException : " + e.getCause());
+			log.error("IOException : " + e.getCause());
 		} catch(ServletException e) {
-			logger.error("ServletException : " + e.getCause());
+			log.error("ServletException : " + e.getCause());
 		}
 	}
 
 	@Override
 	public void init(FilterConfig filterConfig) {
-		if(logger.isDebugEnabled()) logger.debug("SecurityFilter initialize");
+		if(log.isDebugEnabled()) log.debug("SecurityFilter initialize");
 		this.filterConfig = filterConfig;
 	}
 

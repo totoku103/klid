@@ -1,11 +1,10 @@
 package com.klid.webapp.common.security;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.webapp.common.dto.IntegrationLoginInfoDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,9 +20,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * 커스텀 인증 완료 후 Spring Security 인증 컨텍스트를 설정하는 서비스
  */
 @Service
+@Slf4j
 public class SecurityAuthenticationService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 

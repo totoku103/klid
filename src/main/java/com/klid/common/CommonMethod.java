@@ -1,6 +1,7 @@
 
 package com.klid.common;
 
+import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
@@ -12,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-
 
 import com.klid.common.hwplib.object.HWPFile;
 import com.klid.common.hwplib.object.bodytext.Section;
@@ -34,9 +34,8 @@ import com.klid.common.hwplib.object.docinfo.borderfill.fillinfo.FillInfo;
 import com.klid.common.hwplib.object.docinfo.borderfill.fillinfo.ImageFill;
 import com.klid.common.hwplib.object.docinfo.borderfill.fillinfo.ImageFillType;
 import com.klid.common.hwplib.object.docinfo.borderfill.fillinfo.PictureEffect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class CommonMethod {
     public void insertShapeWithImage(HWPFile hwpFile, String imageFilePath, Rectangle rectangle) throws IOException {
 

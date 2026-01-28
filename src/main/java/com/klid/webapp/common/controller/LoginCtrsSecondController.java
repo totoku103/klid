@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.common.SEED_KISA256;
 import com.klid.common.util.RandomUtils;
@@ -11,8 +12,6 @@ import com.klid.webapp.common.security.SecurityAuthenticationService;
 import com.klid.webapp.common.service.EmailService;
 import com.klid.webapp.common.service.OtpService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +24,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/login/ctrs/authenticate/second")
+@Slf4j
 public class LoginCtrsSecondController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final OtpService otpService;
     private final EmailService emailService;

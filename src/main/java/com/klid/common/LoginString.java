@@ -1,11 +1,10 @@
 package com.klid.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class LoginString {
     private final static String LOGIN = "/login.do";
-    private final static Logger log = LoggerFactory.getLogger(LoginString.class);
 
     public static String getFullPath() {
         final String loginUrl = getPath();

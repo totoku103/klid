@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.common.SEED_KISA256;
 import com.klid.common.util.RedirectTokenUtil;
@@ -17,8 +18,6 @@ import com.klid.webapp.common.service.PrimaryCtrsService;
 import com.klid.webapp.common.service.ThirdPartyRedirectService;
 import com.klid.webapp.main.thirdparty.redirect.dto.SimpleTokenInfoDto;
 import com.klid.webapp.main.thirdparty.redirect.service.TokenInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +29,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Controller
+@Slf4j
 public class CtrsRedirectViewController {
     public final static String REDIRECT_URL = "/ctrs/redirect.do";
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final PrimaryCtrsService primaryCtrsService;
     private final TokenInfoService tokenInfoService;
     private final ThirdPartyProperty thirdPartyProperty;

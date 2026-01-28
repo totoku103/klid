@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.common.ReturnData;
@@ -13,8 +14,6 @@ import com.klid.webapp.common.menu.service.MenuService;
 import com.klid.webapp.common.policy.service.PolicyConfService;
 import com.klid.webapp.main.env.userConf.service.UserConfService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -23,11 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class PrimaryCtrsService {
 
     private static final int MAX_LOGIN_FAIL_COUNT = 5;
     private static final int LOCK_THRESHOLD_COUNT = 4;
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final PolicyConfService policyConfService;
     private final LoginMapper loginMapper;

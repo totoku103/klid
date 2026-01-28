@@ -1,16 +1,17 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.webapp.common.dto.ThirdPartyAuthPrimaryPlainResDto;
 import com.klid.webapp.common.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Profile("local")
 @Service
+@Slf4j
 public class PrimaryVmsServiceMock implements PrimaryVmsServiceI {
 
     private final ThirdPartyRedirectService thirdPartyRedirectService;

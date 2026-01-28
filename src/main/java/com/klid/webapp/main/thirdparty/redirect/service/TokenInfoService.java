@@ -1,15 +1,14 @@
 package com.klid.webapp.main.thirdparty.redirect.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.main.thirdparty.redirect.dto.SimpleSaveTokenInfoDto;
 import com.klid.webapp.main.thirdparty.redirect.dto.SimpleTokenInfoDto;
 import com.klid.webapp.main.thirdparty.redirect.persistence.TokenInfoMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class TokenInfoService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final TokenInfoMapper tokenInfoMapper;
 
     public TokenInfoService(final TokenInfoMapper tokenInfoMapper) {

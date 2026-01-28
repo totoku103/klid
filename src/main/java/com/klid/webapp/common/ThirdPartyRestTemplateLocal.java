@@ -1,9 +1,8 @@
 package com.klid.webapp.common;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.dto.*;
 import com.klid.webapp.common.enums.ThirdPartyResponseStatusCodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +12,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Profile("local")
+@Slf4j
 public class ThirdPartyRestTemplateLocal extends ThirdPartyRestTemplate {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public ThirdPartyRestTemplateLocal() {
         super(null, null);

@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.common.util.RedirectTokenUtil;
 import com.klid.webapp.common.CustomException;
@@ -12,8 +13,6 @@ import com.klid.webapp.common.login.persistence.LoginMapper;
 import com.klid.webapp.common.properties.ThirdPartyProperty;
 import com.klid.webapp.main.thirdparty.redirect.dto.SimpleSaveTokenInfoDto;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -23,9 +22,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ThirdPartyRedirectService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final LoginMapper loginMapper;
     private final ThirdPartyProperty thirdPartyProperty;
@@ -71,7 +70,6 @@ public class ThirdPartyRedirectService {
         if (correctUserList.size() == 1) return correctUserList.get(0);
         else throw new CustomException(ThirdPartyResponseStatusCodes.DUPLICATED_USER.getUserMessage());
     }
-
 
     private String generateToken(String secret, Timestamp expiredTimeSecond) {
         final String token = RedirectTokenUtil.createToken(secret, expiredTimeSecond);

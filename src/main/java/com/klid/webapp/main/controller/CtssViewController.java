@@ -1,11 +1,10 @@
 package com.klid.webapp.main.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.properties.ThirdPartyProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +13,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/main/ctss")
+@Slf4j
 public class CtssViewController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ThirdPartyProperty thirdPartyProperty;
 
     public CtssViewController(final ThirdPartyProperty thirdPartyProperty) {

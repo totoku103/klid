@@ -6,14 +6,12 @@ import com.klid.webapp.common.dto.IntegrationLoginInfoDto;
 import com.klid.webapp.common.dto.UserLastActionDto;
 import com.klid.webapp.common.enums.SessionAttributeTypes;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import jakarta.servlet.http.HttpSession;
 
+@Slf4j
 public class IntegrationSessionManager {
-
-    private final static Logger log = LoggerFactory.getLogger(IntegrationSessionManager.class);
 
     public static boolean isAuthenticatePrimary() {
         final HttpSession session = SessionManager.getSession();

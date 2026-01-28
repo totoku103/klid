@@ -13,8 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -34,10 +33,9 @@ import java.util.*;
  * @author imhojong
  *
  */
+@Slf4j
 @Service("accidentApplyService")
 public class AccidentApplyServiceImpl extends MsgService implements AccidentApplyService {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource(name = "accidentApplyMapper")
 	private AccidentApplyMapper mapper;
@@ -968,7 +966,7 @@ public class AccidentApplyServiceImpl extends MsgService implements AccidentAppl
 			buf.put(6, (byte) (0xff & addr[2]));
 			buf.put(7, (byte) (0xff & addr[3]));
 		} catch (UnknownHostException uhe) {
-			logger.warn("[getIpByNationNm] IP 부터 Host 를 가져올 수 없습니다. ", uhe);
+			log.warn("[getIpByNationNm] IP 부터 Host 를 가져올 수 없습니다. ", uhe);
 			return new ReturnData(returnList);
 		}
 		ipLong = buf.asLongBuffer().get();
@@ -997,7 +995,7 @@ public class AccidentApplyServiceImpl extends MsgService implements AccidentAppl
 			buf.put(6, (byte) (0xff & addr[2]));
 			buf.put(7, (byte) (0xff & addr[3]));
 		} catch (UnknownHostException uhe) {
-			logger.warn("[getInstByIP] IP 부터 Host 를 가져올 수 없습니다. ", uhe);
+			log.warn("[getInstByIP] IP 부터 Host 를 가져올 수 없습니다. ", uhe);
 			return new ReturnData(returnList);
 		}
 		ipLong = buf.asLongBuffer().get();

@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.ThirdPartyRestTemplate;
 import com.klid.webapp.common.dto.ThirdPartyAuthPrimaryCryptoReqDto;
@@ -8,15 +9,13 @@ import com.klid.webapp.common.dto.ThirdPartyAuthPrimaryPlainResDto;
 import com.klid.webapp.common.dto.ThirdPartyBaseResDto;
 import com.klid.webapp.common.enums.ThirdPartyResponseStatusCodes;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Profile("!local")
 @Service
+@Slf4j
 public class PrimaryVmsService implements PrimaryVmsServiceI {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final ThirdPartyRestTemplate thirdPartyRestTemplate;
     private final ThirdPartyCryptoService thirdPartyCryptoService;

@@ -1,8 +1,7 @@
 package com.klid.common;
 
 import org.apache.commons.codec.binary.Base32;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -10,9 +9,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.util.*;
 
+@Slf4j
 @Component
 public class OtpApi {
-    private static final Logger log = LoggerFactory.getLogger(OtpApi.class);
     public static String generate(String name, String host) {
         byte[] buffer = new byte[5 + 5 * 5];
         new Random().nextBytes(buffer);

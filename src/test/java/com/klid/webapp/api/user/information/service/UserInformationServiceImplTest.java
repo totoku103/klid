@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(MockitoExtension.class)
 class UserInformationServiceImplTest {
 
-    private final UserInformationServiceImpl service = new UserInformationServiceImpl();
+    private final UserInformationService service = new UserInformationService();
 
     @Nested
     @DisplayName("getCurrentUserInformation()")

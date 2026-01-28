@@ -1,9 +1,9 @@
 package com.klid.webapp.common;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
 import com.klid.webapp.common.login.persistence.LoginMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import jakarta.servlet.ServletContext;
@@ -16,9 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class SessionAttributeLogger implements HttpSessionAttributeListener {
-
-    private final static Logger log = LoggerFactory.getLogger(SessionAttributeLogger.class);
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private LoginMapper getLoginMapper(HttpSessionEvent event) {

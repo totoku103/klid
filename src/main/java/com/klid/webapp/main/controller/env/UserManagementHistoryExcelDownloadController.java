@@ -1,11 +1,10 @@
 package com.klid.webapp.main.controller.env;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.file.service.ExcelFileService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +20,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/main/env/user-management/history/excel")
+@Slf4j
 public class UserManagementHistoryExcelDownloadController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ExcelFileService excelFileService;
 
     public UserManagementHistoryExcelDownloadController(final ExcelFileService excelFileService) {
@@ -142,7 +141,6 @@ public class UserManagementHistoryExcelDownloadController {
         }
     }
 
-
     public static class Request {
         private String fileName;
         private String sheetName;
@@ -176,7 +174,6 @@ public class UserManagementHistoryExcelDownloadController {
         public void setGroupHeaders(final List<String> groupHeaders) {
             this.groupHeaders = groupHeaders;
         }
-
 
         public List<Map<String, String>> getHeaders() {
             return headers;

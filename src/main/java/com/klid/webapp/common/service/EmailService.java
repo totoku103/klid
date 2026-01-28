@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.webapp.common.CustomException;
 import com.klid.webapp.common.ThirdPartyRestTemplate;
@@ -9,18 +10,16 @@ import com.klid.webapp.common.dto.ThirdPartyBaseResDto;
 import com.klid.webapp.common.dto.UserLastActionDto;
 import com.klid.webapp.common.enums.ThirdPartyResponseStatusCodes;
 import com.klid.webapp.main.rpt.reportCollection.persistence.ReportCollectionMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class EmailService {
 
     private final String USER_LAST_ACTION_EMAIL = "emailSend";
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ThirdPartyRestTemplate thirdPartyRestTemplate;
     private final ThirdPartyCryptoService thirdPartyCryptoService;
 
@@ -29,7 +28,6 @@ public class EmailService {
         this.thirdPartyRestTemplate = thirdPartyRestTemplate;
         this.thirdPartyCryptoService = thirdPartyCryptoService;
     }
-
 
     public void setUserLastAction() {
         IntegrationSessionManager.setUserLastAction(new UserLastActionDto(USER_LAST_ACTION_EMAIL));

@@ -1,5 +1,6 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.IntegrationSessionManager;
 import com.klid.common.OtpApi;
 import com.klid.webapp.common.CustomException;
@@ -9,16 +10,14 @@ import com.klid.webapp.common.enums.ThirdPartyResponseStatusCodes;
 import com.klid.webapp.common.enums.ThirdPartyUserTypes;
 import com.klid.webapp.main.user.otp.persistence.OtpMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Profile("!local & !dev")
+@Slf4j
 public class OtpServiceImpl implements OtpService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final OtpMapper otpMapper;
     private final SecondCtrsService secondCtrsService;
     private final SecondVmsService secondVmsService;

@@ -1,5 +1,6 @@
 package com.klid.webapp.common.file.service;
 
+import lombok.extern.slf4j.Slf4j;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
@@ -41,9 +40,9 @@ import com.klid.webapp.common.file.dto.AttachfileDto;
 import com.klid.webapp.common.file.persistence.FileDownloadMapper;
 
 @Service("fileDownloadService")
+@Slf4j
 public class FileDownloadServiceImpl extends MsgService implements FileDownloadService {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource(name = "fileDownloadMapper")
 	public FileDownloadMapper mapper;
@@ -101,7 +100,7 @@ public class FileDownloadServiceImpl extends MsgService implements FileDownloadS
 			FileCopyUtils.copy(fis, sos);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 		} finally {
 			if (fis != null) {
 				try {
@@ -151,7 +150,7 @@ public class FileDownloadServiceImpl extends MsgService implements FileDownloadS
 			FileCopyUtils.copy(fis, sos);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 
 		} finally {
 			if (fis != null) {
@@ -172,7 +171,6 @@ public class FileDownloadServiceImpl extends MsgService implements FileDownloadS
 		}
 		return response;
 	}
-
 
 	public HttpServletResponse fileRenderHelp(HttpServletResponse response, String code2) {
 		//한글이름 일 경우 post 인코딩 문제로 service에서 파일명 호출 쿼리 실행
@@ -203,7 +201,7 @@ public class FileDownloadServiceImpl extends MsgService implements FileDownloadS
 			FileCopyUtils.copy(fis, sos);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			log.error(e.getMessage());
 
 		} finally {
 			if (fis != null) {

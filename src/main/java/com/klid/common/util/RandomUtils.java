@@ -1,13 +1,11 @@
 package com.klid.common.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 
+@Slf4j
 public class RandomUtils {
-
-    private final static Logger log = LoggerFactory.getLogger(RandomUtils.class);
 
     public static String getRandom6Digit() {
         final SecureRandom secureRandom = new SecureRandom();

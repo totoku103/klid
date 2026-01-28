@@ -1,7 +1,7 @@
 package com.klid.common;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
+@Slf4j
 public class AppGlobal {
     final public static String ariaKey = "HamonSoft_SecurityProgramModule#";
 
@@ -57,8 +58,6 @@ public class AppGlobal {
     public static String APP_VMS_REST_PROTOCOL = StringUtils.EMPTY;
 
     public static String NOTICE_VERSION = StringUtils.EMPTY;
-
-    private final static Logger log = org.slf4j.LoggerFactory.getLogger(AppGlobal.class);
 
     /**
      * @Method setSystemProperties

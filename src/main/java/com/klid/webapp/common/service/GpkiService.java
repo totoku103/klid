@@ -1,12 +1,11 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.SEED_KISA256;
 import com.klid.webapp.common.dto.UserDto;
 import com.klid.webapp.main.user.gpki.persistence.GpkiMapper;
 import me.totoku103.crypto.java.sha2.Sha512;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +13,9 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @Transactional
+@Slf4j
 public class GpkiService {
 
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final GpkiMapper gpkiMapper;
     private final SecondVmsService secondVmsService;
     private final ThirdPartyRedirectService thirdPartyRedirectService;

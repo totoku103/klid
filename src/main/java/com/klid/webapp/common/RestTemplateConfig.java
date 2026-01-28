@@ -1,5 +1,6 @@
 package com.klid.webapp.common;
 
+import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -16,8 +17,6 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -45,9 +44,9 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.http.HttpMethod;
 
 @Configuration
+@Slf4j
 public class RestTemplateConfig {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Bean(destroyMethod = "close")
     public PoolingHttpClientConnectionManager connectionManager() throws NoSuchAlgorithmException, KeyManagementException {

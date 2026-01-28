@@ -1,9 +1,8 @@
 package com.klid.webapp.common.file.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.main.hist.userActHist.persistence.UserActHistMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +14,9 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class CsvFileService extends FileService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public CsvFileService(final UserActHistMapper userActHistMapper) {
         super(userActHistMapper);

@@ -15,12 +15,10 @@
  */
 package com.klid.webapp.common;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.AppGlobal;
 import com.klid.webapp.common.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,9 +27,9 @@ import java.util.Map;
  * @author jung
  *
  */
+@Slf4j
 public class Criterion {
 	
-	private Logger logger = LoggerFactory.getLogger(getClass());	
 	private Map<String, Object> condition = new HashMap<String, Object>();
 	
 	/**

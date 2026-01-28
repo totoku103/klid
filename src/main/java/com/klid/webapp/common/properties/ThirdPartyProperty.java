@@ -1,15 +1,14 @@
 package com.klid.webapp.common.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 @Component
 @DependsOn(value = {"thirdPartyCommonProperty", "thirdPartyVmsProperty", "thirdPartyCtssProperty"})
+@Slf4j
 public class ThirdPartyProperty {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ThirdPartyCommonProperty commonProperty;
     private final ThirdPartyCtrsProperty ctrsProperty;
     private final ThirdPartyVmsProperty vmsProperty;

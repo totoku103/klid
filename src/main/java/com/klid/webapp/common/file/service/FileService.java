@@ -1,17 +1,15 @@
 package com.klid.webapp.common.file.service;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.main.hist.userActHist.persistence.UserActHistMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class FileService {
-    private final Logger log = LoggerFactory.getLogger(FileService.class);
-
     protected static final int MAX_CODEPOINTS = 150;
     protected static final int MAX_UTF8_BYTES = 800;
     protected static final Pattern CONTROL_OR_SLASH = Pattern.compile("[\\r\\n\\\\/\\u0000-\\u001F\\u007F]");

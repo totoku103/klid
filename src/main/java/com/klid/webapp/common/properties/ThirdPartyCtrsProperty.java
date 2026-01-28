@@ -1,16 +1,15 @@
 package com.klid.webapp.common.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 
 @Component
+@Slf4j
 public class ThirdPartyCtrsProperty {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Value("${app.ctrs.url.host}")
     private String urlHost;

@@ -1,20 +1,18 @@
 package com.klid.webapp.common.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.Criterion;
 import com.klid.webapp.common.dto.UserDto;
 import com.klid.webapp.common.login.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class SecondCtrsService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final LoginService loginService;
     private final ThirdPartyRedirectService thirdPartyRedirectService;
-
 
     public SecondCtrsService(final LoginService loginService, final ThirdPartyRedirectService thirdPartyRedirectService) {
         this.loginService = loginService;

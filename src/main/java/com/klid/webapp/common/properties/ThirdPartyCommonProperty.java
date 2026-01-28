@@ -1,8 +1,7 @@
 package com.klid.webapp.common.properties;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.ThirdPartyPropertyCrypto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -11,8 +10,8 @@ import jakarta.annotation.PostConstruct;
 
 @Component
 @DependsOn(value = {"thirdPartyPropertyCrypto"})
+@Slf4j
 public class ThirdPartyCommonProperty {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final ThirdPartyPropertyCrypto thirdPartyPropertyCrypto;
 

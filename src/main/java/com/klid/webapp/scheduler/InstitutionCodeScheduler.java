@@ -1,10 +1,10 @@
 package com.klid.webapp.scheduler;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.webapp.common.enums.ThirdPartySystemTypes;
 import com.klid.webapp.main.logs.institution.dto.InstitutionCodeResDto;
 import com.klid.webapp.main.logs.institution.service.InstitutionCodeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +16,8 @@ import java.util.List;
  * 기관 코드 정보를 주기적으로 조회하는 스케줄러
  */
 @Component
+@Slf4j
 public class InstitutionCodeScheduler {
-
-    private static final Logger log = LoggerFactory.getLogger(InstitutionCodeScheduler.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final InstitutionCodeService institutionCodeService;

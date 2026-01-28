@@ -1,5 +1,6 @@
 package com.klid.webapp.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.AppGlobal;
 import com.klid.common.util.XLSFileBuilder;
 import com.klid.webapp.common.Criterion;
@@ -21,8 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +46,9 @@ import java.util.*;
 
 @RequestMapping("/api/file")
 @Controller
+@Slf4j
 public class FileController {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     public static String emlcsvFilePath = null;
 	public static String emlcsvFileName = null;
 	public static String emlcsvExtName = null;
@@ -87,7 +86,7 @@ public class FileController {
 		if (ex instanceof org.springframework.web.multipart.MaxUploadSizeExceededException) {
 			sb.append(((MaxUploadSizeExceededException) ex).getMaxUploadSize() / 1000 + "kb");
 		}
-		logger.error(sb.toString());
+		log.error(sb.toString());
 	}
 
 	@RequestMapping("upload")
@@ -115,7 +114,6 @@ public class FileController {
 
 		String tempFileName = tempFileName(multipartFile);
 		String originalFileName = multipartFile.getOriginalFilename();
-
 
 		Criterion boardCriterion = new Criterion();
 		boardCriterion.addParam("guid", boardGuid);
@@ -171,7 +169,6 @@ public class FileController {
 			}
 		}
 
-
 		// response.setStatus(response.SC_OK);
 		// return response;
 	}
@@ -199,7 +196,6 @@ public class FileController {
 
 		String tempFileName = uploadTime + "_" + SessionManager.getUser().getUserId().toString() + "_" + multipartFile.getOriginalFilename();
 		return tempFileName;
-
 
 	}
 
@@ -324,7 +320,7 @@ public class FileController {
 				FileUtils.writeByteArrayToFile(new File(path), byteData);
 			} catch (IOException e) {
 				e.printStackTrace();
-	//			logger.error("[saveChart]", e);
+	//			log.error("[saveChart]", e);
 			}
 		}catch(Exception err){
 			err.printStackTrace();
@@ -377,7 +373,6 @@ public class FileController {
 		//String savePath = Paths.get(AppGlobal.uploadPath).toString();
 		String savePath = "\\"+todayPath;
 
-
 		uploadService.fileUploadLocal(multipartFile, tempFileName);
 
 		Criterion criterion = new Criterion();
@@ -389,7 +384,6 @@ public class FileController {
 		criterion.addParam("savePath", savePath);
 		uploadService.insertAccFileInfo(criterion);
 
-
 	}
 
 	//사고접수용 첨부파일 업로드
@@ -398,8 +392,6 @@ public class FileController {
 
 		String tempFileName = tempEmlFileName(multipartFile, type);
 		String originalFileName = multipartFile.getOriginalFilename();
-
-
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			Calendar c1 = Calendar.getInstance();

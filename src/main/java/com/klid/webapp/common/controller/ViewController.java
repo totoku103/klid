@@ -1,12 +1,12 @@
 package com.klid.webapp.common.controller;
 
+
+import lombok.extern.slf4j.Slf4j;
 import com.klid.common.AppGlobal;
 import com.klid.common.CommonController;
 import com.klid.common.HttpRequestUtils;
 import com.klid.webapp.common.SessionManager;
 import com.klid.webapp.common.login.service.LoginServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@Slf4j
 public class ViewController extends CommonController {
-
-    private final Logger logger = LoggerFactory.getLogger(ViewController.class);
-
     @GetMapping(value = "/")
     public String root() {
         return "redirect:/login.do";
@@ -34,7 +32,7 @@ public class ViewController extends CommonController {
     }
 
     private void print(String userAgent) {
-        logger.info("\n========== [User Info] ==========\n" +
+        log.info("\n========== [User Info] ==========\n" +
                         " SessionId   : {}\n" +
                         " ClientIp    : {}\n" +
                         " UserAgent   : {}\n" +
