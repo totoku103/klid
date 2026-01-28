@@ -7,7 +7,7 @@ export interface FilterPanelProps {
 
 export function FilterPanel({ children, className }: FilterPanelProps) {
   return (
-    <div id="filter-panel" className={cn('flex items-start gap-2', className)}>
+    <div id="filter-panel" className={cn('flex items-start gap-2 flex-shrink-0', className)}>
       {children}
     </div>
   )
