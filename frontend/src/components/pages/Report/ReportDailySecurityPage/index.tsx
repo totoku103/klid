@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { DailySecurityReport } from '@/types'
@@ -43,7 +43,7 @@ export function ReportDailySecurityPage() {
   }, [loadData])
 
   return (
-    <SubPageLayout locationPath={['보고서', '일일보안현황']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">누계일자:</label>
         <input
@@ -115,6 +115,6 @@ export function ReportDailySecurityPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

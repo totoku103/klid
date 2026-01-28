@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { sysApi } from '@/services/api/sysApi'
 import type { RiskMgmt, RiskHistory } from '@/types'
 import { cn } from '@/lib/utils'
@@ -143,7 +143,7 @@ export function RiskMgmtPage() {
     : null
 
   return (
-    <SubPageLayout locationPath={['시스템관리', '위협등급관리']}>
+    <>
       <div className="mb-4 flex justify-end">
         <button
           type="button"
@@ -257,6 +257,6 @@ export function RiskMgmtPage() {
           </div>
         </div>
       )}
-    </SubPageLayout>
+    </>
   )
 }

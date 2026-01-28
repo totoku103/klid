@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { useUserStore } from '@/stores/userStore'
 import { boardApi } from '@/services/api/boardApi'
@@ -173,7 +172,7 @@ export function NoticeBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '공지사항']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="그룹분류">
           <select
@@ -252,6 +251,6 @@ export function NoticeBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }

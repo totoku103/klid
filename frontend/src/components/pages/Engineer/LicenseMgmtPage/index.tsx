@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { License } from '@/types'
 
@@ -59,16 +59,16 @@ export function LicenseMgmtPage() {
 
   if (isLoading) {
     return (
-      <SubPageLayout locationPath={['엔지니어', '라이선스 관리']}>
+      <>
         <div className="flex h-full items-center justify-center">
           <span className="text-gray-500">로딩 중...</span>
         </div>
-      </SubPageLayout>
+      </>
     )
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '라이선스 관리']}>
+    <>
       <div className="flex h-full gap-4 p-4">
         <div className="w-1/2 rounded border border-gray-300 bg-white">
           <div className="flex items-center justify-between border-b border-gray-300 bg-gray-100 p-2">
@@ -148,6 +148,6 @@ export function LicenseMgmtPage() {
           </div>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

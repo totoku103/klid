@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { InciTypeReport } from '@/types'
@@ -59,7 +59,7 @@ export function ReportInciTypePage() {
   const totalCnt = data.reduce((sum, item) => sum + item.cnt, 0)
 
   return (
-    <SubPageLayout locationPath={['보고서', '사고유형별 통계']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">기간:</label>
         <input
@@ -147,6 +147,6 @@ export function ReportInciTypePage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

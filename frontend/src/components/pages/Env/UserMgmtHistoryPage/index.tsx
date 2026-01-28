@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { envApi } from '@/services/api/envApi'
 import type { UserMgmtHistory } from '@/types'
 import { cn } from '@/lib/utils'
@@ -85,7 +85,7 @@ export function UserMgmtHistoryPage() {
   }, [loadData])
 
   return (
-    <SubPageLayout locationPath={['환경설정', '사용자 관리 이력']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">요청 일자:</label>
         <input
@@ -228,6 +228,6 @@ export function UserMgmtHistoryPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

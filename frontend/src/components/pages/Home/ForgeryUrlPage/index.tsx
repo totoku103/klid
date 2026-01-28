@@ -1,45 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { homeApi } from '@/services/api/homeApi'
-import { envApi } from '@/services/api/envApi'
-import type { ForgeryUrl, ForgeryUrlSearchParams, Institution } from '@/types'
+import type { ForgeryUrl, ForgeryUrlSearchParams } from '@/types'
 import { cn } from '@/lib/utils'
-
-interface InstTreeProps {
-  institutions: Institution[]
-  selectedInstCd: string | null
-  onSelect: (inst: Institution) => void
-}
-
-function InstTree({ institutions, selectedInstCd, onSelect }: InstTreeProps) {
-  const renderTree = (nodes: Institution[], level = 0) => {
-    return nodes.map((node) => (
-      <div key={node.instCd}>
-        <div
-          className={cn(
-            'cursor-pointer px-2 py-1 text-sm hover:bg-gray-100',
-            selectedInstCd === node.instCd && 'bg-blue-100 font-medium'
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => onSelect(node)}
-        >
-          {node.instNm}
-        </div>
-        {node.children && node.children.length > 0 && renderTree(node.children, level + 1)}
-      </div>
-    ))
-  }
-
-  return <div className="h-full overflow-auto">{renderTree(institutions)}</div>
-}
 
 export function ForgeryUrlPage() {
   const { user } = useUserStore()
-  const [institutions, setInstitutions] = useState<Institution[]>([])
   const [data, setData] = useState<ForgeryUrl[]>([])
-  const [selectedInstCd, setSelectedInstCd] = useState<string | null>(null)
   const [selectedRow, setSelectedRow] = useState<ForgeryUrl | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [searchParams, setSearchParams] = useState<ForgeryUrlSearchParams>({
@@ -50,21 +19,12 @@ export function ForgeryUrlPage() {
     srchCheckYn: '',
   })
 
-  const loadInstitutions = useCallback(async () => {
-    try {
-      const result = await envApi.getInstTree()
-      setInstitutions(result)
-    } catch (err) {
-      console.error('Failed to load institutions:', err)
-    }
-  }, [])
-
   const loadData = useCallback(async () => {
     setIsLoading(true)
     try {
       const result = await homeApi.getForgeryUrlList({
         ...searchParams,
-        srchInstCd: selectedInstCd ?? user?.instCd,
+        srchInstCd: user?.instCd,
       })
       setData(result)
       setSelectedRow(null)
@@ -73,19 +33,12 @@ export function ForgeryUrlPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [searchParams, selectedInstCd, user?.instCd])
-
-  useEffect(() => {
-    loadInstitutions()
-  }, [loadInstitutions])
+  }, [searchParams, user?.instCd])
 
   useEffect(() => {
     loadData()
   }, [loadData])
 
-  const handleInstSelect = useCallback((inst: Institution) => {
-    setSelectedInstCd(inst.instCd)
-  }, [])
 
   const handleSearch = useCallback(() => {
     loadData()
@@ -113,22 +66,8 @@ export function ForgeryUrlPage() {
   const getDelYnText = (delYn: string) => (delYn === 'Y' ? '예' : '아니오')
   const getExcpYnText = (excpYn: string) => (excpYn === 'Y' ? '예' : '아니오')
   const getCheckYnText = (checkYn?: string) => (checkYn === 'Y' ? '예' : '아니오')
-
-  const leftPanel = (
-    <InstTree
-      institutions={institutions}
-      selectedInstCd={selectedInstCd}
-      onSelect={handleInstSelect}
-    />
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="기관정보"
-      leftPanelWidth={250}
-      locationPath={['메인', '위변조 URL 관리']}
-    >
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">WSIS_Ip:</label>
         <input
@@ -266,6 +205,6 @@ export function ForgeryUrlPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

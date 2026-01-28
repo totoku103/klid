@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { AgentVersion } from '@/types'
 
@@ -29,7 +29,7 @@ export function AgentVrsConfPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '에이전트 버전관리']}>
+    <>
       <PageToolbar>
         <ToolbarButton icon="search" onClick={loadData} title="검색" />
         <ToolbarButton icon="add" onClick={handleAdd} title="추가" />
@@ -87,6 +87,6 @@ export function AgentVrsConfPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

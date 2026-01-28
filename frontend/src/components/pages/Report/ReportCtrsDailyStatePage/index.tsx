@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { CtrsDailyStateReport } from '@/types'
@@ -41,7 +41,7 @@ export function ReportCtrsDailyStatePage() {
   }, [loadData])
 
   return (
-    <SubPageLayout locationPath={['보고서', 'CTRS 일일현황']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">시작일:</label>
         <input
@@ -105,6 +105,6 @@ export function ReportCtrsDailyStatePage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

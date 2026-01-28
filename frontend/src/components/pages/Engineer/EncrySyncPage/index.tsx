@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { EncrySync } from '@/types'
 
@@ -85,7 +85,7 @@ export function EncrySyncPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '암호화 동기화']}>
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">암호화 확인값:</label>
         <input
@@ -170,6 +170,6 @@ export function EncrySyncPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

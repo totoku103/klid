@@ -1,14 +1,18 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import { GlobalAlertModal, GlobalConfirmModal, GlobalPromptModal, ErrorBoundary } from '@/components/organisms'
-import { AppLayout } from '@/components/templates'
+import { SimpleLayout, DefaultLayout } from '@/components/templates'
 
+// 레이아웃 없는 페이지들
 const LoginPage = lazy(() => import('@/components/pages/Login').then(m => ({ default: m.LoginPage })))
-const MainPage = lazy(() => import('@/components/pages/Main').then(m => ({ default: m.MainPage })))
 const PrivacyPolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.PrivacyPolicyPage })))
 const HistoryPolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.HistoryPolicyPage })))
 const ComparePolicyPage = lazy(() => import('@/components/pages/Popup').then(m => ({ default: m.ComparePolicyPage })))
 
+// SimpleLayout 사용 페이지 (Header + MenuBar + Outlet)
+const MainPage = lazy(() => import('@/components/pages/Main').then(m => ({ default: m.MainPage })))
+
+// DefaultLayout 사용 페이지 (Header + MenuBar + PageNav + Outlet)
 const CustUserMgmtPage = lazy(() => import('@/components/pages/System').then(m => ({ default: m.CustUserMgmtPage })))
 const BoardMgmtPage = lazy(() => import('@/components/pages/System').then(m => ({ default: m.BoardMgmtPage })))
 const CodeMgmtPage = lazy(() => import('@/components/pages/System').then(m => ({ default: m.CodeMgmtPage })))
@@ -116,17 +120,20 @@ function App() {
             <Route path="/popup/history-policy/:version" element={<HistoryPolicyPage />} />
             <Route path="/popup/compare-policy/:version" element={<ComparePolicyPage />} />
 
-            {/* AppLayout을 사용하는 페이지들 */}
-            <Route element={<AppLayout />}>
+            {/* SimpleLayout: Header + MenuBar + Outlet */}
+            <Route element={<SimpleLayout />}>
               <Route path="/main" element={<MainPage />} />
-              
+            </Route>
+
+            {/* DefaultLayout: Header + MenuBar + PageNav + Outlet */}
+            <Route element={<DefaultLayout />}>
               {/* 시스템관리 */}
               <Route path="/main/sys/custUserMgmt" element={<CustUserMgmtPage />} />
               <Route path="/main/sys/boardMgmt" element={<BoardMgmtPage />} />
               <Route path="/main/sys/codeMgmtList" element={<CodeMgmtPage />} />
               <Route path="/main/sys/riskMgmt" element={<RiskMgmtPage />} />
               <Route path="/main/sys/weekMgmt" element={<WeekMgmtPage />} />
-              
+
               {/* 게시판 */}
               <Route path="/main/sec/noticeBoardList" element={<NoticeBoardPage />} />
               <Route path="/main/sec/qnaBoardList" element={<QnaBoardPage />} />
@@ -134,7 +141,7 @@ function App() {
               <Route path="/main/sec/resourceBoardList" element={<ResourceBoardPage />} />
               <Route path="/main/sec/moisBoardList" element={<MoisBoardPage />} />
               <Route path="/main/sec/takeOverBoardList" element={<TakeOverBoardPage />} />
-              
+
               {/* 환경관리 */}
               <Route path="/main/env/userMgmtList" element={<UserMgmtPage />} />
               <Route path="/main/env/instMgmtList" element={<InstMgmtPage />} />
@@ -142,10 +149,10 @@ function App() {
               <Route path="/main/env/nationIPMgmtList" element={<NationIPMgmtPage />} />
               <Route path="/main/env/userConf" element={<UserConfPage />} />
               <Route path="/main/env/userManagementHistory" element={<UserMgmtHistoryPage />} />
-              
+
               {/* 침해사고 */}
               <Route path="/main/acc/accidentApplyList" element={<AccidentApplyListPage />} />
-              
+
               {/* 보고서 */}
               <Route path="/main/rpt/reportDailyState" element={<ReportDailyStatePage />} />
               <Route path="/main/rpt/reportWeeklyState" element={<ReportWeeklyStatePage />} />
@@ -165,7 +172,7 @@ function App() {
               <Route path="/main/rpt/reportSecurityHacking" element={<ReportSecurityHackingPage />} />
               <Route path="/main/rpt/reportSecurityVulnerability" element={<ReportSecurityVulnerabilityPage />} />
               <Route path="/main/rpt/reportSecurityResult" element={<ReportSecurityResultPage />} />
-              
+
               {/* 로그 */}
               <Route path="/main/logs/userConnectLogDaily" element={<UserConnectLogDailyPage />} />
               <Route path="/main/logs/userConnectLogPeriod" element={<UserConnectLogPeriodPage />} />
@@ -175,12 +182,12 @@ function App() {
               <Route path="/main/logs/userActionLogPeriod" element={<UserActionLogPeriodPage />} />
               <Route path="/main/logs/userActionLogInstitution" element={<UserActionLogInstitutionPage />} />
               <Route path="/main/logs/userActionLogSummary" element={<UserActionLogSummaryPage />} />
-              
+
               {/* 이력관리 */}
               <Route path="/main/hist/userInoutHistMgmt" element={<UserInoutHistPage />} />
               <Route path="/main/hist/smsEmailHistMgmt" element={<SmsEmailHistPage />} />
               <Route path="/main/hist/userActHist" element={<UserActHistPage />} />
-              
+
               {/* 엔지니어 */}
               <Route path="/main/engineer/passReset" element={<PassResetPage />} />
               <Route path="/main/engineer/sysConf" element={<SysConfPage />} />
@@ -193,7 +200,7 @@ function App() {
               <Route path="/main/engineer/licenseMgmt" element={<LicenseMgmtPage />} />
               <Route path="/main/engineer/defGrpConf" element={<DefGrpConfPage />} />
               <Route path="/main/engineer/menuGrpMgmt" element={<MenuGrpMgmtPage />} />
-              
+
               {/* 웹대시보드 */}
               <Route path="/webdash/adminControl" element={<AdminControlPage />} />
               <Route path="/webdash/externalControl" element={<ExternalControlPage />} />
@@ -203,7 +210,7 @@ function App() {
               <Route path="/webdash/mois3" element={<Mois3DashboardPage />} />
               <Route path="/webdash/mois4" element={<Mois4DashboardPage />} />
               <Route path="/main/mois/dashConfig" element={<DashConfigPage />} />
-              
+
               {/* 홈페이지 관리 */}
               <Route path="/main/home/healthCheckUrl" element={<HealthCheckUrlPage />} />
               <Route path="/main/home/healthCheckStat" element={<HealthCheckStatPage />} />

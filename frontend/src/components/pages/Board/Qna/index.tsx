@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { useUserStore } from '@/stores/userStore'
 import { boardApi } from '@/services/api/boardApi'
@@ -135,7 +134,7 @@ export function QnaBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '문의/의견']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="제목">
           <Input
@@ -165,6 +164,6 @@ export function QnaBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }

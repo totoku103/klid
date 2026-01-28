@@ -2,55 +2,22 @@ import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { envApi } from '@/services/api/envApi'
-import type { Institution, InstIP } from '@/types'
+import type { InstIP } from '@/types'
 import { cn } from '@/lib/utils'
 
-interface InstTreeProps {
-  institutions: Institution[]
-  selectedInstCd: string | null
-  onSelect: (inst: Institution) => void
-}
-
-function InstTree({ institutions, selectedInstCd, onSelect }: InstTreeProps) {
-  const renderTree = (nodes: Institution[], level = 0) => {
-    return nodes.map((node) => (
-      <div key={node.instCd}>
-        <div
-          className={cn(
-            'cursor-pointer px-2 py-1 text-sm hover:bg-gray-100',
-            selectedInstCd === node.instCd && 'bg-blue-100 font-medium'
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => onSelect(node)}
-        >
-          {node.instNm}
-        </div>
-        {node.children && node.children.length > 0 && renderTree(node.children, level + 1)}
-      </div>
-    ))
-  }
-
-  return <div className="h-full overflow-auto">{renderTree(institutions)}</div>
-}
-
 export function InstIPMgmtPage() {
-  const [treeData, setTreeData] = useState<Institution[]>([])
   const [ipList, setIPList] = useState<InstIP[]>([])
-  const [selectedInstCd, setSelectedInstCd] = useState<string | null>(null)
-  const [selectedInstNm, setSelectedInstNm] = useState<string>('')
   const [selectedIP, setSelectedIP] = useState<InstIP | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedInstCd, _setSelectedInstCd] = useState<string | null>(null)
+  const [selectedInstNm, _setSelectedInstNm] = useState<string | null>(null)
 
-  const loadTree = useCallback(async () => {
-    try {
-      const data = await envApi.getInstTree()
-      setTreeData(data)
-    } catch (err) {
-      console.error('Failed to load institution tree:', err)
-    }
-  }, [])
+  // TODO: 기관 선택 로직 추가 필요
+  // _setSelectedInstCd, _setSelectedInstNm 을 사용하여 기관 선택 시 상태 업데이트
+  void _setSelectedInstCd
+  void _setSelectedInstNm
 
   const loadIPList = useCallback(async () => {
     if (!selectedInstCd) {
@@ -69,18 +36,9 @@ export function InstIPMgmtPage() {
   }, [selectedInstCd])
 
   useEffect(() => {
-    loadTree()
-  }, [loadTree])
-
-  useEffect(() => {
     loadIPList()
   }, [loadIPList])
 
-  const handleTreeSelect = useCallback((inst: Institution) => {
-    setSelectedInstCd(inst.instCd)
-    setSelectedInstNm(inst.instNm)
-    setSelectedIP(null)
-  }, [])
 
   const handleIPAdd = useCallback(async () => {
     if (!selectedInstCd) {
@@ -147,22 +105,8 @@ export function InstIPMgmtPage() {
       globalAlert.error('삭제에 실패했습니다.')
     }
   }, [selectedIP, loadIPList])
-
-  const leftPanel = (
-    <InstTree
-      institutions={treeData}
-      selectedInstCd={selectedInstCd}
-      onSelect={handleTreeSelect}
-    />
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="기관정보"
-      leftPanelWidth={250}
-      locationPath={['환경설정', '기관IP관리']}
-    >
+    <>
       <div className="mb-2 rounded border border-gray-300 bg-gray-50 p-2">
         <span className="text-sm font-medium">
           선택된 기관: {selectedInstNm || '기관을 선택해주세요'}
@@ -232,6 +176,6 @@ export function InstIPMgmtPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

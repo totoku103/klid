@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { SysConfig, EngineerCodeItem } from '@/types'
 
@@ -86,16 +86,16 @@ export function SysConfPage() {
 
   if (isLoading) {
     return (
-      <SubPageLayout locationPath={['엔지니어', '시스템 설정']}>
+      <>
         <div className="flex h-full items-center justify-center">
           <span className="text-gray-500">로딩 중...</span>
         </div>
-      </SubPageLayout>
+      </>
     )
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '시스템 설정']}>
+    <>
       <div className="overflow-auto p-4">
         <div className="rounded border border-gray-300 bg-white">
           <div className="border-b border-gray-300 bg-gray-100 p-2 font-semibold">
@@ -218,6 +218,6 @@ export function SysConfPage() {
           </PageToolbar>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

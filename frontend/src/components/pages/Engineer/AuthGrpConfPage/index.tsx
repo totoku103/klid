@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { AuthGroup } from '@/types'
 
@@ -72,7 +72,7 @@ export function AuthGrpConfPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '권한그룹 관리']}>
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <span className="font-bold text-red-500">
           ※ 다중등록시 그룹명 중복체크를 하지 않습니다. ※
@@ -226,6 +226,6 @@ export function AuthGrpConfPage() {
           </table>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

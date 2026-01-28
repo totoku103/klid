@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { boardApi } from '@/services/api/boardApi'
 import type { ShareItem } from '@/types'
@@ -106,7 +105,7 @@ export function ShareBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '자료공유']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="제목">
           <Input
@@ -136,6 +135,6 @@ export function ShareBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }

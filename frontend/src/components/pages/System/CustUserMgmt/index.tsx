@@ -1,20 +1,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { sysApi } from '@/services/api/sysApi'
 import type { SmsGroup, CustUser } from '@/types'
-import { SmsGroupTree, CustUserAddModal, CustUserEditModal } from './components'
+import { CustUserAddModal, CustUserEditModal } from './components'
 import { cn } from '@/lib/utils'
 
 export function CustUserMgmtPage() {
   const { user } = useUserStore()
   const [groups, setGroups] = useState<SmsGroup[]>([])
   const [users, setUsers] = useState<CustUser[]>([])
-  const [selectedGroupNo, setSelectedGroupNo] = useState<number | null>(1)
   const [selectedUser, setSelectedUser] = useState<CustUser | null>(null)
+  const selectedGroupNo = 1
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -52,88 +51,51 @@ export function CustUserMgmtPage() {
     loadUsers()
   }, [loadUsers])
 
-  const handleGroupSelect = useCallback((group: SmsGroup) => {
-    setSelectedGroupNo(group.grpNo)
-    setSelectedUser(null)
+  const handleRowClick = useCallback((u: CustUser) => {
+    setSelectedUser(u)
   }, [])
 
-  const handleGroupAdd = useCallback(async () => {
-    const name = await globalPrompt('새 그룹 이름을 입력하세요:')
-    if (name) {
-      try {
-        await sysApi.addSmsGroup({ smsNm: name, parentGrpNo: selectedGroupNo ?? 1 })
-        globalAlert.success('그룹이 추가되었습니다.')
-        loadGroups()
-      } catch {
-        globalAlert.error('그룹 추가에 실패했습니다.')
-      }
+  const handleUserAdd = useCallback(async (data: {
+    smsGroupSeq: number
+    custNm: string
+    custCellNo: string
+    custMailAddr: string
+  }) => {
+    try {
+      await sysApi.addCustUser({
+        ...data,
+        smsGroupName: '',
+        userId: user?.userId ?? '',
+      })
+      globalAlert.success('추가되었습니다.')
+      setIsAddModalOpen(false)
+      loadUsers()
+    } catch {
+      globalAlert.error('추가에 실패했습니다.')
     }
-  }, [selectedGroupNo, loadGroups])
+  }, [user?.userId, loadUsers])
 
-  const handleGroupEdit = useCallback(
-    async (group: SmsGroup) => {
-      if (group.grpNo === 1) {
-        globalAlert.info('최상위 그룹은 수정이 불가능합니다.')
-        return
-      }
-      const name = await globalPrompt('그룹 이름을 입력하세요:', group.smsNm)
-      if (name && name !== group.smsNm) {
-        try {
-          await sysApi.updateSmsGroup({ grpNo: group.grpNo, smsNm: name })
-          globalAlert.success('그룹이 수정되었습니다.')
-          loadGroups()
-        } catch {
-          globalAlert.error('그룹 수정에 실패했습니다.')
-        }
-      }
-    },
-    [loadGroups]
-  )
-
-  const handleUserAdd = useCallback(
-    async (data: {
-      smsGroupSeq: number
-      custNm: string
-      custCellNo: string
-      custMailAddr: string
-    }) => {
-      if (!user) return
-      try {
-        await sysApi.addCustUser({
-          ...data,
-          smsGroupName: '',
-          userId: user.userId,
-        })
-        globalAlert.success('사용자가 등록되었습니다.')
-        setIsAddModalOpen(false)
-        loadUsers()
-      } catch {
-        globalAlert.error('사용자 등록에 실패했습니다.')
-      }
-    },
-    [user, loadUsers]
-  )
-
-  const handleUserEdit = useCallback(
-    async (data: CustUser) => {
-      try {
-        await sysApi.updateCustUser(data)
-        globalAlert.success('사용자 정보가 수정되었습니다.')
-        setIsEditModalOpen(false)
-        loadUsers()
-      } catch {
-        globalAlert.error('사용자 수정에 실패했습니다.')
-      }
-    },
-    [loadUsers]
-  )
+  const handleUserEdit = useCallback(async (data: Partial<CustUser>) => {
+    if (!selectedUser) return
+    try {
+      await sysApi.updateCustUser({
+        ...selectedUser,
+        ...data,
+      })
+      globalAlert.success('수정되었습니다.')
+      setIsEditModalOpen(false)
+      loadUsers()
+    } catch {
+      globalAlert.error('수정에 실패했습니다.')
+    }
+  }, [selectedUser, loadUsers])
 
   const handleUserDelete = useCallback(async () => {
     if (!selectedUser) {
       globalAlert.warning('데이터를 선택해주세요.')
       return
     }
-    if (!await globalConfirm('선택한 사용자를 삭제하시겠습니까?')) return
+    if (!await globalConfirm('선택한 데이터를 삭제하시겠습니까?')) return
 
     try {
       await sysApi.deleteCustUser(selectedUser.custSeq)
@@ -145,10 +107,6 @@ export function CustUserMgmtPage() {
     }
   }, [selectedUser, loadUsers])
 
-  const handleRowClick = useCallback((user: CustUser) => {
-    setSelectedUser(user)
-  }, [])
-
   const handleEditClick = useCallback(() => {
     if (!selectedUser) {
       globalAlert.warning('데이터를 선택해주세요.')
@@ -156,24 +114,8 @@ export function CustUserMgmtPage() {
     }
     setIsEditModalOpen(true)
   }, [selectedUser])
-
-  const leftPanel = (
-    <SmsGroupTree
-      groups={groups}
-      selectedGroupNo={selectedGroupNo}
-      onSelect={handleGroupSelect}
-      onAdd={handleGroupAdd}
-      onEdit={handleGroupEdit}
-    />
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="그룹정보"
-      leftPanelWidth={250}
-      locationPath={['시스템관리', '사용자관리']}
-    >
+    <>
       <PageToolbar>
         <ToolbarButton icon="add" onClick={() => setIsAddModalOpen(true)} title="추가" />
         <ToolbarButton icon="edit" onClick={handleEditClick} title="수정" />
@@ -251,6 +193,6 @@ export function CustUserMgmtPage() {
         user={selectedUser}
         groups={groups}
       />
-    </SubPageLayout>
+    </>
   )
 }

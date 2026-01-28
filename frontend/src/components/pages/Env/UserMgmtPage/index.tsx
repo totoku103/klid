@@ -2,47 +2,18 @@ import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { envApi } from '@/services/api/envApi'
-import type { Institution, UserInfo, UserSearchParams } from '@/types'
+import type { UserInfo, UserSearchParams } from '@/types'
 import { cn } from '@/lib/utils'
-
-interface InstTreeProps {
-  institutions: Institution[]
-  selectedInstCd: string | null
-  onSelect: (inst: Institution) => void
-}
-
-function InstTree({ institutions, selectedInstCd, onSelect }: InstTreeProps) {
-  const renderTree = (nodes: Institution[], level = 0) => {
-    return nodes.map((node) => (
-      <div key={node.instCd}>
-        <div
-          className={cn(
-            'cursor-pointer px-2 py-1 text-sm hover:bg-gray-100',
-            selectedInstCd === node.instCd && 'bg-blue-100 font-medium'
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => onSelect(node)}
-        >
-          {node.instNm}
-        </div>
-        {node.children && node.children.length > 0 && renderTree(node.children, level + 1)}
-      </div>
-    ))
-  }
-
-  return <div className="h-full overflow-auto">{renderTree(institutions)}</div>
-}
 
 export function UserMgmtPage() {
   const { user } = useUserStore()
-  const [institutions, setInstitutions] = useState<Institution[]>([])
   const [users, setUsers] = useState<UserInfo[]>([])
-  const [selectedInstCd, setSelectedInstCd] = useState<string | null>(null)
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedInstCd, _setSelectedInstCd] = useState<string | null>(null)
   const [searchParams, setSearchParams] = useState<UserSearchParams>({
     srchUserName: '',
     srchUserId: '',
@@ -50,14 +21,9 @@ export function UserMgmtPage() {
     inactiveUser: false,
   })
 
-  const loadInstitutions = useCallback(async () => {
-    try {
-      const data = await envApi.getInstTree()
-      setInstitutions(data)
-    } catch (err) {
-      console.error('Failed to load institutions:', err)
-    }
-  }, [])
+  // TODO: 기관 선택 로직 추가 필요
+  // _setSelectedInstCd를 사용하여 기관 선택 시 상태 업데이트
+  void _setSelectedInstCd
 
   const loadUsers = useCallback(async () => {
     setIsLoading(true)
@@ -75,17 +41,9 @@ export function UserMgmtPage() {
   }, [searchParams, selectedInstCd])
 
   useEffect(() => {
-    loadInstitutions()
-  }, [loadInstitutions])
-
-  useEffect(() => {
     loadUsers()
   }, [loadUsers])
 
-  const handleInstSelect = useCallback((inst: Institution) => {
-    setSelectedInstCd(inst.instCd)
-    setSelectedUser(null)
-  }, [])
 
   const handleSearch = useCallback(() => {
     loadUsers()
@@ -135,22 +93,8 @@ export function UserMgmtPage() {
 
   const isAdmin =
     user?.authMain === 'AUTH_MAIN_2' && user?.authSub === 'AUTH_SUB_3'
-
-  const leftPanel = (
-    <InstTree
-      institutions={institutions}
-      selectedInstCd={selectedInstCd}
-      onSelect={handleInstSelect}
-    />
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="기관정보"
-      leftPanelWidth={250}
-      locationPath={['환경설정', '사용자관리']}
-    >
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">이름:</label>
         <input
@@ -263,6 +207,6 @@ export function UserMgmtPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

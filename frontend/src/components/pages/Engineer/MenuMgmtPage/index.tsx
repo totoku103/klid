@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { Page, PageGroup, Menu } from '@/types'
 
@@ -146,7 +146,7 @@ export function MenuMgmtPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '메뉴 관리']}>
+    <>
       <div className="flex h-full gap-2">
         <div className="flex w-1/3 flex-col">
           <div className="mb-1 flex items-center justify-between">
@@ -305,6 +305,6 @@ export function MenuMgmtPage() {
           </div>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

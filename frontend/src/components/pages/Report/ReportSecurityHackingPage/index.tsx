@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { SecurityHackingReport } from '@/types'
@@ -45,7 +45,7 @@ export function ReportSecurityHackingPage() {
   const totalCnt = data.reduce((sum, item) => sum + item.cnt, 0)
 
   return (
-    <SubPageLayout locationPath={['보고서', '보안해킹현황']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">시작일:</label>
         <input
@@ -108,6 +108,6 @@ export function ReportSecurityHackingPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { envApi } from '@/services/api/envApi'
 import type { NationIP } from '@/types'
 import { cn } from '@/lib/utils'
@@ -44,7 +44,7 @@ export function NationIPMgmtPage() {
   }, [loadIPList])
 
   return (
-    <SubPageLayout locationPath={['환경설정', '국가IP관리']}>
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">국가:</label>
         <select
@@ -114,6 +114,6 @@ export function NationIPMgmtPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

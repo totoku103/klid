@@ -2,85 +2,40 @@ import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { envApi } from '@/services/api/envApi'
 import type { Institution, InstSearchParams } from '@/types'
 import { cn } from '@/lib/utils'
 
-interface InstTreeProps {
-  institutions: Institution[]
-  selectedInstCd: string | null
-  onSelect: (inst: Institution) => void
-}
-
-function InstTree({ institutions, selectedInstCd, onSelect }: InstTreeProps) {
-  const renderTree = (nodes: Institution[], level = 0) => {
-    return nodes.map((node) => (
-      <div key={node.instCd}>
-        <div
-          className={cn(
-            'cursor-pointer px-2 py-1 text-sm hover:bg-gray-100',
-            selectedInstCd === node.instCd && 'bg-blue-100 font-medium'
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => onSelect(node)}
-        >
-          {node.instNm}
-        </div>
-        {node.children && node.children.length > 0 && renderTree(node.children, level + 1)}
-      </div>
-    ))
-  }
-
-  return <div className="h-full overflow-auto">{renderTree(institutions)}</div>
-}
-
 export function InstMgmtPage() {
-  const [treeData, setTreeData] = useState<Institution[]>([])
   const [institutions, setInstitutions] = useState<Institution[]>([])
-  const [selectedParentCd, setSelectedParentCd] = useState<string | null>(null)
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedParentCd, _setSelectedParentCd] = useState<string | null>(null)
   const [searchParams, setSearchParams] = useState<InstSearchParams>({
     sInstNm: '',
   })
 
-  const loadTree = useCallback(async () => {
-    try {
-      const data = await envApi.getInstTree()
-      setTreeData(data)
-    } catch (err) {
-      console.error('Failed to load institution tree:', err)
-    }
-  }, [])
+  // TODO: 상위 기관 선택 로직 추가 필요
+  // _setSelectedParentCd를 사용하여 상위 기관 선택 시 상태 업데이트
+  void _setSelectedParentCd
 
   const loadInstitutions = useCallback(async () => {
     setIsLoading(true)
     try {
-      const data = await envApi.getInstList({
-        ...searchParams,
-        pntInstCd: selectedParentCd ?? undefined,
-      })
+      const data = await envApi.getInstList(searchParams)
       setInstitutions(data)
     } catch (err) {
       console.error('Failed to load institutions:', err)
     } finally {
       setIsLoading(false)
     }
-  }, [searchParams, selectedParentCd])
-
-  useEffect(() => {
-    loadTree()
-  }, [loadTree])
+  }, [searchParams])
 
   useEffect(() => {
     loadInstitutions()
   }, [loadInstitutions])
 
-  const handleTreeSelect = useCallback((inst: Institution) => {
-    setSelectedParentCd(inst.instCd)
-    setSelectedInst(null)
-  }, [])
 
   const handleSearch = useCallback(() => {
     loadInstitutions()
@@ -101,12 +56,11 @@ export function InstMgmtPage() {
         useYn: 'Y',
       })
       globalAlert.success('기관이 추가되었습니다.')
-      loadTree()
       loadInstitutions()
     } catch {
       globalAlert.error('기관 추가에 실패했습니다.')
     }
-  }, [selectedParentCd, loadTree, loadInstitutions])
+  }, [selectedParentCd, loadInstitutions])
 
   const handleInstEdit = useCallback(async () => {
     if (!selectedInst) {
@@ -120,12 +74,11 @@ export function InstMgmtPage() {
     try {
       await envApi.updateInst({ ...selectedInst, instNm })
       globalAlert.success('기관이 수정되었습니다.')
-      loadTree()
       loadInstitutions()
     } catch {
       globalAlert.error('기관 수정에 실패했습니다.')
     }
-  }, [selectedInst, loadTree, loadInstitutions])
+  }, [selectedInst, loadInstitutions])
 
   const handleInstDelete = useCallback(async () => {
     if (!selectedInst) {
@@ -138,32 +91,17 @@ export function InstMgmtPage() {
       await envApi.deleteInst(selectedInst.instCd)
       globalAlert.success('삭제되었습니다.')
       setSelectedInst(null)
-      loadTree()
       loadInstitutions()
     } catch {
       globalAlert.error('삭제에 실패했습니다.')
     }
-  }, [selectedInst, loadTree, loadInstitutions])
+  }, [selectedInst, loadInstitutions])
 
   const handleExportExcel = useCallback(() => {
     globalAlert.info('엑셀 내보내기 기능은 추후 구현 예정입니다.')
   }, [])
-
-  const leftPanel = (
-    <InstTree
-      institutions={treeData}
-      selectedInstCd={selectedParentCd}
-      onSelect={handleTreeSelect}
-    />
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="기관정보"
-      leftPanelWidth={250}
-      locationPath={['환경설정', '기관관리']}
-    >
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">기관명:</label>
         <input
@@ -243,6 +181,6 @@ export function InstMgmtPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { homeApi } from '@/services/api/homeApi'
 import type { HealthCheckStat } from '@/types'
@@ -85,7 +85,7 @@ export function HealthCheckStatPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['메인', '헬스체크 통계']}>
+    <>
       <PageToolbar>
         <ToolbarButton icon="search" onClick={handleSearch} title="검색" />
       </PageToolbar>
@@ -147,6 +147,6 @@ export function HealthCheckStatPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

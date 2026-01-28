@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { DailyReport, DailyTotReport, TypeAccidentReport } from '@/types'
@@ -69,7 +69,7 @@ export function ReportDailyStatePage() {
   const canExport = user?.authMain !== 'AUTH_MAIN_4'
 
   return (
-    <SubPageLayout locationPath={['보고서', '일일현황보고']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">검색일자:</label>
         <input
@@ -223,6 +223,6 @@ export function ReportDailyStatePage() {
           </div>
         </div>
       )}
-    </SubPageLayout>
+    </>
   )
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { Modal } from '@/components/organisms'
 import { Input } from '@/components/atoms/Input'
 import { Label } from '@/components/atoms/Label'
@@ -79,7 +79,7 @@ export function BoardMgmtPage() {
   }, [])
 
   return (
-    <SubPageLayout locationPath={['시스템관리', '게시판관리']}>
+    <>
       <PageToolbar>
         <ToolbarButton icon="edit" onClick={handleEditClick} title="수정" />
       </PageToolbar>
@@ -178,6 +178,6 @@ export function BoardMgmtPage() {
           </div>
         )}
       </Modal>
-    </SubPageLayout>
+    </>
   )
 }

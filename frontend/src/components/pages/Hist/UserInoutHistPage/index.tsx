@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { histApi } from '@/services/api/histApi'
 import type { UserInoutHist } from '@/types'
@@ -48,7 +48,7 @@ export function UserInoutHistPage() {
   }, [loadData])
 
   return (
-    <SubPageLayout locationPath={['이력관리', '사용자 접속이력']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">기간:</label>
         <input
@@ -133,6 +133,6 @@ export function UserInoutHistPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

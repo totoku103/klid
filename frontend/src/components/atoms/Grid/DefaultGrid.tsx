@@ -56,13 +56,13 @@ export function DefaultGrid({
     if (!gridRef.current || typeof window === 'undefined') return
 
     try {
-      await import('jqwidgets-framework/jqwidgets/jqxcore')
-      await import('jqwidgets-framework/jqwidgets/jqxdata')
-      await import('jqwidgets-framework/jqwidgets/jqxbuttons')
-      await import('jqwidgets-framework/jqwidgets/jqxscrollbar')
-      await import('jqwidgets-framework/jqwidgets/jqxmenu')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.selection')
+      await import('jqwidgets-scripts/jqwidgets/jqxcore')
+      await import('jqwidgets-scripts/jqwidgets/jqxdata')
+      await import('jqwidgets-scripts/jqwidgets/jqxbuttons')
+      await import('jqwidgets-scripts/jqwidgets/jqxscrollbar')
+      await import('jqwidgets-scripts/jqwidgets/jqxmenu')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.selection')
 
       interface JqxGridElement {
         jqxGrid: (options: unknown) => void

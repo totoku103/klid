@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { sysApi } from '@/services/api/sysApi'
 import type { CodeLv1, CodeLv2, CodeLv3 } from '@/types'
 import { cn } from '@/lib/utils'
@@ -177,82 +177,77 @@ export function CodeMgmtPage() {
     }
   }, [selectedLv2, selectedLv3, loadLv3])
 
-  const leftPanel = (
-    <div className="flex h-full flex-col">
-      <div className="flex justify-end gap-1 border-b border-gray-200 p-2">
-        <button
-          onClick={handleAddLv1}
-          className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-white text-sm hover:bg-gray-100"
-          title="추가"
-          type="button"
-        >
-          +
-        </button>
-        <button
-          onClick={handleEditLv1}
-          className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-white text-sm hover:bg-gray-100"
-          title="수정"
-          type="button"
-        >
-          ✎
-        </button>
-      </div>
-      <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse text-sm">
-          <thead className="sticky top-0 bg-gray-100">
-            <tr>
-              <th className="border-b border-gray-300 p-2 text-center">코드</th>
-              <th className="border-b border-gray-300 p-2 text-left">코드명</th>
-              <th className="border-b border-gray-300 p-2 text-center">사용</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={3} className="p-4 text-center text-gray-500">
-                  로딩 중...
-                </td>
-              </tr>
-            ) : lv1List.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="p-4 text-center text-gray-500">
-                  데이터가 없습니다
-                </td>
-              </tr>
-            ) : (
-              lv1List.map((code) => (
-                <tr
-                  key={code.code}
-                  onClick={() => handleLv1Click(code)}
-                  className={cn(
-                    'cursor-pointer hover:bg-gray-50',
-                    selectedLv1?.code === code.code && 'bg-blue-100'
-                  )}
-                >
-                  <td className="border-b border-gray-200 p-2 text-center">
-                    {code.code}
-                  </td>
-                  <td className="border-b border-gray-200 p-2">{code.codeName}</td>
-                  <td className="border-b border-gray-200 p-2 text-center">
-                    {code.useYn}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-
   return (
-    <SubPageLayout
-      leftPanel={leftPanel}
-      leftPanelTitle="대분류 코드"
-      leftPanelWidth={300}
-      locationPath={['시스템관리', '코드관리']}
-    >
+    <>
       <div className="flex h-full gap-4">
+        <div className="flex w-80 flex-col rounded border border-gray-300">
+          <div className="bg-[#22516d] px-4 py-2 text-sm font-bold text-white">
+            대분류 코드
+          </div>
+          <div className="flex justify-end gap-1 border-b border-gray-200 p-2">
+            <button
+              onClick={handleAddLv1}
+              className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-white text-sm hover:bg-gray-100"
+              title="추가"
+              type="button"
+            >
+              +
+            </button>
+            <button
+              onClick={handleEditLv1}
+              className="flex h-6 w-6 items-center justify-center rounded border border-gray-300 bg-white text-sm hover:bg-gray-100"
+              title="수정"
+              type="button"
+            >
+              ✎
+            </button>
+          </div>
+          <div className="flex-1 overflow-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead className="sticky top-0 bg-gray-100">
+                <tr>
+                  <th className="border-b border-gray-300 p-2 text-center">코드</th>
+                  <th className="border-b border-gray-300 p-2 text-left">코드명</th>
+                  <th className="border-b border-gray-300 p-2 text-center">사용</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={3} className="p-4 text-center text-gray-500">
+                      로딩 중...
+                    </td>
+                  </tr>
+                ) : lv1List.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="p-4 text-center text-gray-500">
+                      데이터가 없습니다
+                    </td>
+                  </tr>
+                ) : (
+                  lv1List.map((code) => (
+                    <tr
+                      key={code.code}
+                      onClick={() => handleLv1Click(code)}
+                      className={cn(
+                        'cursor-pointer hover:bg-gray-50',
+                        selectedLv1?.code === code.code && 'bg-blue-100'
+                      )}
+                    >
+                      <td className="border-b border-gray-200 p-2 text-center">
+                        {code.code}
+                      </td>
+                      <td className="border-b border-gray-200 p-2">{code.codeName}</td>
+                      <td className="border-b border-gray-200 p-2 text-center">
+                        {code.useYn}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div className="flex flex-1 flex-col">
           <PageToolbar>
             <ToolbarButton icon="add" onClick={handleAddLv2} title="추가" />
@@ -351,6 +346,6 @@ export function CodeMgmtPage() {
           </div>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

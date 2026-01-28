@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { AuthGroup, MenuAuthConfig } from '@/types'
 
@@ -65,7 +65,7 @@ export function MenuGrpMgmtPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '메뉴그룹 관리']}>
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <span className="font-bold text-red-500">※ 권한별 메뉴 설정 ※</span>
       </div>
@@ -201,6 +201,6 @@ export function MenuGrpMgmtPage() {
           </table>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

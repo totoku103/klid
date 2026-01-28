@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { boardApi } from '@/services/api/boardApi'
 import type { ResourceItem, BoardCategory } from '@/types'
@@ -123,7 +122,7 @@ export function ResourceBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '자료실']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="분류">
           <select
@@ -167,6 +166,6 @@ export function ResourceBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { rptApi } from '@/services/api/rptApi'
 import type { WeeklyStateReport } from '@/types'
@@ -56,7 +56,7 @@ export function ReportWeeklyStatePage() {
   }, [])
 
   return (
-    <SubPageLayout locationPath={['보고서', '주간현황보고']}>
+    <>
       <div className="mb-2 flex flex-wrap items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <label className="text-sm">기간:</label>
         <input
@@ -131,6 +131,6 @@ export function ReportWeeklyStatePage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

@@ -76,22 +76,22 @@ export function DataGrid({
     if (!gridRef.current || typeof window === 'undefined') return
 
     try {
-      await import('jqwidgets-framework/jqwidgets/jqxcore')
-      await import('jqwidgets-framework/jqwidgets/jqxdata')
-      await import('jqwidgets-framework/jqwidgets/jqxbuttons')
-      await import('jqwidgets-framework/jqwidgets/jqxscrollbar')
-      await import('jqwidgets-framework/jqwidgets/jqxlistbox')
-      await import('jqwidgets-framework/jqwidgets/jqxdropdownlist')
-      await import('jqwidgets-framework/jqwidgets/jqxmenu')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.selection')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.pager')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.sort')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.filter')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.columnsresize')
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.columnsreorder')
-      // @ts-expect-error - jqwidgets-framework has no type declarations
-      await import('jqwidgets-framework/jqwidgets/jqxgrid.export')
+      await import('jqwidgets-scripts/jqwidgets/jqxcore')
+      await import('jqwidgets-scripts/jqwidgets/jqxdata')
+      await import('jqwidgets-scripts/jqwidgets/jqxbuttons')
+      await import('jqwidgets-scripts/jqwidgets/jqxscrollbar')
+      await import('jqwidgets-scripts/jqwidgets/jqxlistbox')
+      await import('jqwidgets-scripts/jqwidgets/jqxdropdownlist')
+      await import('jqwidgets-scripts/jqwidgets/jqxmenu')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.selection')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.pager')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.sort')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.filter')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.columnsresize')
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.columnsreorder')
+      // @ts-expect-error - jqwidgets has no type declarations
+      await import('jqwidgets-scripts/jqwidgets/jqxgrid.export')
 
       interface JqxGridElement {
         jqxGrid: (options: unknown) => void

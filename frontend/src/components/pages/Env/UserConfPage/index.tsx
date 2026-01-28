@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
 import { globalPrompt } from '@/utils/prompt'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { useUserStore } from '@/stores/userStore'
 import { envApi } from '@/services/api/envApi'
 import type { UserAddress } from '@/types'
@@ -127,7 +127,7 @@ export function UserConfPage() {
   }, [selectedAddr, loadAddresses])
 
   return (
-    <SubPageLayout locationPath={['환경설정', '사용자설정']}>
+    <>
       <div className="mb-4 flex border-b border-gray-300">
         <button
           className={cn(
@@ -260,6 +260,6 @@ export function UserConfPage() {
           </div>
         </>
       )}
-    </SubPageLayout>
+    </>
   )
 }

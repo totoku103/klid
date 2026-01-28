@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { engineerApi } from '@/services/api/engineerApi'
 import type { PassResetUser } from '@/types'
 
@@ -40,7 +40,7 @@ export function PassResetPage() {
   }
 
   return (
-    <SubPageLayout locationPath={['엔지니어', '비밀번호 리셋']}>
+    <>
       <div className="mb-2 flex items-center gap-2 rounded border border-gray-300 bg-gray-50 p-2">
         <span className="font-bold text-red-500">COMM_USER 전체 비밀번호 리셋</span>
       </div>
@@ -89,6 +89,6 @@ export function PassResetPage() {
           </tbody>
         </table>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

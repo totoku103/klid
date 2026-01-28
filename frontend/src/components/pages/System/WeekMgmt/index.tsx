@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { globalAlert } from '@/utils/alert'
 import { globalConfirm } from '@/utils/confirm'
-import { SubPageLayout, PageToolbar, ToolbarButton } from '@/components/templates'
+import { PageToolbar, ToolbarButton } from '@/components/templates'
 import { sysApi } from '@/services/api/sysApi'
 import { cn } from '@/lib/utils'
 
@@ -142,7 +142,7 @@ export function WeekMgmtPage() {
   }, [selectedDate, loadHolidays])
 
   return (
-    <SubPageLayout locationPath={['시스템관리', '공휴일관리']}>
+    <>
       <PageToolbar>
         {canAddHoliday && <ToolbarButton icon="add" onClick={handleAddHoliday} title="공휴일 추가" />}
         {canDeleteHoliday && <ToolbarButton icon="delete" onClick={handleDeleteHoliday} title="공휴일 삭제" />}
@@ -274,6 +274,6 @@ export function WeekMgmtPage() {
           </div>
         </div>
       </div>
-    </SubPageLayout>
+    </>
   )
 }

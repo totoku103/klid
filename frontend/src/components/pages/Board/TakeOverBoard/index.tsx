@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { useUserStore } from '@/stores/userStore'
 import { boardApi } from '@/services/api/boardApi'
@@ -137,7 +136,7 @@ export function TakeOverBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '인수인계']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="기간">
           <input
@@ -225,6 +224,6 @@ export function TakeOverBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }

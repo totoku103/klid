@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SubPageLayout } from '@/components/templates'
 import { Input } from '@/components/atoms/Input'
 import { useUserStore } from '@/stores/userStore'
 import { boardApi } from '@/services/api/boardApi'
@@ -108,7 +107,7 @@ export function MoisBoardPage() {
   )
 
   return (
-    <SubPageLayout locationPath={['게시판', '행안부 게시판']}>
+    <>
       <SearchBox onSearch={handleSearch} onWrite={handleWrite}>
         <SearchField label="제목">
           <Input
@@ -138,6 +137,6 @@ export function MoisBoardPage() {
           onRowDoubleClick={handleRowDoubleClick}
         />
       </div>
-    </SubPageLayout>
+    </>
   )
 }
