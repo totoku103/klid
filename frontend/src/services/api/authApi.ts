@@ -50,22 +50,22 @@ export interface EmailSendResponse {
 
 const AUTH_ENDPOINTS = {
   CTRS: {
-    primary: '/login/ctrs/authenticate/primary.do',
-    otp: '/login/ctrs/authenticate/second/otp.do',
-    emailSend: '/login/ctrs/authenticate/second/email/send.do',
-    emailValidate: '/login/ctrs/authenticate/second/email/validate.do',
+    primary: '/api/login/ctrs/authenticate/primary',
+    otp: '/api/login/ctrs/authenticate/second/otp',
+    emailSend: '/api/login/ctrs/authenticate/second/email/send',
+    emailValidate: '/api/login/ctrs/authenticate/second/email/validate',
   },
   VMS: {
-    primary: '/login/vms/authenticate/primary.do',
-    otp: '/login/vms/authenticate/second/otp.do',
-    emailSend: '/login/vms/authenticate/second/email/send.do',
-    emailValidate: '/login/vms/authenticate/second/email/validate.do',
+    primary: '/api/login/vms/authenticate/primary',
+    otp: '/api/login/vms/authenticate/second/otp',
+    emailSend: '/api/login/vms/authenticate/second/email/send',
+    emailValidate: '/api/login/vms/authenticate/second/email/validate',
   },
   CTSS: {
-    primary: '/login/ctss/authenticate/primary.do',
-    otp: '/login/ctss/authenticate/second/otp.do',
-    emailSend: '/login/ctss/authenticate/second/email/send.do',
-    emailValidate: '/login/ctss/authenticate/second/email/validate.do',
+    primary: '/api/login/ctss/authenticate/primary',
+    otp: '/api/login/ctss/authenticate/second/otp',
+    emailSend: '/api/login/ctss/authenticate/second/email/send',
+    emailValidate: '/api/login/ctss/authenticate/second/email/validate',
   },
 } as const
 
