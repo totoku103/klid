@@ -400,7 +400,7 @@ export function AccidentApplyListPage() {
   )
 
   return (
-    <div className="flex flex-col h-full p-4">
+    <div className="flex flex-col h-full">
       <div id="filter-panel" className="flex items-start gap-2">
         <SearchBar>
           <SearchRow>
