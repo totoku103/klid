@@ -12,6 +12,9 @@ target/**
 # Claude settings
 .claude/
 
+# oh-my-claudecode plugin
+.omc/
+
 # IntelliJ IDEA
 *.iml
 
