@@ -401,7 +401,7 @@ export function AccidentApplyListPage() {
 
   return (
     <div className="flex flex-col h-full p-4">
-      <div id="filter-panel" className="mb-2 flex items-start gap-2">
+      <div id="filter-panel" className="mb-4 flex items-start gap-2">
         <SearchBar>
           <SearchRow>
             <SearchSelect
