@@ -4,6 +4,7 @@ import { globalConfirm } from '@/utils/confirm'
 import {
   ActionBar,
   ActionButton,
+  FilterPanel,
   SearchBar,
   SearchRow,
   SearchSelect,
@@ -401,7 +402,7 @@ export function AccidentApplyListPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div id="filter-panel" className="flex items-start gap-2">
+      <FilterPanel>
         <SearchBar>
           <SearchRow>
             <SearchSelect
@@ -679,7 +680,7 @@ export function AccidentApplyListPage() {
           <ActionButton icon="excel" onClick={handleExportExcel} title="엑셀" />
           {canCopy && <ActionButton icon="refresh" onClick={handleCopy} title="사고복사" />}
         </ActionBar>
-      </div>
+      </FilterPanel>
 
       <div id="data-panel" className="flex-1 min-h-0">
         <DataGrid

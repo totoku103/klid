@@ -22,6 +22,9 @@ export type { MenuBarProps } from './MenuBar'
 export { ActionBar, ActionButton } from './ActionBar'
 export type { ActionBarProps, ActionButtonProps } from './ActionBar'
 
+export { FilterPanel } from './FilterPanel'
+export type { FilterPanelProps } from './FilterPanel'
+
 export {
   SearchBar,
   SearchRow,
